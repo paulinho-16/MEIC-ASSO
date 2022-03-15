@@ -26,8 +26,19 @@ Identify architectural and design challenges, as well as the solutions that we f
 
 ## Components
 
-Identify the main components/subsystems. Define these components by partitioning the system based on the main themes that have already been identified above.
-
+* Profiles
+* Authentication
+* Scraping
+* Chat
+* Calendar
+* Payments
+* Group Making
+* Feedback
+* Library
+* Mapping
+* Food
+* Housing
+* Registrations
 
 ## Logical architecture
 
