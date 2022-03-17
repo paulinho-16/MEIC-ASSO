@@ -21,8 +21,18 @@ This section should give an idea of the high-level non-functional requirements.
 
 ## Challenges and foreseen possible solutions
 
-Identify architectural and design challenges, as well as the solutions that we foresee may be useful to address them. Many of these solutions can (and should) be expressed as architectural patterns.
+This section is responsible for identifying architectural and design challenges, as well as the solutions that we foresee may be useful to address them. Many of these solutions can (and should) be expressed as architectural patterns.
 
+- Data Storage
+  - Chats need lots of small writes and reads
+  - Scalability
+  - Performance
+- Privacy
+- Efficiency when dealing with scrapped data
+- How to combine data from different sources? (e.g. calendar)
+- Real-time communication in chats
+- Multiple authentication strategies
+- Security in payments
 
 ## Components
 
