@@ -12,10 +12,8 @@ Use this section to provide a high-level view over what the product intends to p
 
 # Product Themes
 
-**Note:**
+**Note:** **already**: themes that were set by the tuesday class; **edited**: already themes that were edited by the friday class
 
-- **already** - themes that were set by the tuesday class
-- **edited** - already themes that were edited by the friday class
 
 - **(already)** Car sharing
 - **(already) (edited)** Authentication
