@@ -10,23 +10,55 @@ Use this section to provide a high-level view over what the product intends to p
 
 ## Product themes
 
-* Car sharing
-* Authentication & user profiles
-* Cantine/bar - collect info, ratings, buy ticket
-* Schedule management
-  *  Algorithm to optimize schedule, notification, synchronization
-  *  Exams schedule
-  *  Other events
-* FEUP Positioning System
-* Group formation - project groups, study groups and class
-* Book reservations @ library
-* Housing
-* Scheduling psychiatry appointments
-* Registering for stuff: Pick classes, UCs, register for 2nd call exams
-* Presence in practical classes
-* Feedback (about everything)
-* News and job listings
+# Product Themes
 
+**Note:**
+
+- **already** - themes that were set by the tuesday class
+- **edited** - already themes that were edited by the friday class
+
+- **(already)** Car sharing
+- **(already) (edited)** Authentication
+- User profiles
+- **(already) (edited)** Meals
+    - cantine
+    - bares
+    - grill
+    - SASUP
+- **(already)** Schedule management
+    - **(already) (edit)** Algorithm to optimize schedule, synchronization
+    - **(already)** Exams schedule
+    - **(already)** Other events
+    - Personal schedule
+    - Services (e.g. Library schedule)
+- **(already) (edited)** FEUP Classrooms
+- **(already)** Group formation - project groups, study groups and class
+- **(already) (edited)** Library
+    - book reservation (and delivery dates)
+    - capacity
+    - classrooms
+- **(already) (edited)** External systems
+    - GPS systems (e.g. study places)
+    - housing
+    - external places to eat (together with meals)
+- **(already)** Scheduling appointments
+    - Psychologist
+- **(already)** Registering for stuff: Pick classes, UCs, register for 2nd call exams
+- **(already)** Presence in practical classes
+- **(already)** Feedback (about everything)
+    - Trouble tickets
+- **(already) (edited)** News
+- Job listings management
+- Printing system
+- Appliances system (Projeto Integrador)
+- Student Associations
+- Chat (class groups)
+- Notifications
+    - Calendar (deliveries, exams, tests...)
+- Queues / Crowd Sourcing
+- Mentoring app (erasmus students also)
+- Accio with comments
+- Payments (Balance)
 ## Quality attributes
 
 This section should give an idea of the high-level non-functional requirements.
