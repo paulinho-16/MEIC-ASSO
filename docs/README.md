@@ -14,7 +14,6 @@ Use this section to provide a high-level view over what the product intends to p
 
 **Note:** **already**: themes that were set by the tuesday class; **edited**: already themes that were edited by the friday class
 
-
 - **(already)** Car sharing
 - **(already) (edited)** Authentication
 - User profiles
@@ -81,18 +80,15 @@ This section is responsible for identifying architectural and design challenges,
 
 ## Components
 
-* Profiles
-* Authentication
 * Scraping
+* Authentication
 * Chat
 * Calendar
 * Payments
+* Notifications
+* External API / Services
 * Group Making
 * Feedback
-* Library
-* Mapping
-* Food
-* Housing
 * Registrations
 
 ## Logical architecture
