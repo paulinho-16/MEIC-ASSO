@@ -10,7 +10,22 @@ Use this section to provide a high-level view over what the product intends to p
 
 ## Product themes
 
-This section should give an idea of the high-level functional requirements.
+* Car sharing
+* Authentication & user profiles
+* Cantine/bar - collect info, ratings, buy ticket
+* Schedule management
+  *  Algorithm to optimize schedule, notification, synchronization
+  *  Exams schedule
+  *  Other events
+* FEUP Positioning System
+* Group formation - project groups, study groups and class
+* Book reservations @ library
+* Housing
+* Scheduling psychiatry appointments
+* Registering for stuff: Pick classes, UCs, register for 2nd call exams
+* Presence in practical classes
+* Feedback (about everything)
+* News and job listings
 
 ## Quality attributes
 
