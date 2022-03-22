@@ -1,50 +1,46 @@
 # uni4all
 
 Welcome to the repository supporting the development of the uni4all project, developed as part of the practical classes of the FEUP/M.EIC/ASSO/2021-22 course.
- 
+
 # Product
 
-Use this section to provide a high-level view over what the product intends to provide in terms of function and non-functional requirements. These high-level requirements will later be broken up and documented as user stories. 
+Use this section to provide a high-level view over what the product intends to provide in terms of function and non-functional requirements. These high-level requirements will later be broken up and documented as user stories.
 
-## Vision
-
-## Product themes
+# Vision
 
 # Product Themes
 
-**Note:** **already**: themes that were set by the tuesday class; **edited**: already themes that were edited by the friday class
-
-- **(already)** Car sharing
-- **(already) (edited)** Authentication
+- Car sharing
+- Authentication
 - User profiles
-- **(already) (edited)** Meals
-    - cantine
-    - bares
-    - grill
+- Meals
+    - Cantine
+    - Bares
+    - Grill
     - SASUP
-- **(already)** Schedule management
-    - **(already) (edit)** Algorithm to optimize schedule, synchronization
-    - **(already)** Exams schedule
-    - **(already)** Other events
+- Schedule management
+    - Algorithm to optimize schedule, synchronization
+    - Exams schedule
+    - Other events
     - Personal schedule
     - Services (e.g. Library schedule)
-- **(already) (edited)** FEUP Classrooms
-- **(already)** Group formation - project groups, study groups and class
-- **(already) (edited)** Library
-    - book reservation (and delivery dates)
-    - capacity
-    - classrooms
-- **(already) (edited)** External systems
+- FEUP Classrooms
+- Group formation - project groups, study groups and class
+- Library
+    - Book reservation (and delivery dates)
+    - Capacity
+    - Classrooms
+- External systems
     - GPS systems (e.g. study places)
-    - housing
-    - external places to eat (together with meals)
-- **(already)** Scheduling appointments
+    - Housing
+    - External places to eat (together with meals)
+- Scheduling appointments
     - Psychologist
-- **(already)** Registering for stuff: Pick classes, UCs, register for 2nd call exams
-- **(already)** Presence in practical classes
-- **(already)** Feedback (about everything)
+- Registering for stuff: Pick classes, UCs, register for 2nd call exams
+- Presence in practical classes
+- Feedback (about everything)
     - Trouble tickets
-- **(already) (edited)** News
+- News
 - Job listings management
 - Printing system
 - Appliances system (Projeto Integrador)
@@ -53,13 +49,13 @@ Use this section to provide a high-level view over what the product intends to p
 - Notifications
     - Calendar (deliveries, exams, tests...)
 - Queues / Crowd Sourcing
-- Mentoring app (erasmus students also)
+- Mentoring app (Erasmus students also)
 - Accio with comments
 - Payments (Balance)
+
 ## Quality attributes
 
 This section should give an idea of the high-level non-functional requirements.
-
 
 # Architecture and design
 
@@ -67,29 +63,145 @@ This section should give an idea of the high-level non-functional requirements.
 
 This section is responsible for identifying architectural and design challenges, as well as the solutions that we foresee may be useful to address them. Many of these solutions can (and should) be expressed as architectural patterns.
 
-- Data Storage
-  - Chats need lots of small writes and reads
-  - Scalability
-  - Performance
-- Privacy
-- Efficiency when dealing with scrapped data
-- How to combine data from different sources? (e.g. calendar)
-- Real-time communication in chats
-- Multiple authentication strategies
-- Security in payments
+### Data Storage
+
+**Definition**
+- Chats need lots of small writes and reads
+- Scalability
+- Performance
+
+**Patterns**
+- Shared repository
+
+### Privacy
+
+**Definition**
+- Avoid storing user data
+- Handle user data carefully (encryption, etc)
+
+**Patterns**
+- None
+
+### Efficiency when dealing with scrapped data
+
+**Definition**
+- Scraping on demand can be slow
+- Scrap periodically and store data in a server (outdated data and privacy concerns)
+
+**Patterns**
+- Pipes and filters
+- Broker
+- Message channel
+- Message endpoint
+- The requester
+- The invoker
+- Client request handler
+- Server request handler
+- Proxy
+
+
+### Data combination from different sources (ex: calendar)
+
+**Definition**
+- How should data submitted by user be combined with scrapped data
+
+**Patterns**
+- Shared repository
+- Microkernel
+
+### Real-time communication in chats
+
+**Definition**
+- Delay can be hard to deal with
+- Some users might not be online at the time the messages are created
+
+**Patterns**
+- Broker
+- Publisher-Subscriber
+
+### Multiple authentication strategies
+
+**Definition**
+- None
+
+**Patterns**
+- None
+
+### Security in payments
+
+**Definition**
+- Use third-party APIs
+
+**Patterns**
+- None
+
+### Versatility and ability to add modules
+
+**Definition**
+- Functionality can be added later
+- The project needs support for lots of modules with different functionalities
+
+**Patterns**
+- Microkernel
+
+### API Patterns
+
+**Foundation**
+
+- Clients need to know how to call the API
+    - [API Description](https://microservice-api-patterns.org/patterns/foundation/APIDescription)
+- The visibility of the new API should be restricted
+    - [Community API](https://microservice-api-patterns.org/patterns/foundation/CommunityAPI)
+    - [Solution-Internal API](https://microservice-api-patterns.org/patterns/foundation/SolutionInternalAPI)
+
+**Responsibility**
+
+- Provide CRUD functionality
+    - [Information Holder Resource](https://microservice-api-patterns.org/patterns/responsibility/endpointRoles/InformationHolderResource)
+- Let clients exchange data directly
+    - [Data Transfer Resource](https://microservice-api-patterns.org/patterns/responsibility/informationHolderEndpointTypes/DataTransferResource)
+
+**Structure**
+
+- Provide a structure for the messages exchanged between client and server
+    - [Atomic Parameter](https://microservice-api-patterns.org/patterns/structure/representationElements/AtomicParameter)
+    - [Atomic Parameter List](https://microservice-api-patterns.org/patterns/structure/representationElements/AtomicParameterList)
+- Help clients to not having to load all the information in a single response
+    - [Pagination](https://microservice-api-patterns.org/patterns/structure/compositeRepresentations/Pagination)
+
+**Quality**
+
+- Handle authentication of different clients
+    - [API Key](https://microservice-api-patterns.org/patterns/quality/qualityManagementAndGovernance/APIKey)
+- Prevent unnecessary server-side processing and bandwidth
+    - [Conditional Request](https://microservice-api-patterns.org/patterns/quality/dataTransferParsimony/ConditionalRequest)
+    - [Request Bundle](https://microservice-api-patterns.org/patterns/quality/dataTransferParsimony/RequestBundle)
+- Inform clients about the errors
+    - [Error Report](https://microservice-api-patterns.org/patterns/quality/qualityManagementAndGovernance/ErrorReport)
+
+**Evolution**
+
+- New versions with improved functionality are offered over time
+    - [Version Identifier](https://microservice-api-patterns.org/patterns/evolution/VersionIdentifier)
+- Maintain several versions of API endpoints and their operations
+    - [Two in Production](https://microservice-api-patterns.org/patterns/evolution/TwoInProduction)
 
 ## Components
 
-* Scraping
-* Authentication
-* Chat
-* Calendar
-* Payments
-* Notifications
-* External API / Services
-* Group Making
-* Feedback
-* Registrations
+- Scraping
+- Authentication
+- Chat
+- Calendar
+- Payments
+- Notifications
+- External API / Services
+- Group Making
+- Feedback
+- Registrations
+
+## Frameworks
+
+- Node.js
 
 ## Logical architecture
 
@@ -97,9 +209,8 @@ Document the high-level logical structure of the system, using a UML diagram wit
 
 It can be beneficial to present the system both in a horizontal and vertical decomposition:
 
- * Horizontal decomposition may define layers and implementation concepts, such as the user interface, business logic and concepts.
- * Vertical decomposition can define a hierarchy of subsystems that cover all layers of implementation.
-
+- Horizontal decomposition may define layers and implementation concepts, such as the user interface, business logic and concepts.
+- Vertical decomposition can define a hierarchy of subsystems that cover all layers of implementation.
 
 ## Physical architecture
 
@@ -107,21 +218,20 @@ Document the high-level physical structure of the software system (machines, con
 
 It should also describe the technologies considered and justify the selections made. 
 
-
 # Development
 
 Include here instructions for ...
- * setting up the development environment
- * running the system in the development environment
- * running the tests
+- setting up the development environment
+- running the system in the development environment
+- running the tests
 
 # Operation
 
 Include here instructions for ...
- * setting up a production environment
- * building and packaging the system for deployment
- * deployment the system to production
- * operating the system (where the logs are, what monitoring tools are in place, etc.)
+- setting up a production environment
+- building and packaging the system for deployment
+- deployment the system to production
+- operating the system (where the logs are, what monitoring tools are in place, etc.)
 
 
 # Other information
