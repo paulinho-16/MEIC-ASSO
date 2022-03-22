@@ -2,13 +2,13 @@
 
 Welcome to the repository supporting the development of the uni4all project, developed as part of the practical classes of the FEUP/M.EIC/ASSO/2021-22 course.
 
-# Product
+## Product
 
 Use this section to provide a high-level view over what the product intends to provide in terms of function and non-functional requirements. These high-level requirements will later be broken up and documented as user stories.
 
-# Vision
+## Vision
 
-# Product Themes
+## Product Themes
 
 - Car sharing
 - Authentication
@@ -57,8 +57,6 @@ Use this section to provide a high-level view over what the product intends to p
 
 This section should give an idea of the high-level non-functional requirements.
 
-# Architecture and design
-
 ## Challenges and foreseen possible solutions
 
 This section is responsible for identifying architectural and design challenges, as well as the solutions that we foresee may be useful to address them. Many of these solutions can (and should) be expressed as architectural patterns.
@@ -98,7 +96,6 @@ This section is responsible for identifying architectural and design challenges,
 - Client request handler
 - Server request handler
 - Proxy
-
 
 ### Data combination from different sources (ex: calendar)
 
@@ -199,9 +196,37 @@ This section is responsible for identifying architectural and design challenges,
 - Feedback
 - Registrations
 
-## Frameworks
+## Technologies
 
+### Backend Framework
 - Node.js
+    - Express
+        - Can integrate with swagger using [swagger-node-express](https://www.npmjs.com/package/swagger-node-express) or [swagger-ui-express](https://www.npmjs.com/package/swagger-ui-express).
+        - Can integrate with [passport](https://www.npmjs.com/package/passport).
+    - Sails
+    - Meteor
+    - Loopback
+
+["The Best NodeJS Frameworks for 2021"](https://rapidapi.com/blog/best-nodejs-frameworks/)
+![](https://i.imgur.com/NrBnTJj.png)
+
+### Miscellaneous
+
+- TypeScript
+- Docker?
+
+### Database
+
+- PostgreSQL or MariaDB
+- Redis
+- MongoDB
+- Neo4j
+
+### Scraping
+
+- Cheerio + axios
+- Puppeteer
+- Playwright
 
 ## Logical architecture
 
@@ -218,14 +243,14 @@ Document the high-level physical structure of the software system (machines, con
 
 It should also describe the technologies considered and justify the selections made. 
 
-# Development
+## Development
 
 Include here instructions for ...
 - setting up the development environment
 - running the system in the development environment
 - running the tests
 
-# Operation
+## Operation
 
 Include here instructions for ...
 - setting up a production environment
@@ -234,7 +259,7 @@ Include here instructions for ...
 - operating the system (where the logs are, what monitoring tools are in place, etc.)
 
 
-# Other information
+## Other information
 
 Things will break. Deal with it, together.
 
