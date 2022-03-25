@@ -32,6 +32,8 @@ Use this section to provide a high-level view over what the product intends to p
     - Classrooms
 - External systems
     - GPS systems (e.g. study places)
+    - GPS systems (e.g. study places)
+    - GPS systems (e.g. study places)
     - Housing
     - External places to eat (together with meals)
 - Scheduling appointments
@@ -53,6 +55,13 @@ Use this section to provide a high-level view over what the product intends to p
 - Accio with comments
 - Payments (Balance)
 
+## Endpoints TBD
+
+- Cantine / Menus
+- Library current capacity
+- News
+- Jobs
+
 ## Quality attributes
 
 This section should give an idea of the high-level non-functional requirements.
@@ -66,7 +75,9 @@ This section is responsible for identifying architectural and design challenges,
 **Definition**
 - Chats need lots of small writes and reads
 - Scalability
+    - group formation deals with multiple degrees, multiple courses and multiple groups
 - Performance
+    - there are multiple group types: study, projects, etc; the algorithms that form these groups need to be fast
 
 **Patterns**
 - Shared repository
@@ -76,6 +87,7 @@ This section is responsible for identifying architectural and design challenges,
 **Definition**
 - Avoid storing user data
 - Handle user data carefully (encryption, etc)
+- Authentication (handling of user credentials)
 
 **Patterns**
 - None
@@ -84,27 +96,24 @@ This section is responsible for identifying architectural and design challenges,
 
 **Definition**
 - Scraping on demand can be slow
+    - e.g. user profiles: information can be scrapped once a day, and user can force refresh, action that triggers a new scrapping
 - Scrap periodically and store data in a server (outdated data and privacy concerns)
 
 **Patterns**
-- Pipes and filters
-- Broker
-- Message channel
-- Message endpoint
-- The requester
-- The invoker
-- Client request handler
-- Server request handler
-- Proxy
+- (something related with caching)
 
-### Data combination from different sources (ex: calendar)
+### Data combination from different sources
 
 **Definition**
 - How should data submitted by user be combined with scrapped data
 
+**Examples**
+- calendar
+    - personal calendars have information that come from different Sigarra pages, endpoints, and possibly external services
+
 **Patterns**
 - Shared repository
-- Microkernel
+- Microkernel **why? :(**
 
 ### Real-time communication in chats
 
@@ -117,6 +126,8 @@ This section is responsible for identifying architectural and design challenges,
 - Publisher-Subscriber
 
 ### Multiple authentication strategies
+
+(**what does this mean? we need Sigarra credentials anyway**)
 
 **Definition**
 - None
@@ -135,17 +146,33 @@ This section is responsible for identifying architectural and design challenges,
 ### Versatility and ability to add modules
 
 **Definition**
-- Functionality can be added later
 - The project needs support for lots of modules with different functionalities
+- The modules should be independent of one another, allowing them to be enabled or disabled without affecting the ones in production
+- There is the possibility of having multiple instances of some modules (for example, if there are 2 front-ends with the same functionality, we should have 2 instances of the database)
 
 **Patterns**
 - Microkernel
+- Module ([see description](https://en.wikipedia.org/wiki/Module_pattern))
 
-### API Patterns
+### Notifications
+
+**Definition**
+- Most of the applications will need to use a notification/alert system to give users relevant information (for example, chat notifications, car sharing notifications, Sigarra notifications, etc.)
+- We have 2 problems:
+    1. **Notifications** - sent in real-time, similar to the the real-time communication in chats problem
+    2. **Alert** - sent at a reasonable time that would be most effective to your users (for example, some type of notifications will only be sent at some specific hour, taking into account the user's local timezone)
+- The user should be able to **subscribe** to what type of information wishes to be notified about, based on their preferences.
+
+**Patterns**
+- Publisher-Subscriber
+
+### How to design the API
 
 **Foundation**
 
-- Clients need to know how to call the API
+- Support multiple client-side user interfaces while keeping these decoupled from the backend server-side implementation
+    - [Frontend Integration](https://microservice-api-patterns.org/patterns/foundation/FrontendIntegration)
+- Clients need to know how to call the API in precise terms
     - [API Description](https://microservice-api-patterns.org/patterns/foundation/APIDescription)
 - The visibility of the new API should be restricted
     - [Community API](https://microservice-api-patterns.org/patterns/foundation/CommunityAPI)
@@ -155,8 +182,13 @@ This section is responsible for identifying architectural and design challenges,
 
 - Provide CRUD functionality
     - [Information Holder Resource](https://microservice-api-patterns.org/patterns/responsibility/endpointRoles/InformationHolderResource)
-- Let clients exchange data directly
+        - map each endpoint to an entity (and expose CRUD operations over that entity)
+- ??
+    - [Retrieval Operation](https://microservice-api-patterns.org/patterns/responsibility/operationResponsibilities/RetrievalOperation)
+- Let clients exchange data
     - [Data Transfer Resource](https://microservice-api-patterns.org/patterns/responsibility/informationHolderEndpointTypes/DataTransferResource)
+- Provide an endpoint to access static data
+    - [Reference Data Holder](https://microservice-api-patterns.org/patterns/responsibility/informationHolderEndpointTypes/ReferenceDataHolder.html)
 
 **Structure**
 
@@ -200,12 +232,15 @@ This section is responsible for identifying architectural and design challenges,
 
 ### Backend Framework
 - Node.js
-    - Express
-        - Can integrate with swagger using [swagger-node-express](https://www.npmjs.com/package/swagger-node-express) or [swagger-ui-express](https://www.npmjs.com/package/swagger-ui-express).
-        - Can integrate with [passport](https://www.npmjs.com/package/passport).
+    - **Express ✔**
+        - Can integrate with swagger using [swagger-node-express](https://www.npmjs.com/package/swagger-node-express) ❌ or [swagger-ui-express](https://www.npmjs.com/package/swagger-ui-express) ✔️.
+        - Can integrate with [passport](https://www.npmjs.com/package/passport) ❓ (to be studied).
     - Sails
     - Meteor
     - Loopback
+- Python
+    - If microservices are added in the future
+    - Scrapping
 
 ["The Best NodeJS Frameworks for 2021"](https://rapidapi.com/blog/best-nodejs-frameworks/)
 ![](https://i.imgur.com/NrBnTJj.png)
@@ -213,20 +248,32 @@ This section is responsible for identifying architectural and design challenges,
 ### Miscellaneous
 
 - TypeScript
-- Docker?
+- EsLint
+- Docker
+    - Reverse proxy for cache
+        - Apache
+        - nginx
 
 ### Database
 
 - PostgreSQL or MariaDB
 - Redis
-- MongoDB
+    - Cache
+- **MongoDB**
+    - Default
+    - Information on Sigarra is not structured
+    - New structured data may grow fast
 - Neo4j
 
-### Scraping
+### Scrapping
 
-- Cheerio + axios
-- Puppeteer
-- Playwright
+- Node.js
+    - Cheerio + axios
+    - Puppeteer
+    - Playwright
+- Python
+    - [beautifulsoup4](https://pypi.org/project/beautifulsoup4/)
+    - [selenium](https://www.selenium.dev/)
 
 ## Logical architecture
 
@@ -262,4 +309,3 @@ Include here instructions for ...
 ## Other information
 
 Things will break. Deal with it, together.
-
