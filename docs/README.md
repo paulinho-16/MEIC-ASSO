@@ -57,10 +57,16 @@ Use this section to provide a high-level view over what the product intends to p
 
 ## Endpoints TBD
 
+**Turma 1**
+
 - Cantine / Menus
 - Library current capacity
 - News
 - Jobs
+
+**Turma 2**
+
+- Notifications
 
 ## Quality attributes
 
