@@ -67,6 +67,7 @@ Use this section to provide a high-level view over what the product intends to p
 **Turma 2**
 
 - Student Associations
+- Group formation - project groups, study groups and class
 
 ## Quality attributes
 
