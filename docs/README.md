@@ -66,7 +66,7 @@ Use this section to provide a high-level view over what the product intends to p
 
 **Turma 2**
 
-- Notifications
+- Student Associations
 
 ## Quality attributes
 
