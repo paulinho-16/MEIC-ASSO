@@ -14,7 +14,7 @@ Use this section to provide a high-level view over what the product intends to p
 - Authentication
 - User profiles
 - Meals
-    - Cantine
+    - Canteen
     - Bares
     - Grill
     - SASUP
