@@ -291,6 +291,8 @@ _Instructions: Information about setting up a production environment, building a
 
 ## Usage
 
+_Instructions: Information about how the product can be used from the standpoint of its users (e.g., endpoints and how to use them). Should include a link to the API documenttion._
+
 The following endpoints are work in progress:
 
 ### Turma 1
