@@ -6,9 +6,9 @@ Welcome to the repository supporting the development of the uni4all project, dev
 
 Use this section to provide a high-level view over what the product intends to provide in terms of function and non-functional requirements. These high-level requirements will later be broken up and documented as user stories.
 
-## Vision
+### Vision
 
-## Product Themes
+### Product Themes
 
 - Car sharing
 - Authentication
@@ -55,6 +55,11 @@ Use this section to provide a high-level view over what the product intends to p
 - Accio with comments
 - Payments (Balance)
 
+### Quality attributes
+
+This section should give an idea of the high-level non-functional requirements.
+
+
 ## Endpoints TBD
 
 **Turma 1**
@@ -70,9 +75,6 @@ Use this section to provide a high-level view over what the product intends to p
 - Group formation - project groups, study groups and class
 - Feedback
 
-## Quality attributes
-
-This section should give an idea of the high-level non-functional requirements.
 
 ## Challenges and foreseen possible solutions
 
