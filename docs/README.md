@@ -2,13 +2,26 @@
 
 Welcome to the repository supporting the development of the uni4all project, developed as part of the practical classes of the FEUP/M.EIC/ASSO/2021-22 course.
 
-## Product
+## Contents
 
-Use this section to provide a high-level view over what the product intends to provide in terms of function and non-functional requirements. These high-level requirements will later be broken up and documented as user stories.
+* [Product envisioning](#product-envisioning)
+* [High-level architecture](#high-level-architecture)
+* [Technologies](#technologies)
+* [Development](#development)
+* [Operation](#operation)
+* [Usage](#usage)
+* [Contributing](#contributing)
+
+
+## Product envisioning 
+
+_Instructions: Use this section to provide a high-level view over what the product intends to provide in terms of function and non-functional requirements. These high-level requirements will later be broken up and documented as user stories._
 
 ### Vision
 
-### Product Themes
+_Instructions: write a short paragraph describing the overall vision for the system._
+
+### Themes
 
 - Car sharing
 - Authentication
@@ -57,124 +70,81 @@ Use this section to provide a high-level view over what the product intends to p
 
 ### Quality attributes
 
-This section should give an idea of the high-level non-functional requirements.
+_Instructions: This section should give an idea of the high-level non-functional requirements._
 
+### Challenges and foreseen possible solutions
 
-## Endpoints TBD
+_Instructions: This section is responsible for identifying architectural and design challenges, as well as the solutions that we foresee may be useful to address them. Many of these solutions can (and should) be expressed as architectural patterns._
 
-**Turma 1**
+#### Data Storage
 
-- Cantine / Menus
-- Library current capacity
-- News
-- Jobs
-
-**Turma 2**
-
-- Student Associations
-- Group formation - project groups, study groups and class
-- Feedback
-
-
-## Challenges and foreseen possible solutions
-
-This section is responsible for identifying architectural and design challenges, as well as the solutions that we foresee may be useful to address them. Many of these solutions can (and should) be expressed as architectural patterns.
-
-### Data Storage
-
-**Definition**
 - Chats need lots of small writes and reads
 - Scalability
     - group formation deals with multiple degrees, multiple courses and multiple groups
 - Performance
     - there are multiple group types: study, projects, etc; the algorithms that form these groups need to be fast
 
-**Patterns**
-- Shared repository
+**Patterns**: Shared repository
 
 ### Privacy
-
-**Definition**
 - Avoid storing user data
 - Handle user data carefully (encryption, etc)
 - Authentication (handling of user credentials)
 
-**Patterns**
-- None
+**Patterns**: None
 
 ### Efficiency when dealing with scrapped data
 
-**Definition**
 - Scraping on demand can be slow
     - e.g. user profiles: information can be scrapped once a day, and user can force refresh, action that triggers a new scrapping
 - Scrap periodically and store data in a server (outdated data and privacy concerns)
 
-**Patterns**
-- (something related with caching)
+**Patterns**: (something related with caching)
 
 ### Data combination from different sources
 
-**Definition**
 - How should data submitted by user be combined with scrapped data
 
-**Examples**
-- calendar
-    - personal calendars have information that come from different Sigarra pages, endpoints, and possibly external services
+**Examples**: personal calendars have information that come from different Sigarra pages, endpoints, and possibly external services
 
-**Patterns**
-- Shared repository
-- Microkernel **why? :(**
+**Patterns**: Shared repository, Microkernel (why? 😕)
 
 ### Real-time communication in chats
 
-**Definition**
 - Delay can be hard to deal with
 - Some users might not be online at the time the messages are created
 
-**Patterns**
-- Broker
-- Publisher-Subscriber
+**Patterns**: Broker, Publisher-Subscriber
 
 ### Multiple authentication strategies
 
-(**what does this mean? we need Sigarra credentials anyway**)
+(what does this mean? we need Sigarra credentials anyway)
 
-**Definition**
-- None
-
-**Patterns**
-- None
+**Patterns**: None
 
 ### Security in payments
 
-**Definition**
 - Use third-party APIs
 
-**Patterns**
-- None
+**Patterns**: None
 
 ### Versatility and ability to add modules
 
-**Definition**
 - The project needs support for lots of modules with different functionalities
 - The modules should be independent of one another, allowing them to be enabled or disabled without affecting the ones in production
 - There is the possibility of having multiple instances of some modules (for example, if there are 2 front-ends with the same functionality, we should have 2 instances of the database)
 
-**Patterns**
-- Microkernel
-- Module ([see description](https://en.wikipedia.org/wiki/Module_pattern))
+**Patterns**: Microkernel, [Module](https://en.wikipedia.org/wiki/Module_pattern)
 
 ### Notifications
 
-**Definition**
 - Most of the applications will need to use a notification/alert system to give users relevant information (for example, chat notifications, car sharing notifications, Sigarra notifications, etc.)
 - We have 2 problems:
     1. **Notifications** - sent in real-time, similar to the the real-time communication in chats problem
     2. **Alert** - sent at a reasonable time that would be most effective to your users (for example, some type of notifications will only be sent at some specific hour, taking into account the user's local timezone)
 - The user should be able to **subscribe** to what type of information wishes to be notified about, based on their preferences.
 
-**Patterns**
-- Publisher-Subscriber
+**Patterns**: Publisher-Subscriber
 
 ### How to design the API
 
@@ -225,7 +195,12 @@ This section is responsible for identifying architectural and design challenges,
 - Maintain several versions of API endpoints and their operations
     - [Two in Production](https://microservice-api-patterns.org/patterns/evolution/TwoInProduction)
 
-## Components
+
+## High-level architecture
+
+_Instructions: Information about **Components**, **Activities** and **Infrastructure** (respectivelly, use UML Component, Activity and Deployment diagrams. Provide higher-level views over these three types of elements using _Package_ diagrams, if appropriate._
+
+### Components
 
 - Scraping
 - Authentication
@@ -285,37 +260,52 @@ This section is responsible for identifying architectural and design challenges,
     - [beautifulsoup4](https://pypi.org/project/beautifulsoup4/)
     - [selenium](https://www.selenium.dev/)
 
-## Logical architecture
-
-Document the high-level logical structure of the system, using a UML diagram with logical packages, without the worry of allocating to components, processes or machines.
-
-It can be beneficial to present the system both in a horizontal and vertical decomposition:
-
-- Horizontal decomposition may define layers and implementation concepts, such as the user interface, business logic and concepts.
-- Vertical decomposition can define a hierarchy of subsystems that cover all layers of implementation.
-
-## Physical architecture
-
-Document the high-level physical structure of the software system (machines, connections, software components installed, and their dependencies) using UML deployment diagrams or component diagrams (separate or integrated), showing the physical structure of the system.
-
-It should also describe the technologies considered and justify the selections made. 
-
 ## Development
 
-Include here instructions for ...
-- setting up the development environment
-- running the system in the development environment
-- running the tests
+_Instructions: Document design and architecture problems and solutions, preferably using pattern instances. 
+Documenting pattern instances is important because it will help other developers 
+to better understand the resulting concrete classes, attributes and methods, 
+and the underneath design decisions. <br>
+This provides a level of abstraction higher than the class/component level, 
+highlighting the commonalities of the system and thus promoting the understandability, 
+conciseness and consistency of the documentation.  <br>
+At the same time, the documentation of pattern instances will help the designer instantiating a pattern, 
+to certify himself that he is taking the right decision.  <br>
+In general terms, this results in better communication within the development team, and consequently on less bugs.
+To more formally document a pattern instance we must describe the design context, to justify the selection of the 
+pattern, to explain how the pattern roles, operations and associations were mapped to the concrete design classes, 
+and to state the benefits and liabilities of instantiating the pattern, eventually in comparison with other alternatives.
+<ins>For each pattern instance</ins> that you would like to document, use the following template:_
+
+### _name the goal that you would like to achieve_
+
+**Context**: _Describe the design context that justifies the selection of the pattern. Link to your best reference of the pattern, if available._
+
+**Mapping**: _Explain how are mapped the pattern's roles, operations and associations to the concrete design classes. Something that works well is to annotate UML structural diagrams with pattern roles, as is done in  [JUnit A Cook's Tour](http://junit.sourceforge.net/doc/cookstour/cookstour.htm), for example. Link to the appropriate files in the repository._
+
+**Consequences**: _Explain the pros and cons of instantiating the pattern, eventually in comparison with other alternatives._
 
 ## Operation
 
-Include here instructions for ...
-- setting up a production environment
-- building and packaging the system for deployment
-- deployment the system to production
-- operating the system (where the logs are, what monitoring tools are in place, etc.)
+_Instructions: Information about setting up a production environment, building and packaging the system for deployment, deploying the system to production, and operating the system (where the logs are, what monitoring tools are in place, etc.)_
 
+## Usage
 
-## Other information
+The following endpoints are work in progress:
 
-Things will break. Deal with it, together.
+### Turma 1
+
+- Cantine / Menus
+- Library current capacity
+- News
+- Jobs
+
+### Turma 2
+
+- Student Associations
+- Group formation - project groups, study groups and class
+- Feedback
+
+## Contributing
+
+_Instructions: Information about setting up the development environment, running the system in development, running the tests, and creating and reviewing pull requests._
