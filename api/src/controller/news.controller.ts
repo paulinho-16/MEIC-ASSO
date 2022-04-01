@@ -19,7 +19,7 @@ async function get(req: Request, res: Response) {
   const news: News[] = []
 
   axios
-    .get(NEWS_URL, {responseEncoding: 'binary'})
+    .get(NEWS_URL, { responseEncoding: 'binary' })
     .then(response => {
       const $ = cheerio.load(response.data.toString('latin1'))
       const targetUl = $('a[name=gruponot7] ~ ul')[0]
@@ -38,7 +38,7 @@ async function get(req: Request, res: Response) {
         })
     })
     .then(() => {
-      const requests = news.map(({ url }) => axios.get(url, {responseEncoding: 'binary'}))
+      const requests = news.map(({ url }) => axios.get(url, { responseEncoding: 'binary' }))
       axios
         .all(requests)
         .then(

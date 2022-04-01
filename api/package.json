@@ -4,7 +4,8 @@
   "main": "src/app.js",
   "license": "MIT",
   "scripts": {
-    "dev": "tsc-watch --onSuccess \"node dist/app.js\""
+    "dev": "tsc-watch --onSuccess \"node dist/app.js\"",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\""
   },
   "_moduleAliases": {
     "@": "dist"
