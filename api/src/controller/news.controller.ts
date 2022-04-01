@@ -19,9 +19,9 @@ async function get(req: Request, res: Response) {
   const news: News[] = []
 
   axios
-    .get(NEWS_URL)
+    .get(NEWS_URL, {responseEncoding: 'binary'})
     .then(response => {
-      const $ = cheerio.load(response.data)
+      const $ = cheerio.load(response.data.toString('latin1'))
       const targetUl = $('a[name=gruponot7] ~ ul')[0]
       $(targetUl)
         .find('li')
@@ -38,13 +38,13 @@ async function get(req: Request, res: Response) {
         })
     })
     .then(() => {
-      const requests = news.map(({ url }) => axios.get(url))
+      const requests = news.map(({ url }) => axios.get(url, {responseEncoding: 'binary'}))
       axios
         .all(requests)
         .then(
           axios.spread((...responses) => {
             responses.forEach((item, index) => {
-              const $ = cheerio.load(item.data)
+              const $ = cheerio.load(item.data.toString('latin1'))
               const target = $('#conteudoinner')
               const header = $(target).first().find('h1').text()
               const details = $(target).first().find('h2').text()
