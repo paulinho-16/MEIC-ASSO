@@ -4,7 +4,9 @@
   "main": "src/app.js",
   "license": "MIT",
   "scripts": {
-    "dev": "tsc-watch --onSuccess \"node dist/app.js\""
+    "dev": "nodemon src/app.ts",
+    "start": "NODE_PATH=./build node build/app.js",
+    "build": "tsc -p ."
   },
   "_moduleAliases": {
     "@": "dist"
