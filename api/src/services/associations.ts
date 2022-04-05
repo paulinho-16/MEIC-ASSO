@@ -4,7 +4,7 @@ import puppeteer from 'puppeteer'
 
 type Association = {
   name: string
-  information: Record<string, unknown>
+  information: Record<string, Record<string, string>>
 }
 
 async function scrap() {
