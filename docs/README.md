@@ -210,7 +210,10 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 - Notifications
 - External API / Services
 - Group Making
-- **T1G1** Feedback
+- **T2G2** Feedback
+    - canteen/bar meals (reviews)
+    - classes/professors (reviews)
+    - pedagogical surveys (?)
 - Registrations
 
 ## Technologies
