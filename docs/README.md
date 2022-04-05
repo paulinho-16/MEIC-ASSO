@@ -202,15 +202,15 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 
 ### Components
 
-- Scraping
+- **T1G4** Scraping
 - Authentication
-- Chat
-- Calendar
+- **T1G3** Chat
+- **T1G2** Calendar
 - Payments
 - Notifications
 - External API / Services
 - Group Making
-- Feedback
+- **T1G1** Feedback
 - Registrations
 
 ## Technologies
