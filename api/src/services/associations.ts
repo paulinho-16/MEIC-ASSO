@@ -1,6 +1,5 @@
 import constants from '../config/constants'
 import puppeteer from 'puppeteer'
-//import fs from 'fs'
 
 type Association = {
   name: string
@@ -44,10 +43,6 @@ async function scrap() {
 
   const associations = associations1.concat(associations2)
   const parsedAssociations = associations.map(parseAssociationBody)
-
-  //   fs.writeFileSync("data.json", JSON.stringify(parsedAssociations), {
-  //     flag: "a",
-  //   });
 
   return parsedAssociations
 }
