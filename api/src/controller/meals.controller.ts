@@ -29,8 +29,8 @@ async function getRestaurantMeals(req: Request, res: Response) {
   try {
     const grill = await mealsService.fetchMealsData(code)
     return res.status(200).json(grill)
-  } catch (error) {
-    return res.status(503).json(error)
+  } catch ({message}) {
+    return res.status(503).json({error: message})
   }
 }
 
