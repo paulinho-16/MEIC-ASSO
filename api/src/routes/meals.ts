@@ -8,6 +8,6 @@ router.get('/canteen', controller.getCanteen)
 router.get('/grill', controller.getGrill)
 router.get('/cafeteria', controller.getCafeteria)
 router.get('/inegi', controller.getInegi)
-router.get('/inesc', controller.getInesc)
+router.get('/inesctec', controller.getInescTec)
 
 export default router

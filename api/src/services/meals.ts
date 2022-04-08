@@ -57,13 +57,13 @@ function parseMealsInformation(meals: MealInformationRaw): MealInformation {
   })
 }
 
-async function fetchMealsData() {
+async function fetchMealsData(restaurantCode: number[]) {
   const response = await fetch(constants.canteenUrl)
   const data = await response.json()
 
-  const meals = parseMealsInformation(data)
+  const restaurant = data.filter((r: { codigo: number }) => restaurantCode.includes(r.codigo))
 
-  return meals
+  return parseMealsInformation(restaurant)
 }
 
 export default {
