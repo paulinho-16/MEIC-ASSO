@@ -1,15 +1,13 @@
-FROM node:16 as base
+FROM node:16
 
-WORKDIR /home/node/app
+WORKDIR /usr/src/app
 
 COPY package*.json ./
 
 RUN npm i
 
-COPY . .
+COPY src/ src/
 
-FROM base as production
+COPY tsconfig.json ./
 
-ENV NODE_PATH=./build
-
-RUN npm run build
+CMD [ "npm", "run", "dev" ]
