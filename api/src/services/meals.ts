@@ -67,7 +67,7 @@ async function fetchMealsData(restaurantCode: number[]) {
 
     return parseMealsInformation(restaurant)
   } catch {
-    throw new Error(`CanteenURL responded with status ${response.status}`)
+    throw new Error(`Canteen service is not avaiable at the moment. Status: ${response.status}`)
   }
 }
 
