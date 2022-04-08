@@ -2,40 +2,38 @@ import { Request, Response } from 'express'
 
 import mealsService from '@/services/meals'
 
-async function getCanteen(req: Request, res: Response) {
-  const canteen = await mealsService.fetchMealsData([6, 7])
+async function getRestaurantMeals(req: Request, res: Response) {
+  const { restaurant } = req.params
+  let code
 
-  return res.status(200).json(canteen)
-}
+  switch (restaurant) {
+    case "grill":
+      code = [2]
+      break
+    case "cafeteria":
+      code = [4]
+      break
+    case "inegi":
+      code = [5]
+      break
+    case "canteen":
+      code = [6, 7]
+      break
+    case "inesctec":
+      code = [8]
+      break
+    default:
+      return res.status(404).send("Unknown restaurant")
+  }
 
-async function getGrill(req: Request, res: Response) {
-  const grill = await mealsService.fetchMealsData([2])
-
-  return res.status(200).json(grill)
-}
-
-async function getCafeteria(req: Request, res: Response) {
-  const cafeteria = await mealsService.fetchMealsData([4])
-
-  return res.status(200).json(cafeteria)
-}
-
-async function getInegi(req: Request, res: Response) {
-  const inegi = await mealsService.fetchMealsData([5])
-
-  return res.status(200).json(inegi)
-}
-
-async function getInescTec(req: Request, res: Response) {
-  const inesc = await mealsService.fetchMealsData([8])
-
-  return res.status(200).json(inesc)
+  try {
+    const grill = await mealsService.fetchMealsData(code)
+    return res.status(200).json(grill)
+  } catch ({message}) {
+    return res.status(503).send(message)
+  }
 }
 
 export default {
-  getCanteen,
-  getGrill,
-  getCafeteria,
-  getInegi,
-  getInescTec,
+  getRestaurantMeals,
 }

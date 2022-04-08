@@ -59,11 +59,16 @@ function parseMealsInformation(meals: MealInformationRaw): MealInformation {
 
 async function fetchMealsData(restaurantCode: number[]) {
   const response = await fetch(constants.canteenUrl)
-  const data = await response.json()
 
-  const restaurant = data.filter((r: { codigo: number }) => restaurantCode.includes(r.codigo))
+  try {
+    const data = await response.json()
 
-  return parseMealsInformation(restaurant)
+    const restaurant = data.filter((r: { codigo: number }) => restaurantCode.includes(r.codigo))
+
+    return parseMealsInformation(restaurant)
+  } catch {
+    throw new Error(`CanteenURL responded with status ${response.status}`)
+  }
 }
 
 export default {
