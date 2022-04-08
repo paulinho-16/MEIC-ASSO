@@ -27,7 +27,7 @@ _Instructions: write a short paragraph describing the overall vision for the sys
 - Authentication
 - User profiles
 - Meals
-    - Cantine
+    - Canteen
     - Bares
     - Grill
     - SASUP
