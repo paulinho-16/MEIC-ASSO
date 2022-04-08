@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import cheerio from 'cheerio'
+import * as cheerio from 'cheerio'
 import axios from 'axios'
 
 type News = {
@@ -22,7 +22,17 @@ async function get(req: Request, res: Response) {
     .get(NEWS_URL, { responseEncoding: 'binary' })
     .then(response => {
       const $ = cheerio.load(response.data.toString('latin1'))
-      const targetUl = $('a[name=gruponot7] ~ ul')[0]
+
+      let groupIndex
+      for (let i = 1; i <= 10; i++) {
+        const target = $(`a[name=gruponot${i}] ~ h2`)[0]
+        if ($(target).text() === 'Noticias FEUP') {
+          groupIndex = i
+          break
+        }
+      }
+
+      const targetUl = $(`a[name=gruponot${groupIndex}] ~ ul`)[0]
       $(targetUl)
         .find('li')
         .each((i, e) => {
@@ -31,7 +41,7 @@ async function get(req: Request, res: Response) {
           const excerpt = $(e).find('p.textopequenonoticia').text()
 
           news.push({
-            url: `${MAIN_URL}/${url}`,
+            url: url === FALLBACK_URL ? url : `${MAIN_URL}/${url}`,
             title: title,
             excerpt: excerpt,
           })
