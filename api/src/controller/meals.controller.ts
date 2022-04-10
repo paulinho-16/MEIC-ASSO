@@ -23,12 +23,12 @@ async function getRestaurantMeals(req: Request, res: Response) {
       code = [8]
       break
     default:
-      res.status(404).json({error: "Unknown restaurant"})
+      return res.status(404).json({error: "Unknown restaurant"})
   }
 
   try {
-    const grill = await mealsService.fetchMealsData(code)
-    return res.status(200).json(grill)
+    const meals = await mealsService.fetchMealsData(code)
+    return res.status(200).json(meals)
   } catch ({message}) {
     return res.status(503).json({error: message})
   }
