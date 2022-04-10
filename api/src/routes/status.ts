@@ -1,6 +1,6 @@
 import express from 'express'
 
-import controller from '../controller/status.controller'
+import controller from '@/controller/status.controller'
 
 const router = express.Router()
 

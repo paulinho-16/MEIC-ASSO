@@ -1,20 +1,9 @@
 import { Request, Response } from 'express'
-
-function pad(s: number){
-  return (s < 10 ? '0' : '') + s;
-}
-
-function format(seconds: number){
-  const hours = pad(Math.floor(seconds / (60*60)));
-  const minutes = pad(Math.floor(seconds % (60*60) / 60));
-  const sec = pad(Math.floor(seconds % 60));
-
-  return hours + ':' + minutes+ ':' + sec;
-}
+import { format } from '@/util/time'
 
 async function get(req: Request, res: Response) {
-  const uptime = process.uptime();
-  res.send("I've been up for: " + format(uptime));
+  const uptime = format(Number(process.uptime()))
+  return res.status(200).json({ message: "I've been up for: " + uptime })
 }
 
 export default {
