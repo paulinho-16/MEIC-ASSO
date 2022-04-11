@@ -2,50 +2,38 @@ import { Request, Response } from 'express'
 
 import mealsService from '@/services/meals'
 
-async function getCanteen(req: Request, res: Response) {
-  const data = await mealsService.fetchMealsData()
+async function getRestaurantMeals(req: Request, res: Response) {
+  const { restaurant } = req.params
+  let code
 
-  const canteen = data.filter(meal => meal.code === 6 || meal.code === 7)
+  switch (restaurant) {
+    case "grill":
+      code = [2]
+      break
+    case "cafeteria":
+      code = [4]
+      break
+    case "inegi":
+      code = [5]
+      break
+    case "canteen":
+      code = [6, 7]
+      break
+    case "inesctec":
+      code = [8]
+      break
+    default:
+      return res.status(404).json({error: "Unknown restaurant"})
+  }
 
-  return res.status(200).json(canteen)
-}
-
-async function getGrill(req: Request, res: Response) {
-  const data = await mealsService.fetchMealsData()
-
-  const grill = data.filter(meal => meal.code === 2)
-
-  return res.status(200).json(grill)
-}
-
-async function getCafeteria(req: Request, res: Response) {
-  const data = await mealsService.fetchMealsData()
-
-  const cafeteria = data.filter(meal => meal.code === 4)
-
-  return res.status(200).json(cafeteria)
-}
-
-async function getInegi(req: Request, res: Response) {
-  const data = await mealsService.fetchMealsData()
-
-  const inegi = data.filter(meal => meal.code === 5)
-
-  return res.status(200).json(inegi)
-}
-
-async function getInesc(req: Request, res: Response) {
-  const data = await mealsService.fetchMealsData()
-
-  const inesc = data.filter(meal => meal.code === 8)
-
-  return res.status(200).json(inesc)
+  try {
+    const meals = await mealsService.fetchMealsData(code)
+    return res.status(200).json(meals)
+  } catch ({message}) {
+    return res.status(503).json({error: message})
+  }
 }
 
 export default {
-  getCanteen,
-  getGrill,
-  getCafeteria,
-  getInegi,
-  getInesc,
+  getRestaurantMeals,
 }
