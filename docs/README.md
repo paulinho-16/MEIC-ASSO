@@ -27,7 +27,7 @@ _Instructions: write a short paragraph describing the overall vision for the sys
 - Authentication
 - User profiles
 - Meals
-    - Cantine
+    - Canteen
     - Bares
     - Grill
     - SASUP
@@ -202,15 +202,18 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 
 ### Components
 
-- Scraping
+- **T1G4** Scraping
 - Authentication
-- Chat
-- Calendar
+- **T1G3** Chat
+- **T1G2** Calendar
 - Payments
 - Notifications
 - External API / Services
 - Group Making
-- Feedback
+- **T2G2** Feedback
+    - canteen/bar meals (reviews)
+    - classes/professors (reviews)
+    - pedagogical surveys (?)
 - Registrations
 
 ## Technologies

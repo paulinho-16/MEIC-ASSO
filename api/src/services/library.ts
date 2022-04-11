@@ -1,7 +1,6 @@
 import fetch from 'node-fetch'
 import cheerio from 'cheerio'
-
-const URL = "https://docs.google.com/spreadsheets/d/1gZRbEX4y8vNW7vrl15FCdAQ3pVNRJw_uRZtVL6ORP0g/edit#gid=75324596"
+import constants from '@/config/constants'
 
 async function fetchLibraryOcupation() {
   const ocupation = [
@@ -13,15 +12,15 @@ async function fetchLibraryOcupation() {
     { floor: 6, max: 64, current: 0 },
   ]
 
-  const data = await fetchSpreadData(URL)
+  const data = await fetchSpreadData()
 
   ocupation.forEach((floor, i) => floor.current = data ? data[i] || 0 : 0)
 
   return ocupation
 }
 
-async function fetchSpreadData(url: string) {
-  const response = await fetch(url)
+async function fetchSpreadData() {
+  const response = await fetch(constants.libraryUrl)
 
   const body = await response.text()
 
