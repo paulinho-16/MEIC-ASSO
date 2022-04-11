@@ -5,7 +5,7 @@ import libraryService from '@/services/library'
 async function get(req: Request, res: Response) {
     const data = await libraryService.fetchLibraryOcupation()
 
-    return res.status(200).send(data)
+    return res.status(200).json(data)
 }
 
 export default {
