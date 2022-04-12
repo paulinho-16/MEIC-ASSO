@@ -1,5 +1,6 @@
+import axios from 'axios'
+import * as cheerio from 'cheerio'
 import constants from '../config/constants'
-import puppeteer from 'puppeteer'
 
 type Association = {
   name: string
@@ -7,44 +8,35 @@ type Association = {
 }
 
 async function scrap() {
-  const browser = await puppeteer.launch()
-  const page = await browser.newPage()
-  await page.goto(constants.associationsUrl)
+  const result: Association[] = []
+  return axios
+    .get(constants.associationsUrl)
+    .then(response => {
+      const $ = cheerio.load(response.data.toString())
+      const target1 = $(`#accordion-37-1`)
+      const target2 = $(`#accordion-37-2`)
 
-  const parseAssociations = function (associations: Array<Element>) {
-    const results = []
+      const parseAssociations = (e: cheerio.Element) => {
+        const name = $(e).find('span.fusion-toggle-heading').text() ?? ''
+        const body = $(e).find('div.panel-body').html()
 
-    for (const association of associations) {
-      const nameElement = association.querySelector(
-        'span.fusion-toggle-heading'
-      )
-      const bodyElement = association.querySelector('div.panel-body')
+        if (!name || !body) return
 
-      if (!nameElement || !bodyElement) continue
+        result.push(parseAssociationBody({ name, body }))
+      }
 
-      const name = nameElement.textContent ?? ''
-      const body = bodyElement.innerHTML
+      $(target1)
+        .find('div')
+        .each((_, e) => parseAssociations(e))
+      $(target2)
+        .find('div')
+        .each((_, e) => parseAssociations(e))
 
-      results.push({ name, body })
-    }
-    return results
-  }
-
-  const associations1 = await page.$$eval(
-    '#accordion-37-1 > div',
-    parseAssociations
-  )
-
-  const associations2 = await page.$$eval(
-    '#accordion-37-2 > div',
-    parseAssociations
-  )
-  await browser.close();
-
-  const associations = associations1.concat(associations2)
-  const parsedAssociations = associations.map(parseAssociationBody)
-
-  return parsedAssociations
+      return result
+    })
+    .catch(function (e) {
+      console.log(e)
+    })
 }
 
 function parseAssociationBody(association: { name: string; body: string }) {

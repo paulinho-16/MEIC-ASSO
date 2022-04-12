@@ -28,12 +28,11 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.10",
-    "node-fetch": "2",
-    "module-alias": "^2.2.2",
-    "source-map-support": "^0.5.21",
     "axios": "^0.26.1",
+    "cheerio": "^1.0.0-rc.10",
     "express": "^4.17.3",
-    "puppeteer": "^13.5.2"
+    "module-alias": "^2.2.2",
+    "node-fetch": "2",
+    "source-map-support": "^0.5.21"
   }
 }
