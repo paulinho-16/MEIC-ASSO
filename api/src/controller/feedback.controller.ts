@@ -1,18 +1,29 @@
 import { Request, Response } from 'express'
 
-import feedbackService from '../services/feedback'
+import fb from '@/services/feedback'
+
+import {
+  MealReview,
+  TeacherReview,
+} from '@/@types/reviews'
 
 async function get(req: Request, res: Response) {
-  const data = feedbackService.getFeedback()
+  const data = fb.getFeedback(2)
   res.send('Feedback route')
 }
 
-async function post(req: Request, res: Response) {
-  const data = feedbackService.sendFeedback()
+async function postMealReview(req: Request, res: Response) {
+  const data = fb.postMealReview()
+  res.send('Feedback route')
+}
+
+async function postTeacherReview(req: Request, res: Response) {
+  const data = fb.postTeacherReview()
   res.send('Feedback route')
 }
 
 export default {
   get,
-  post
+  postMealReview,
+  postTeacherReview
 }
