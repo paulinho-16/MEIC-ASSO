@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 
-import feedbackService from '@/services/feedback'
+import feedbackService from '../services/feedback'
 
 async function get(req: Request, res: Response) {
   const data = feedbackService.getFeedback()
