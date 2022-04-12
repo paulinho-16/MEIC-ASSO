@@ -3,11 +3,10 @@ version: '3.7'
 services:
   ts-node-docker:
     build:
-      context: .
+      context: ./api
       dockerfile: Dockerfile
     volumes:
-      - ./src:/usr/src/app/src
+      - ./api/src:/usr/src/app/api/src
     container_name: ts-node-docker
     ports:
-      - '3000:3000'
-    command: npm run dev
+      - 3000:3000

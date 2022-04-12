@@ -1,13 +1,14 @@
 FROM node:16
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/app/api/
 
-COPY package*.json ./
+COPY package.json ./
+COPY yarn.lock ./
 
-RUN npm i
+RUN yarn install
 
 COPY src/ src/
 
 COPY tsconfig.json ./
 
-CMD [ "npm", "run", "dev" ]
+CMD [ "yarn", "dev"]
