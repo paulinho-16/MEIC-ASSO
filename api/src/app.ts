@@ -14,3 +14,4 @@ app.listen(port, () => {
 
 app.use('/hello', routes.hello)
 app.use('/meals', routes.meals)
+app.use('/notifications', routes.notifications)
