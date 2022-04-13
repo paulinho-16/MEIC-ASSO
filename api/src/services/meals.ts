@@ -57,13 +57,18 @@ function parseMealsInformation(meals: MealInformationRaw): MealInformation {
   })
 }
 
-async function fetchMealsData() {
+async function fetchMealsData(restaurantCode: number[]) {
   const response = await fetch(constants.canteenUrl)
-  const data = await response.json()
 
-  const meals = parseMealsInformation(data)
+  try {
+    const data = await response.json()
 
-  return meals
+    const restaurant = data.filter((r: { codigo: number }) => restaurantCode.includes(r.codigo))
+
+    return parseMealsInformation(restaurant)
+  } catch {
+    throw new Error(`Canteen service is not avaiable at the moment. Status: ${response.status}`)
+  }
 }
 
 export default {

@@ -12,6 +12,9 @@ app.listen(port, () => {
   console.log(`Application running in port ${port}.`)
 })
 
-app.use('/status', routes.status)
+app.use('/associations', routes.associations)
+app.use('/library', routes.library)
 app.use('/hello', routes.hello)
 app.use('/meals', routes.meals)
+app.use('/news', routes.news)
+app.use('/status', routes.status)
