@@ -1,3 +1,4 @@
+import authentication from './authentication'
 import associations from './associations'
 import hello from './hello'
 import library from './library'
@@ -7,6 +8,7 @@ import status from './status'
 
 export default {
   associations,
+  authentication,
   hello,
   library,
   meals,
