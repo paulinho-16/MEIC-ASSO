@@ -280,7 +280,6 @@ In general terms, this results in better communication within the development te
 To more formally document a pattern instance we must describe the design context, to justify the selection of the 
 pattern, to explain how the pattern roles, operations and associations were mapped to the concrete design classes, 
 and to state the benefits and liabilities of instantiating the pattern, eventually in comparison with other alternatives.<br><br>
-
 It is expected that you start this section with system-wide patterns, but you should link to component-specific pages for describing the design of individual components. <ins>For each pattern instance</ins> that you would like to document, use the following template:_
 
 ### _name the goal that you would like to achieve, or problem to solve_
