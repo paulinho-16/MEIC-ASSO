@@ -1,6 +1,6 @@
 import express from 'express'
 
-import controller from '../controller/associations.controller'
+import controller from '@/controller/associations.controller'
 
 const router = express.Router()
 

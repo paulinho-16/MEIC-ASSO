@@ -1,14 +1,7 @@
 import fetch from 'node-fetch'
 import constants from '@/config/constants'
 
-import {
-  Meal,
-  MealInformation,
-  MealInformationRaw,
-  MealRaw,
-  Menu,
-  MenuRaw,
-} from '@/@types/meals'
+import { Meal, MealInformation, MealInformationRaw, MealRaw, Menu, MenuRaw } from '@/@types/meals'
 
 function parseMeals(meals: MealRaw[]): Meal[] {
   return meals.map(meal => {
@@ -36,12 +29,7 @@ function parseMenus(menus: MenuRaw[]): Menu[] {
 
 function parseMealsInformation(meals: MealInformationRaw): MealInformation {
   return meals.map(meal => {
-    const {
-      codigo: code,
-      descricao: description,
-      horario: scheduleRaw,
-      ementas: menusRaw,
-    } = meal
+    const { codigo: code, descricao: description, horario: scheduleRaw, ementas: menusRaw } = meal
 
     const schedule = {
       start: scheduleRaw.split('às')[0].trim(),
