@@ -10,11 +10,14 @@ services:
     container_name: ts-node-docker
     ports:
       - 8080:3000
-  mysql-development:
-    image: mysql
-    platform: linux/x86_64
-    environment:
-      MYSQL_ROOT_PASSWORD: helloworld
-      MYSQL_DATABASE: testapp
-    ports:
-      - "3308:3306"
+  db-groupsMaking:
+      image: postgres:14.1-alpine
+      restart: always
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+      ports:
+        - '5432:5432'
+volumes:
+  db-groupsMaking:
+    driver: local
