@@ -24,11 +24,8 @@
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.2.0",
-<<<<<<< HEAD
     "nodemon": "^2.0.15",
     "pg": "^8.7.3",
-=======
->>>>>>> adc8a516ab875476f6034d9136056e9a6153cdb0
     "prettier": "^2.6.1",
     "ts-node": "^10.7.0",
     "tsc-watch": "^4.6.2",
