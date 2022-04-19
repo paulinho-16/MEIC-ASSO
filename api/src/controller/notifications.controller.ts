@@ -23,12 +23,15 @@ async function createTopic(req: Request, res: Response) {
     const answer = {"status":"ok","identification_token":identification_token}
 
 
-
     res.send(answer)
 }
 
 async function deleteTopic(req: Request, res: Response) {
-    res.send('Delete Topic!')
+    const topic = req.params.topic
+    const identification_token = req.body.identification_token;
+    const answer = {"status":"ok"}
+
+    res.send(answer)
 }
 
 export default {
