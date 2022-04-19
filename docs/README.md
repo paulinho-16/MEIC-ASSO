@@ -27,7 +27,7 @@ _Instructions: write a short paragraph describing the overall vision for the sys
 - Authentication
 - User profiles
 - Meals
-    - Canteen
+    - Cantine
     - Bares
     - Grill
     - SASUP
@@ -206,7 +206,7 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 - Authentication
 - **T1G3** Chat
 - **T1G2** Calendar
-- Payments
+- **T1G1** Payments
 - Notifications
 - External API / Services
 - Group Making
