@@ -1,9 +1,12 @@
 import { Request, Response } from 'express'
 
-import groupsService from '../services/associations'
+import groupsService from '../services/groups'
 
 async function getGroups(req: Request, res: Response) {
-  return res.status(200)
+
+    const data = await groupsService.getGroups
+
+    return res.status(200)
 }
 
 export default {
