@@ -13,13 +13,11 @@ const client = new Client({
     port: 5432,
 })
 
-// const client = new Client({
-//   user: 'postgres',
-//   host: 'localhost',
-//   database: 'postgres',
-//   password: 'example',
-//   port: 5432,
-// })
+client.connect()
+  .then(() => console.log('connected'))
+  .catch((err) => console.error('connection error', err.stack))
+
+
 
 
 
@@ -31,30 +29,17 @@ function getFeedback(id:number) {
     }) */
 }
 
-function postMealReview(/* review:MealReview */){
-    console.log('ola2')
+function postMealReview(review:MealReview){
+    console.log('post meal review')
     
-    client.connect()
-      .then(() => console.log('connected'))
-      .catch((err) => console.error('connection error', err.stack))
-
     const query = {
       text: 'INSERT INTO MealReview(description, author, date, establishment, dish, rating) VALUES($1, $2, $3, $4, $5, $6)',
-      values: ['tava top', 'Utilizador123', 'NOW()', 'Grill', 'Febras', '4'],
+      values: [review.description, review.author, review.date, review.establishment, review.dish, review.rating],
     }
 
     client.query(query)
-      .then((res) => {
-        console.log(res.rows[0])
-        client.end()
-
-      })
-      .catch((err) => {
-        console.log(err.stack)
-        client.end()
-      })
-
-    
+      .then((res) => console.log(res.rows[0]))
+      .catch((err) => console.log(err.stack))
 }
 
 function postTeacherReview(){
@@ -72,9 +57,39 @@ function postTeacherReview(){
     // })
 }
 
+function getMealReview(){
+  console.log('get meal reviews')
+    
+  client.connect()
+    .then(() => console.log('connected'))
+    .catch((err) => console.error('connection error', err.stack))
+
+  client.query('SELECT * FROM MealReview')
+    .then((res) => console.log(res.rows[0]))
+    .catch((err) => console.log(err.stack))
+}
+
+function getTeacherReview(){
+  console.log('get teacher reviews')
+      
+  client.connect()
+    .then(() => console.log('connected'))
+    .catch((err) => console.error('connection error', err.stack))
+
+  client.query('SELECT * FROM TeacherReview')
+    .then((res) => {
+      console.log(res.rows[0])
+
+    })
+    .catch((err) => {
+      console.log(err.stack)
+    })
+}
 
 export default {
     getFeedback,
+    getMealReview,
+    getTeacherReview,
     postMealReview,
     postTeacherReview
 }
