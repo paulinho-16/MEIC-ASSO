@@ -1,4 +1,3 @@
--- CREATE TABLES
 create table GroupType (
     id integer,
     typeName varchar(100),
@@ -6,7 +5,7 @@ create table GroupType (
     primary key (id)
 );
 
-create table GroupInfo (
+create table Group (
     id integer,
     title varchar(100),
     description varchar(100),
@@ -78,11 +77,31 @@ create table Student_Course (
 
 -- INSERT DATA
 insert into
-    GroupType
+    Group
 values
     (1, "Study Group");
 
 insert into
     GroupType
 values
-    (2, "Project Group");
+    (1, "STUDY_GROUP");
+
+
+-- INSERT GROUP TYPES.
+
+insert into
+    GroupType
+values
+    (1, "STUDY_GROUP");
+
+
+insert into
+    GroupType
+values
+    (2, "CLASS_GROUP");
+
+
+insert into
+    GroupType
+values
+    (3, "PROJECT_GROUP");
