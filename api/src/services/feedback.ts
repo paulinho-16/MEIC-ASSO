@@ -57,14 +57,40 @@ function postTeacherReview(){
     // })
 }
 
-function getMealReview(){
+function getMealReview(review:MealReview){
   console.log('get meal reviews')
-    
-  client.connect()
-    .then(() => console.log('connected'))
-    .catch((err) => console.error('connection error', err.stack))
+  
+  let query = "SELECT * FROM MealReview"
 
-  client.query('SELECT * FROM MealReview')
+  if(review.description != null || review.author != null || review.date != null || 
+     review.establishment != null || review.dish != null || review.rating != null)  {
+      
+      query += " WHERE "
+
+      if(review.description != null)
+        query += "description='" + review.description + "' AND "
+
+      if(review.author != null)
+        query += "author='" + review.author + "' AND "
+      
+      if(review.date != null)
+        query += "date='" + review.date + "' AND "
+      
+      if(review.establishment != null)
+        query += "establishment='" + review.establishment + "' AND "
+      
+      if(review.dish != null)
+        query += "dish='" + review.dish + "' AND "
+      
+      if(review.rating != null)
+        query += "rating='" + review.rating + "' AND "
+
+      query = query.slice(0, -5)
+    }
+    
+  console.log(query)
+
+  client.query(query)
     .then((res) => console.log(res.rows[0]))
     .catch((err) => console.log(err.stack))
 }
