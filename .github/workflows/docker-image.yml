@@ -14,6 +14,7 @@ jobs:
     name: 'Deploy to server'
     steps:
 
+    - uses: actions/checkout@v3
     - uses: arwynfr/actions-docker-context@v2
       with:
         docker_host: 'ssh://34.78.167.227'
