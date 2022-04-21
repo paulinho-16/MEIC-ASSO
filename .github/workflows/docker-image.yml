@@ -21,4 +21,5 @@ jobs:
         ssh_cert: ${{ secrets.SSH_CERT }}
         ssh_key: ${{ secrets.SSH_KEY }}
 
-    - run: docker --context uni4all-remote COMPOSE_DOCKER_CLI_BUILD=0 docker-compose up -d --build
+    - run: docker context use uni4all-remote
+    - run: COMPOSE_DOCKER_CLI_BUILD=0 docker-compose up -d --build
