@@ -1,9 +1,11 @@
 import { Request, Response } from 'express'
 
+import getGroupsService from '@/services/groups'
+
 
 async function getGroups(req: Request, res: Response) {
-
-    return res.status(200).send("Get from Group")
+    let result = getGroupsService();
+    return res.status(200).send(result)
 
 }
 
