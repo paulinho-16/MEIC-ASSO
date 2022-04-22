@@ -15,7 +15,7 @@ create table GroupInfo (
     typeId integer,
     unique (id),
     primary key (id),
-    foreign key (typeID) references GroupType(id)
+    foreign key (typeId) references GroupType(id)
 );
 
 create table Student (
@@ -77,6 +77,8 @@ create table Student_Course (
 );
 
 -- INSERT DATA
+
+-- GROUP TYPE
 insert into
     GroupType
 values
@@ -86,3 +88,5 @@ insert into
     GroupType
 values
     (2, "Project Group");
+
+-- GROUP INFO
