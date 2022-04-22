@@ -1,14 +1,7 @@
 import fetch from 'node-fetch'
 import constants from '@/config/constants'
 
-import {
-  Meal,
-  MealInformation,
-  MealInformationRaw,
-  MealRaw,
-  Menu,
-  MenuRaw,
-} from '@/@types/meals'
+import { Meal, MealInformation, MealInformationRaw, MealRaw, Menu, MenuRaw } from '@/@types/meals'
 
 function parseMeals(meals: MealRaw[]): Meal[] {
   return meals.map(meal => {
@@ -36,12 +29,7 @@ function parseMenus(menus: MenuRaw[]): Menu[] {
 
 function parseMealsInformation(meals: MealInformationRaw): MealInformation {
   return meals.map(meal => {
-    const {
-      codigo: code,
-      descricao: description,
-      horario: scheduleRaw,
-      ementas: menusRaw,
-    } = meal
+    const { codigo: code, descricao: description, horario: scheduleRaw, ementas: menusRaw } = meal
 
     const schedule = {
       start: scheduleRaw.split('às')[0].trim(),
@@ -57,13 +45,18 @@ function parseMealsInformation(meals: MealInformationRaw): MealInformation {
   })
 }
 
-async function fetchMealsData() {
+async function fetchMealsData(restaurantCode: number[]) {
   const response = await fetch(constants.canteenUrl)
-  const data = await response.json()
 
-  const meals = parseMealsInformation(data)
+  try {
+    const data = await response.json()
 
-  return meals
+    const restaurant = data.filter((r: { codigo: number }) => restaurantCode.includes(r.codigo))
+
+    return parseMealsInformation(restaurant)
+  } catch {
+    throw new Error(`Canteen service is not avaiable at the moment. Status: ${response.status}`)
+  }
 }
 
 export default {

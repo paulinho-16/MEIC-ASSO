@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+  ts-node-docker:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./api/src:/usr/src/app/api/src
+      - /usr/src/app/api/node_modules
+    container_name: ts-node-docker
+    ports:
+      - 8080:3000

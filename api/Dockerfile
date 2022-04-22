@@ -1,13 +1,17 @@
 FROM node:16
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/app/api/
 
-COPY package*.json ./
+COPY package.json /usr/src/app/api/
 
-RUN npm i
+COPY yarn.lock /usr/src/app/api/
 
-COPY src/ src/
+RUN yarn install && npm install typescript -g
 
-COPY tsconfig.json ./
+COPY ./src/ /usr/src/app/api/src/
 
-CMD [ "npm", "run", "dev" ]
+COPY tsconfig.json /usr/src/app/api/
+
+RUN tsc
+
+CMD [ "yarn", "start"]
