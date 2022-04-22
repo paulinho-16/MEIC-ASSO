@@ -2,7 +2,7 @@ export type MealReview = {
     description: string
     author: string
     date: Date
-    establishment: string
+    restaurant: string
     dish: string
     rating: number
 }

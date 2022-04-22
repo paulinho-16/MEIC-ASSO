@@ -15,13 +15,13 @@ import {
 async function postMealReview(req: Request, res: Response) {
   const query = req.query
 
-  if(query.description == undefined || query.author == undefined || query.establishment == undefined || query.dish == undefined || query.rating == undefined) {
-    res.status(400).send('This request must have \'description\', \'author\', \'establishment\', \'dish\' and \'rating\'.')
+  if(query.description == undefined || query.author == undefined || query.restaurant == undefined || query.dish == undefined || query.rating == undefined) {
+    res.status(400).send('This request must have \'description\', \'author\', \'restaurant\', \'dish\' and \'rating\'.')
     return
   }
 
-  if(query.author == '' || query.establishment == '' || query.dish == '' || query.rating == '') {
-    res.status(400).send('\'author\', \'establishment\', \'dish\' and \'rating\' can\'t be empty strings.')
+  if(query.author == '' || query.restaurant == '' || query.dish == '' || query.rating == '') {
+    res.status(400).send('\'author\', \'restaurant\', \'dish\' and \'rating\' can\'t be empty strings.')
     return
   }
 
@@ -39,13 +39,13 @@ async function postMealReview(req: Request, res: Response) {
     description: query.description.toString(),
     author: query.author.toString(),
     date: new Date(),
-    establishment: query.establishment.toString(),
+    restaurant: query.restaurant.toString(),
     dish: query.dish.toString(),
     rating: parseInt(query.rating.toString())
   }
   const data = await fb.postMealReview(review)
   if(data){
-    res.json(data)
+    res.send('Success')
   }
   else{
     res.status(500).send('Something went wrong. Try again!')
@@ -54,14 +54,14 @@ async function postMealReview(req: Request, res: Response) {
 
 async function postTeacherReview(req: Request, res: Response) {
   const data = fb.postTeacherReview()
-  res.send('Feedback route')
+  res.send('postTeacherReview route not implemented.')
 }
 
 async function getMealReview(req: Request, res: Response) {
   const query = req.query
 
-  if(query.description == undefined || query.author == undefined || query.date == undefined || query.establishment == undefined || query.dish == undefined || query.rating == undefined) {
-    res.status(400).send('This request must have \'description\', \'author\', \'date\', \'establishment\', \'dish\' and \'rating\'.')
+  if(query.description == undefined || query.author == undefined || query.date == undefined || query.restaurant == undefined || query.dish == undefined || query.rating == undefined) {
+    res.status(400).send('This request must have \'description\', \'author\', \'date\', \'restaurant\', \'dish\' and \'rating\'. If you don\'t want to include some of them in your search leave them blank.')
     return
   }
 
@@ -74,7 +74,7 @@ async function getMealReview(req: Request, res: Response) {
     description: query.description.toString() == '' ? null : query.description.toString(),
     author: query.author.toString() == '' ? null : query.author.toString(),
     date: query.date.toString() == '' ? null : new Date(query.date.toString()),
-    establishment: query.establishment.toString() == '' ? null : query.establishment.toString(),
+    restaurant: query.restaurant.toString() == '' ? null : query.restaurant.toString(),
     dish: query.dish.toString() == '' ? null : query.dish.toString(),
     rating: query.rating.toString() == '' ? null : parseInt(query.rating.toString())
   }
@@ -89,7 +89,7 @@ async function getMealReview(req: Request, res: Response) {
 
 async function getTeacherReview(req: Request, res: Response) {
   const data = fb.getTeacherReview()
-  res.send('Feedback route')
+  res.send('getTeacherReview route not implemented')
 }
 
 export default {

@@ -7,7 +7,7 @@ CREATE TABLE MealReview (
     description     TEXT NOT NULL,
     author          TEXT NOT NULL,
     date            DATE NOT NULL,
-    establishment   TEXT NOT NULL,
+    restaurant      TEXT NOT NULL,
     dish            TEXT NOT NULL,  
     rating          INTEGER NOT NULL
 );

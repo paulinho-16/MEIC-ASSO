@@ -30,13 +30,13 @@ async function postMealReview(review:MealReview){
   console.log('post meal review')
   
   const query = {
-    text: 'INSERT INTO MealReview(description, author, date, establishment, dish, rating) VALUES($1, $2, $3, $4, $5, $6)',
-    values: [review.description, review.author, review.date, review.establishment, review.dish, review.rating],
+    text: 'INSERT INTO MealReview(description, author, date, restaurant, dish, rating) VALUES($1, $2, $3, $4, $5, $6)',
+    values: [review.description, review.author, review.date, review.restaurant, review.dish, review.rating],
   }
 
   try{
     let res = await client.query(query)
-    return res.rows
+    return true
   }
   catch(err){
     console.log(err);
@@ -65,7 +65,7 @@ async function getMealReview(review:MealReview){
   let query = "SELECT * FROM MealReview"
   let values = []
 
-  if(review.description != null || review.author != null || review.date != null || review.establishment != null || review.dish != null || review.rating != null)  {
+  if(review.description != null || review.author != null || review.date != null || review.restaurant != null || review.dish != null || review.rating != null)  {
       
     query += " WHERE "
     let i = 0
@@ -88,10 +88,10 @@ async function getMealReview(review:MealReview){
       query += "date=$" + i + " AND "
     }
     
-    if(review.establishment != null) {
+    if(review.restaurant != null) {
       i++
-      values.push(review.establishment)
-      query += "establishment=$" + i + " AND "
+      values.push(review.restaurant)
+      query += "restaurant=$" + i + " AND "
     }
     
     if(review.dish != null) {
