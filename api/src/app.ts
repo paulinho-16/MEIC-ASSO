@@ -15,6 +15,7 @@ app.listen(port, () => {
 app.use('/associations', routes.associations)
 app.use('/library', routes.library)
 app.use('/hello', routes.hello)
+app.use('/feedback', routes.feedback)
 app.use('/jobs', routes.jobs)
 app.use('/meals', routes.meals)
 app.use('/news', routes.news)
