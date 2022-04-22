@@ -65,8 +65,13 @@ async function getMealReview(req: Request, res: Response) {
     return
   }
 
-  if(query.rating.toString() != '' && parseInt(query.rating.toString())){
+  if(query.rating.toString() != '' && isNaN(parseInt(query.rating.toString()))){
     res.status(400).send('Rating must be a integer.')
+    return
+  }
+
+  if(parseInt(query.rating.toString()) > 5 || parseInt(query.rating.toString()) < 0) {
+    res.status(400).send('Rating must be between 0 and 5.')
     return
   }
 
