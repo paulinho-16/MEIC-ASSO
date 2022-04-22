@@ -12,17 +12,21 @@ services:
       - 8080:3000
 
   postgres:
-    image: postgres
+    container_name: postgres
     restart: always
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: example
+      POSTGRES_PASSWORD: postgres
     volumes:
       - ./postgres/data:/home/postgres/data
     ports:
       - "5432:5432"
 
   adminer:
+    container_name: adminer
     image: adminer
     restart: always
     ports:
