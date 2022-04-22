@@ -1,9 +1,30 @@
 import { Request, Response } from 'express'
 
+import groups from '@/services/groups'
+
+
 
 async function getGroups(req: Request, res: Response) {
 
-    return res.status(200).send("Get from Group")
+
+
+    const data = await groups.getGroups()
+    if (data) {
+        res.json(data)
+    }
+    else {
+        res.status(500).send('Something went wrong. Try again!')
+    }
+
+    return
+
+
+
+
+
+
+
+
 
 }
 
