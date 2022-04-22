@@ -4,27 +4,18 @@ import groups from '@/services/groups'
 
 
 
-async function getGroups(req: Request, res: Response) {
 
-
+async function getGroups(req: Request, res: Response){
 
     const data = await groups.getGroups()
     if (data) {
         res.json(data)
     }
     else {
-        res.status(500).send('Something went wrong. Try again!')
+        res.status(500).send('Error')
     }
 
     return
-
-
-
-
-
-
-
-
 
 }
 
