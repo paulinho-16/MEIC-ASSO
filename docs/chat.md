@@ -24,7 +24,31 @@ flowchart LR
 
 For communication with the client, the chat server needs to send messages autonomously. For this polling, long-polling, and websockets are possibilities. Polling and long-polling are more demanding computationally, hence the coice for **websockets**.
 
+## Socket Endpoints
+
+### Receiving
+
+- `connection`: (implicit) on a new connection
+- `disonnect`: (implicit) on a disconnection
+- `username`: to update a username
+  - msg (string): the new username
+- `chat message`: to send a chat message
+  - msg (string): the message
+  - to (string): the recipient
+
+### Sending
+
+- `notification`: a notification
+  - msg (string): the message
+- `private message`: a private message
+  - sender (string): the sender
+  - msg (string): the message
+- `chat message`: a general message
+  - sender (string): the sender
+  - msg (string): the message
+
 ## Technologies
+
 - chat server
-	- **backend** node.js
-	- **websockets** socket.io
+  - **backend** node.js
+  - **websockets** socket.io
