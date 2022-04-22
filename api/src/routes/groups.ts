@@ -6,4 +6,6 @@ const router = express.Router()
 
 router.get('/', controller.getGroups)
 
+router.post('/', controller.createGroup)
+
 export default router

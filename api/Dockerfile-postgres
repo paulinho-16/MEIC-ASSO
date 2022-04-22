@@ -1,0 +1,3 @@
+FROM postgres:14.1-alpine
+ENV POSTGRES_DATABASE groupmaking
+COPY ./sql-scripts /docker-entrypoint-initdb.d

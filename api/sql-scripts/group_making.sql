@@ -1,4 +1,3 @@
--- CREATE TABLES
 create table GroupType (
     id integer,
     typeName varchar(100),
@@ -6,7 +5,7 @@ create table GroupType (
     primary key (id)
 );
 
-create table GroupInfo (
+create table GroupBody (
     id integer,
     title varchar(100),
     description varchar(100),
@@ -15,7 +14,7 @@ create table GroupInfo (
     typeId integer,
     unique (id),
     primary key (id),
-    foreign key (typeId) references GroupType(id)
+    foreign key (typeID) references GroupType(id)
 );
 
 create table Student (
@@ -52,7 +51,7 @@ create table Group_Student (
     isAccepted boolean,
     unique (id),
     primary key (id),
-    foreign key (groupId) references GroupInfo(id),
+    foreign key (groupId) references GroupBody(id),
     foreign key (studentId) references Student(id)
 );
 
@@ -77,16 +76,27 @@ create table Student_Course (
 );
 
 -- INSERT DATA
+insert into
+    GroupBody
+values
+    (1, 'Study Group for Class X');
 
--- GROUP TYPE
+
+-- INSERT GROUP TYPES.
+
 insert into
     GroupType
 values
-    (1, "Study Group");
+    (1, 'STUDY_GROUP');
+
 
 insert into
     GroupType
 values
-    (2, "Project Group");
+    (2, 'CLASS_GROUP');
 
--- GROUP INFO
+
+insert into
+    GroupType
+values
+    (3, 'PROJECT_GROUP');

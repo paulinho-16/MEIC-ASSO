@@ -1,14 +1,18 @@
 import { Request, Response } from 'express'
 
-import groupsService from '../services/groups'
 
 async function getGroups(req: Request, res: Response) {
 
-    const data = await groupsService.getGroups
+    return res.status(200).send("Get from Group")
 
-    return res.status(200)
+}
+
+async function createGroup(req: Request, res: Response) {
+
+    return res.status(200).send("Create from Group")
 }
 
 export default {
     getGroups,
+    createGroup
 }
