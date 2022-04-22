@@ -18,9 +18,6 @@ client.connect()
   .catch((err) => console.error('connection error', err.stack))
 
 
-
-
-
 function getFeedback(id:number) {
     /*
     client.query('SELECT $1::text as message', ['Hello world!'], (err, res) => {
@@ -29,17 +26,22 @@ function getFeedback(id:number) {
     }) */
 }
 
-function postMealReview(review:MealReview){
-    console.log('post meal review')
-    
-    const query = {
-      text: 'INSERT INTO MealReview(description, author, date, establishment, dish, rating) VALUES($1, $2, $3, $4, $5, $6)',
-      values: [review.description, review.author, review.date, review.establishment, review.dish, review.rating],
-    }
+async function postMealReview(review:MealReview){
+  console.log('post meal review')
+  
+  const query = {
+    text: 'INSERT INTO MealReview(description, author, date, establishment, dish, rating) VALUES($1, $2, $3, $4, $5, $6)',
+    values: [review.description, review.author, review.date, review.establishment, review.dish, review.rating],
+  }
 
-    client.query(query)
-      .then((res) => console.log(res.rows[0]))
-      .catch((err) => console.log(err.stack))
+  try{
+    let res = await client.query(query)
+    return res.rows
+  }
+  catch(err){
+    console.log(err);
+    return false
+  }
 }
 
 function postTeacherReview(){
@@ -57,42 +59,64 @@ function postTeacherReview(){
     // })
 }
 
-function getMealReview(review:MealReview){
+async function getMealReview(review:MealReview){
   console.log('get meal reviews')
   
   let query = "SELECT * FROM MealReview"
+  let values = []
 
-  if(review.description != null || review.author != null || review.date != null || 
-     review.establishment != null || review.dish != null || review.rating != null)  {
+  if(review.description != null || review.author != null || review.date != null || review.establishment != null || review.dish != null || review.rating != null)  {
       
-      query += " WHERE "
+    query += " WHERE "
+    let i = 0
 
-      if(review.description != null)
-        query += "description='" + review.description + "' AND "
+    if(review.description != null) {
+      i++
+      values.push(review.description)
+      query += "description=$" + i + " AND "
+    }
 
-      if(review.author != null)
-        query += "author='" + review.author + "' AND "
-      
-      if(review.date != null)
-        query += "date='" + review.date + "' AND "
-      
-      if(review.establishment != null)
-        query += "establishment='" + review.establishment + "' AND "
-      
-      if(review.dish != null)
-        query += "dish='" + review.dish + "' AND "
-      
-      if(review.rating != null)
-        query += "rating='" + review.rating + "' AND "
-
-      query = query.slice(0, -5)
+    if(review.author != null){
+      i++
+      values.push(review.author)
+      query += "author=$" + i + " AND "
     }
     
-  console.log(query)
+    if(review.date != null){
+      i++
+      values.push(review.date)
+      query += "date=$" + i + " AND "
+    }
+    
+    if(review.establishment != null) {
+      i++
+      values.push(review.establishment)
+      query += "establishment=$" + i + " AND "
+    }
+    
+    if(review.dish != null) {
+      i++
+      values.push(review.dish)
+      query += "dish=$" + i + " AND "
+    }
+    
+    if(review.rating != null) {
+      i++
+      values.push(review.rating)
+      query += "rating=$" + i + " AND "
+    }
 
-  client.query(query)
-    .then((res) => console.log(res.rows[0]))
-    .catch((err) => console.log(err.stack))
+    query = query.slice(0, -4)
+  }
+
+  try{
+    let res = await client.query(query, values)
+    return res.rows
+  }
+  catch(err){
+    console.log(err);
+    return false
+  }
 }
 
 function getTeacherReview(){

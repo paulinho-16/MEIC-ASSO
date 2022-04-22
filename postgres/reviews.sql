@@ -9,7 +9,7 @@ CREATE TABLE MealReview (
     date            DATE NOT NULL,
     establishment   TEXT NOT NULL,
     dish            TEXT NOT NULL,  
-    rating          FLOAT(1) NOT NULL
+    rating          INTEGER NOT NULL
 );
 
 
