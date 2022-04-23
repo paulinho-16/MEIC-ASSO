@@ -32,3 +32,24 @@ services:
       - 5500:5500
     depends_on:
       - chat-server
+
+  postgres:
+    container_name: postgres
+    restart: always
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./postgres/data:/home/postgres/data
+    ports:
+      - "5432:5432"
+
+  adminer:
+    container_name: adminer
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080 
