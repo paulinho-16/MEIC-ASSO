@@ -1,51 +1,45 @@
 import axios from 'axios'
 import * as cheerio from 'cheerio'
 import { Request, Response } from 'express'
-import { gradesHTML } from '../config/data'
+import { gradesManyHTML } from '../config/data'
+// import { Grade, Grades } from '../@types/grades'
 
-type Grade = {
-  uc: string
-  result: string
+type InspectMajor = {
+  link: string
+  name: string
 }
 
-const GRADES_URL = 'https://google.com'
-// const MAIN_URL = 'https://sigarra.up.pt/feup/pt'
-// const FALLBACK_URL = 'https://sigarra.up.pt/feup/pt'
+const STUDENT_NUMBER = 201704790
+const MAIN_URL = 'https://sigarra.up.pt/feup'
+// const STUDENT_PAGE_URL = `https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=${STUDENT_NUMBER}`
 
 async function get(req: Request, res: Response) {
-  let result: string
-  const grades: Grade[] = []
-
-  console.log(req)
-  console.log(res)
-  console.log(grades)
-  console.log(gradesHTML)
+  const inspectMajors: InspectMajor[] = []
+  // const results: Grades[] = []
 
   axios
-    .get(GRADES_URL, { responseEncoding: 'binary' })
-    .then(response => {
-      console.log(response.data)
-      const $ = cheerio.load(gradesHTML.toString())
+    .get('https://google.com', { responseEncoding: 'binary' })
+    .then(() => {
+      const $ = cheerio.load(gradesManyHTML.toString())
+      const majorDivs = $('div .estudante-lista-curso-activo')
 
-      const target = $(`#conteudo`)[0]
-      result = $(target).html()
+      for (const majorDiv of majorDivs) {
+        const link = $(majorDiv).find('.estudante-lista-curso-detalhes a').attr('href')
+        const clickableMajor = $(majorDiv).find('.estudante-lista-curso-nome a').text()
+        const unclickableMajor = $(majorDiv).find('.estudante-lista-curso-nome').text()
+
+        inspectMajors.push({
+          link: link ? `${MAIN_URL}/${link}` : null,
+          name: clickableMajor || unclickableMajor,
+        })
+      }
+
+      inspectMajors.length === 0
+        ? res.send(`No majors found for student ${STUDENT_NUMBER}`)
+        : res.send({ majors: inspectMajors })
     })
     .then(() => {
-      res.send(result)
-      // const requests = grades.map(({ url }) => axios.get(url, { responseEncoding: 'binary' }))
-      // axios
-      //   .all(requests)
-      //   .then(
-      //     axios.spread((...responses) => {
-      //       responses.forEach((item, index) => {
-      //         // const $ = cheerio.load(item.data.toString('latin1'))
-      //         // const target = $('#conteudoinner')
-      //       })
-      //     })
-      //   )
-      //   .then(() => {
-      //     res.send(grades)
-      //   })
+      console.log('resposta')
     })
     .catch(function (e) {
       console.log(e)
