@@ -21,7 +21,7 @@ services:
       - /usr/src/app/chat/server/node_modules
     container_name: chat-server
     ports:
-      - 8081:3000
+      - 8082:3000
 
   chat-client:
     build:

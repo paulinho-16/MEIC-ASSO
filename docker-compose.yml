@@ -19,7 +19,7 @@ services:
       - ./chat/server/src:/usr/src/app/chat/server/src/
     container_name: chat-server
     ports:
-      - 8081:3000
+      - 8082:3000
 
   chat-client:
     build:
