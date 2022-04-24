@@ -3,6 +3,7 @@ import * as cheerio from 'cheerio'
 import { Request, Response } from 'express'
 import { studentPageHTML, academicPathPageHTML, planPositionPageHTML2 } from '../config/data'
 import { Grade, MajorGrades } from '../@types/grades'
+import studentPageBaseUrl from '../config/constants'
 
 type InspectMajor = {
   url: string
@@ -10,23 +11,36 @@ type InspectMajor = {
 }
 
 const MAIN_URL = 'https://sigarra.up.pt/feup'
-const STUDENT_NUMBER = 201704790
-// const STUDENT_PAGE_URL = `https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=${STUDENT_NUMBER}`
 
 async function get(req: Request, res: Response) {
   const api = axios.create({})
+  const studentGrades: MajorGrades[] = []
+
+  const studentNumber = req.params.studentNumber
+  const studentPageUrl = `${studentPageBaseUrl}=${studentNumber}`
+
+  console.log(studentPageUrl)
 
   api
-    .get('https://google.com', { responseEncoding: 'binary' })
+    .get('https://google.com', { responseEncoding: 'binary' }) // replace with studentPageUrl
     .then(() => {
-      const inspectMajors = cheerioGetInspectMajors()
-      if (inspectMajors === null) res.send(`No majors found for student ${STUDENT_NUMBER}`)
+      const inspectMajors = cheerioGetInspectMajors(studentPageHTML)
+      if (inspectMajors === null) res.send(`No majors found for student ${studentNumber}`)
 
-      const planPositionURL = cheerioGetPlanPositionURL()
-      if (!planPositionURL) res.send(`No plan position found for student ${STUDENT_NUMBER}`)
+      for (const major of inspectMajors) {
+        // get academicPathHTML using major.url
+        console.log(major.url)
 
-      const majorGrades = cheerioScrapeGrades(inspectMajors[0].name)
-      res.send({ 'Student Grades': majorGrades })
+        const planPositionURL = cheerioGetPlanPositionURL(academicPathPageHTML)
+        console.log(planPositionURL)
+
+        // get planPositionHTML using planPositionURL
+        const majorGrades = cheerioScrapeGrades(major.name, planPositionPageHTML2)
+        studentGrades.push(majorGrades)
+      }
+    })
+    .then(() => {
+      res.send({ 'Student Grades': studentGrades })
     })
     .catch(function (e) {
       console.log(e)
@@ -36,9 +50,9 @@ async function get(req: Request, res: Response) {
 /**
  * @brief collect all courses a student has had (name and url) from student page
  */
-function cheerioGetInspectMajors(): InspectMajor[] {
+function cheerioGetInspectMajors(studentHTML: string): InspectMajor[] {
   const inspectMajors: InspectMajor[] = []
-  const $ = cheerio.load(studentPageHTML.toString())
+  const $ = cheerio.load(studentHTML.toString())
 
   // collect active majors
   const activeMajors = $('div .estudante-lista-curso-activo')
@@ -76,8 +90,8 @@ function cheerioGetInspectMajors(): InspectMajor[] {
 /**
  * @brief get url to student's plan position in a major
  */
-function cheerioGetPlanPositionURL(): string {
-  const $ = cheerio.load(academicPathPageHTML.toString())
+function cheerioGetPlanPositionURL(academicPathHTML: string): string {
+  const $ = cheerio.load(academicPathHTML.toString())
   const target = $('.estudantes-curso-lista-opcoes')
   let href
 
@@ -96,9 +110,9 @@ function cheerioGetPlanPositionURL(): string {
 /**
  * @brief retireve grades from student's plan position for the respective major
  */
-function cheerioScrapeGrades(major: string): MajorGrades {
+function cheerioScrapeGrades(major: string, planPositionHTML: string): MajorGrades {
   const grades: Grade[] = []
-  const $ = cheerio.load(planPositionPageHTML2.toString())
+  const $ = cheerio.load(planPositionHTML.toString())
   const yearsDiv = $('#conteudoinner > div.caixa > div.caixa > div.caixa > table.dadossz')
 
   let year = 0
