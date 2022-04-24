@@ -1,9 +1,12 @@
 import { Request, Response } from 'express'
 import {v4 as uuidv4} from 'uuid';
 import fetch from 'node-fetch';
+import fb from '@/services/notifications'
+import { fdatasync } from 'fs';
 
 async function createNotification(req: Request, res: Response) {
 
+  /*
   const { client } = req.params
     
   const response = await fetch('https://fcm.googleapis.com/fcm/send', {
@@ -28,6 +31,17 @@ async function createNotification(req: Request, res: Response) {
   if (!response.ok) {
     throw new Error(`Error! status: ${response.status}`);
   }
+  */
+
+  // DataBase
+  // userID = 1
+  let status = await fb.createNotification(1)
+
+  if(status)
+    res.send(status)
+
+  else 
+    res.status(500).send()
 
   return;
 }
@@ -58,13 +72,24 @@ async function getAllUnseenNotifications(req: Request, res: Response) {
 }
 
 async function getAllNotifications(req: Request, res: Response) {
+  
   // BataBase request to retrive the user id
-  const userId = req.params.userId
-  if(userId != null){
-    res.send('Get All Notifications!')
-  }
-  else
-    res.send('Get All Notifications Failed!')
+  // const userId = req.params.userId
+  // if(userId != null){
+  //   res.send('Get All Notifications!')
+  // }
+  // else
+  //   res.send('Get All Notifications Failed!')
+
+  // DataBase Functionality
+  // user ID = 1
+  let status = await fb.getAllNotifications(1)
+
+  if(status)
+    res.send(status)
+
+  else 
+    res.status(500).send()
 }
 
 async function createTopic(req: Request, res: Response) {
