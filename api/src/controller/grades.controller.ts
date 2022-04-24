@@ -140,12 +140,18 @@ function cheerioScrapeGrades(major: string, planPositionHTML: string): MajorGrad
             const foldDiv = $(`#${foldID} table.dadossz table.dadossz tbody tr`)
             $(foldDiv).each(function (index, element) {
               if (!$(element).text().includes('Código')) {
-                const cellText3 = $(element).find('td:nth-child(3)').text().split('Por reconhecimento - ')
+                const cellText3 = $(element)
+                  .find('td:nth-child(3)')
+                  .text()
+                  .split('Por reconhecimento - ')
                 const uc = cellText3[0].trim()
                 const code = $(element).find('td:nth-child(1)').text()
                 const result =
-                  parseFloat($(element).find('td:nth-child(7)').text()) || parseFloat(cellText3[1].replace(',', '.'))
-                const credits = parseFloat($(element).find('td:nth-child(6)').text().replace(',', '.'))
+                  parseFloat($(element).find('td:nth-child(7)').text()) ||
+                  parseFloat(cellText3[1].replace(',', '.'))
+                const credits = parseFloat(
+                  $(element).find('td:nth-child(6)').text().replace(',', '.')
+                )
                 const acronym = $(element).find('td:nth-child(2)').text()
                 grades.push({ uc, year, code, result, credits, acronym, semester })
               }
@@ -155,7 +161,8 @@ function cheerioScrapeGrades(major: string, planPositionHTML: string): MajorGrad
             const uc = cellText3[0].trim()
             const code = $(row).find('td:nth-child(1)').text()
             const result =
-              parseFloat($(row).find('td:nth-child(6)').text()) || parseFloat(cellText3[1].replace(',', '.'))
+              parseFloat($(row).find('td:nth-child(6)').text()) ||
+              parseFloat(cellText3[1].replace(',', '.'))
             const credits = parseFloat($(row).find('td:nth-child(5)').text().replace(',', '.'))
             const acronym = $(row).find('td:nth-child(2)').text()
             grades.push({ uc, year, code, result, credits, acronym, semester })
@@ -168,17 +175,27 @@ function cheerioScrapeGrades(major: string, planPositionHTML: string): MajorGrad
             const foldDiv = $(`#${foldID} table.dadossz table.dadossz tbody tr`)
 
             $(foldDiv).each(function (index, element) {
-              const localDone = $(element).attr('class') ? $(element).attr('class').includes('feito') : false
-              const localAttempted = $(element).attr('class') ? $(element).attr('class').includes('fazer') : false
+              const localDone = $(element).attr('class')
+                ? $(element).attr('class').includes('feito')
+                : false
+              const localAttempted = $(element).attr('class')
+                ? $(element).attr('class').includes('fazer')
+                : false
 
               if (!$(element).text().includes('Código') && (localDone || localAttempted)) {
                 // Option group
-                const cellText3 = $(element).find('td:nth-child(3)').text().split('Por reconhecimento - ')
+                const cellText3 = $(element)
+                  .find('td:nth-child(3)')
+                  .text()
+                  .split('Por reconhecimento - ')
                 const uc = cellText3[0].trim()
                 const code = $(element).find('td:nth-child(1)').text()
                 const result =
-                  parseFloat($(element).find('td:nth-child(7)').text()) || parseFloat(cellText3[1].replace(',', '.'))
-                const credits = parseFloat($(element).find('td:nth-child(6)').text().replace(',', '.'))
+                  parseFloat($(element).find('td:nth-child(7)').text()) ||
+                  parseFloat(cellText3[1].replace(',', '.'))
+                const credits = parseFloat(
+                  $(element).find('td:nth-child(6)').text().replace(',', '.')
+                )
                 const acronym = $(element).find('td:nth-child(2)').text()
                 grades.push({ uc, year, code, result, credits, acronym, semester })
               }
