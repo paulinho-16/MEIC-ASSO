@@ -8,4 +8,5 @@ export type Notifications = {
   content: string
   topic: Topic
   dest_user: string
+  seen: Boolean
 }

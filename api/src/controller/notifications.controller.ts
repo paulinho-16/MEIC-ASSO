@@ -17,7 +17,7 @@ async function createNotification(req: Request, res: Response) {
           "data" : {
               "body" : "Notification Body",
               "title": "Notification Title"
-          }
+          },
     }),
     headers: {
       ContentType: 'application/json',
@@ -33,22 +33,44 @@ async function createNotification(req: Request, res: Response) {
 }
 
 async function updateNotification(req: Request, res: Response) {
-    res.send('Update Notifications!')
+  // BataBase request to retrive the id of the notification
+  const id = req.params.id
+  if(id != null){
+    const notificationBody = req.params.notificationBody
+    const notificationText = req.params.notificationText
+    const dataBody = req.params.dataBody
+    const dataText = req.params.dataText
+
+    res.send({"status":"Update Notification"})
+  }
+  else
+    res.send('Update Nofication Failed!')
 }
 
-async function getAllSeenNotifications(req: Request, res: Response) {
+async function getAllUnseenNotifications(req: Request, res: Response) {
+  // BataBase request to retrive the user id
+  const userId = req.params.userId
+  if(userId != null){
     res.send('Get All Seen Notifications!')
+  }
+  else
+    res.send('Get All Seen Notifications Failed!')
 }
 
 async function getAllNotifications(req: Request, res: Response) {
+  // BataBase request to retrive the user id
+  const userId = req.params.userId
+  if(userId != null){
     res.send('Get All Notifications!')
+  }
+  else
+    res.send('Get All Notifications Failed!')
 }
 
 async function createTopic(req: Request, res: Response) {
     const name = req.params.topic
     const identification_token = uuidv4();
     const answer = {"status":"ok","identification_token":identification_token}
-
 
     res.send(answer)
 }
@@ -65,7 +87,7 @@ export default {
   createNotification,
   updateNotification,
   getAllNotifications,
-  getAllSeenNotifications,
+  getAllUnseenNotifications,
   createTopic,
   deleteTopic,
 }

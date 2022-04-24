@@ -10,8 +10,8 @@ router.post('/:client', controller.createNotification)
 // Route to update notification to seen
 router.put('/:notification', controller.updateNotification)
 
-// Route to get all seen notifications
-router.get('/:client/allseen', controller.getAllSeenNotifications)
+// Route to get all unseen notifications
+router.get('/:client/allunseen', controller.getAllUnseenNotifications)
 
 // Route to get all notifications
 router.get('/:client/all', controller.getAllNotifications)
