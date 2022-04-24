@@ -2,13 +2,13 @@ export type Grade = {
   uc: string
   year: number
   code: string
-  result: number
+  result: number | string
   credits: number
   acronym: string
   semester: number
 }
 
-export type Grades = {
+export type MajorGrades = {
   major: string
   grades: Grade[]
 }

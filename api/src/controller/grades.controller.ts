@@ -1,8 +1,8 @@
 import axios from 'axios'
 import * as cheerio from 'cheerio'
 import { Request, Response } from 'express'
-import { studentPageHTML, academicPathPageHTML, planPositionPageHTML } from '../config/data'
-import { Grade, Grades } from '../@types/grades'
+import { studentPageHTML, academicPathPageHTML, planPositionPageHTML2 } from '../config/data'
+import { Grade, MajorGrades } from '../@types/grades'
 
 type InspectMajor = {
   url: string
@@ -23,8 +23,10 @@ async function get(req: Request, res: Response) {
       if (inspectMajors === null) res.send(`No majors found for student ${STUDENT_NUMBER}`)
 
       const planPositionURL = cheerioGetPlanPositionURL()
-      const scrapeGradesResults = cheerioScrapeGrades()
-      res.send({ ola: planPositionURL })
+      if (!planPositionURL) res.send(`No plan position found for student ${STUDENT_NUMBER}`)
+
+      const majorGrades = cheerioScrapeGrades(inspectMajors[0].name)
+      res.send({ 'Student Grades': majorGrades })
     })
     .catch(function (e) {
       console.log(e)
@@ -94,20 +96,97 @@ function cheerioGetPlanPositionURL(): string {
 /**
  * @brief retireve grades from student's plan position for the respective major
  */
-function cheerioScrapeGrades(): Grades {
-  const majorName = 'Mestrado em Engenharia Informática e Computação'
+function cheerioScrapeGrades(major: string): MajorGrades {
+  const grades: Grade[] = []
+  const $ = cheerio.load(planPositionPageHTML2.toString())
+  const yearsDiv = $('#conteudoinner > div.caixa > div.caixa > div.caixa > table.dadossz')
 
-  const $ = cheerio.load(planPositionPageHTML.toString())
-  const years = $('#conteudoinner > div.caixa > div.caixa > div.caixa > table.dadossz')
+  let year = 0
+  let semester = 1
 
-  for (const year of years) {
-    console.log($(year).find('table.dadossz > tbody tbody > tr').length)
+  for (const yearDiv of yearsDiv) {
+    year++
+    $(yearDiv)
+      .find('table.dadossz > tbody tbody > tr')
+      .each(function (index, row) {
+        const text = $(row).text()
+        const skip = index === 0 || text.includes('Código') || text.includes('Semestre')
+        const done = $(row).attr('class') ? $(row).attr('class').includes('feito') : false
+        const attempted = $(row).attr('class') ? $(row).attr('class').includes('fazer') : false
+
+        if (text.includes('º Semestre') && !text.includes('º SemestreC')) {
+          semester = parseInt(text.split('ºSemestre')[0].trim())
+        }
+
+        if (done) {
+          // done courses (green)
+          if ($(row).find('td:nth-child(1)').text() === '') {
+            const fold = $(row).find('td:nth-child(3) a').attr('href')
+            const foldID = fold.split("javascript:toggleDiv('")[1].split("'")[0]
+            const foldDiv = $(`#${foldID} table.dadossz table.dadossz tbody tr`)
+            $(foldDiv).each(function (index, element) {
+              if (!$(element).text().includes('Código')) {
+                const cellText3 = $(element).find('td:nth-child(3)').text().split('Por reconhecimento - ')
+                const uc = cellText3[0].trim()
+                const code = $(element).find('td:nth-child(1)').text()
+                const result =
+                  parseFloat($(element).find('td:nth-child(7)').text()) || parseFloat(cellText3[1].replace(',', '.'))
+                const credits = parseFloat($(element).find('td:nth-child(6)').text().replace(',', '.'))
+                const acronym = $(element).find('td:nth-child(2)').text()
+                grades.push({ uc, year, code, result, credits, acronym, semester })
+              }
+            })
+          } else {
+            const cellText3 = $(row).find('td:nth-child(3)').text().split('Por reconhecimento - ')
+            const uc = cellText3[0].trim()
+            const code = $(row).find('td:nth-child(1)').text()
+            const result =
+              parseFloat($(row).find('td:nth-child(6)').text()) || parseFloat(cellText3[1].replace(',', '.'))
+            const credits = parseFloat($(row).find('td:nth-child(5)').text().replace(',', '.'))
+            const acronym = $(row).find('td:nth-child(2)').text()
+            grades.push({ uc, year, code, result, credits, acronym, semester })
+          }
+        } else if (attempted) {
+          // attempted courses (amber)
+          if ($(row).find('td:nth-child(4)').text() !== '') {
+            const fold = $(row).find('td:nth-child(3) a').attr('href')
+            const foldID = fold.split("javascript:toggleDiv('")[1].split("'")[0]
+            const foldDiv = $(`#${foldID} table.dadossz table.dadossz tbody tr`)
+
+            $(foldDiv).each(function (index, element) {
+              const localDone = $(element).attr('class') ? $(element).attr('class').includes('feito') : false
+              const localAttempted = $(element).attr('class') ? $(element).attr('class').includes('fazer') : false
+
+              if (!$(element).text().includes('Código') && (localDone || localAttempted)) {
+                // Option group
+                const cellText3 = $(element).find('td:nth-child(3)').text().split('Por reconhecimento - ')
+                const uc = cellText3[0].trim()
+                const code = $(element).find('td:nth-child(1)').text()
+                const result =
+                  parseFloat($(element).find('td:nth-child(7)').text()) || parseFloat(cellText3[1].replace(',', '.'))
+                const credits = parseFloat($(element).find('td:nth-child(6)').text().replace(',', '.'))
+                const acronym = $(element).find('td:nth-child(2)').text()
+                grades.push({ uc, year, code, result, credits, acronym, semester })
+              }
+            })
+          } else {
+            const cellText3 = $(row).find('td:nth-child(3)').text().split('Por reconhecimento - ')
+            const cellText6 = $(row).find('td:nth-child(6)').text()
+
+            const uc = cellText3[0].trim()
+            const code = $(row).find('td:nth-child(1)').text()
+            const result = parseFloat(cellText6) || parseFloat(cellText3[1]) || cellText6
+            const credits = parseFloat($(row).find('td:nth-child(5)').text().replace(',', '.'))
+            const acronym = $(row).find('td:nth-child(2)').text()
+            grades.push({ uc, year, code, result, credits, acronym, semester })
+          }
+        } else if (!skip && !done && !attempted) {
+          // never attempted courses
+        }
+      })
   }
 
-  return {
-    major: majorName,
-    grades: null,
-  }
+  return { major, grades }
 }
 
 export default {
