@@ -12,3 +12,8 @@ export type MajorGrades = {
   major: string
   grades: Grade[]
 }
+
+export type InspectMajor = {
+  url: string
+  name: string
+}

@@ -2,40 +2,40 @@ import axios from 'axios'
 import * as cheerio from 'cheerio'
 import { Request, Response } from 'express'
 import { studentPageHTML, academicPathPageHTML, planPositionPageHTML2 } from '../config/data'
-import { Grade, MajorGrades } from '../@types/grades'
+import { InspectMajor, Grade, MajorGrades } from '../@types/grades'
 import studentPageBaseUrl from '../config/constants'
-
-type InspectMajor = {
-  url: string
-  name: string
-}
 
 const MAIN_URL = 'https://sigarra.up.pt/feup'
 
 async function get(req: Request, res: Response) {
-  const api = axios.create({})
+  const mock = true
+  const api = axios.create({ responseEncoding: 'binary' })
+  const studentNumber = req.params.studentNumber
+  const studentPageUrl = mock ? 'https://google.com' : `${studentPageBaseUrl}=${studentNumber}`
+
+  let inspectMajors: InspectMajor[]
   const studentGrades: MajorGrades[] = []
 
-  const studentNumber = req.params.studentNumber
-  const studentPageUrl = `${studentPageBaseUrl}=${studentNumber}`
-
-  console.log(studentPageUrl)
+  //TODO: Admin authentication to access student page with `studentNumber`
 
   api
-    .get('https://google.com', { responseEncoding: 'binary' }) // replace with studentPageUrl
-    .then(() => {
-      const inspectMajors = cheerioGetInspectMajors(studentPageHTML)
+    .get(studentPageUrl)
+    .then(response => {
+      const studentHTML = mock ? studentPageHTML : response.data
+      inspectMajors = cheerioGetInspectMajors(studentHTML)
       if (inspectMajors === null) res.send(`No majors found for student ${studentNumber}`)
-
+    })
+    .then(() => {
       for (const major of inspectMajors) {
-        // get academicPathHTML using major.url
-        console.log(major.url)
+        const academicPathHTML = academicPathPageHTML // TODO: get academicPathHTML using major.url
+        console.log('Major: ', major.name)
+        console.log('Major URL: ', major.url)
 
-        const planPositionURL = cheerioGetPlanPositionURL(academicPathPageHTML)
-        console.log(planPositionURL)
+        const planPositionURL = cheerioGetPlanPositionURL(academicPathHTML)
+        console.log('Plan Position URL: ', planPositionURL, '\n')
 
-        // get planPositionHTML using planPositionURL
-        const majorGrades = cheerioScrapeGrades(major.name, planPositionPageHTML2)
+        const planPositionHTML = planPositionPageHTML2 // TODO: get planPositionHTML using planPositionURL
+        const majorGrades = cheerioScrapeGrades(major.name, planPositionHTML)
         studentGrades.push(majorGrades)
       }
     })
