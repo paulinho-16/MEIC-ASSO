@@ -8,10 +8,14 @@ const client = new Client({
   port: 5432,
 })
 
+let connected = false;
+
 
 async function connectDatabase(){
 
-  let connected = false;
+  if(connected){
+    return true
+  }
 
   client.connect()
   .then(() => connected = true)
