@@ -6,9 +6,10 @@ import {
     Group
 } from '@/@types/groups'
 
-async function getGroups(req: Request, res: Response){
+async function getGroups(req: Request, res: Response) {
 
     const data = await groups.getGroups()
+
     if (data) {
         res.json(data)
     }
@@ -20,7 +21,33 @@ async function getGroups(req: Request, res: Response){
 
 }
 
+async function getGroup(req: Request, res: Response) {
+
+    if(!req.params.id) {
+        return res.status(400).send({
+            message: "No group id was specified."
+        });
+    }
+
+    if(isNaN(parseInt(req.params.id.toString()))){
+        res.status(400).send('id must be an integer.')
+        return
+    }
+
+    const data = await groups.getGroup(parseInt(req.params.id.toString()))
+
+    if(data){
+        res.json(data)
+      }
+      else{
+        res.status(500).send('Something went wrong. Try again!')
+    }
+
+}
+
 async function createGroup(req: Request, res: Response) {
+
+    // TODO: User that creates Group needs to be added as a member.
 
     if(!req.body) {
         return res.status(400).send({
@@ -29,28 +56,6 @@ async function createGroup(req: Request, res: Response) {
     }
 
     const query = req.body
-
-    console.log(query)
-
-    if(req.body.typeName == undefined) {
-        res.status(400).send('typeName')
-        return
-    }
-
-    if(req.body.title == undefined) {
-        res.status(400).send('title')
-        return
-    }
-
-    if(req.body.description == undefined) {
-        res.status(400).send('description')
-        return
-    }
-
-    if(req.body.mLimit == undefined) {
-        res.status(400).send('mLimit')
-        return
-    }
 
     if(query.typeName == undefined || query.title == undefined || query.description == undefined || query.mLimit == undefined || query.autoAccept == undefined) {
       res.status(400).send('This request must have \'typeName\', \'title\', \'description\', \'mLimit\' and \'autoAccept\'.')
@@ -63,7 +68,7 @@ async function createGroup(req: Request, res: Response) {
     }
   
     if(isNaN(parseInt(query.mLimit.toString()))){
-      res.status(400).send('mLimit must be a integer.')
+      res.status(400).send('mLimit must be an integer.')
       return
     }
   
@@ -85,7 +90,35 @@ async function createGroup(req: Request, res: Response) {
     }
 }
 
+
+async function deleteGroup(req: Request, res: Response) { 
+
+    if(!req.params.id) {
+        return res.status(400).send({
+            message: "No group id was specified."
+        });
+    }
+
+    if(isNaN(parseInt(req.params.id.toString()))){
+        res.status(400).send('id must be an integer.')
+        return
+    }
+
+    const data = await groups.deleteGroup(parseInt(req.params.id.toString()))
+
+    if(data){
+        res.status(200).send('The group was successfuly deleted.')
+      }
+      else{
+        res.status(500).send('Something went wrong. Try again!')
+    }
+
+}
+
+
 export default {
     getGroups,
-    createGroup
+    getGroup,
+    createGroup,
+    deleteGroup
 }

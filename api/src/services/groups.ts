@@ -61,6 +61,31 @@ async function getGroups() {
 }
 
 
+async function getGroup(groupId: Number) {
+
+  console.log("Get group");
+
+  if(!connectDatabase()){ 
+    return -1;
+  }
+
+  const query = {
+    text: 'SELECT * FROM groups WHERE id = $1',
+    values: [groupId],
+  }
+
+  try {
+    let res = await client.query(query)
+    return res.rows
+  }
+  catch (err) {
+    console.log(err);
+    return false
+  }
+
+}
+
+
 
 async function createGroup(group: Group){
 
@@ -86,7 +111,33 @@ async function createGroup(group: Group){
 }
 
 
+async function deleteGroup(groupId: Number){
+
+  console.log("Delete group");
+
+  if(!connectDatabase()){
+    return -1;
+  }
+
+  const query = {
+    text: 'DELETE FROM groups WHERE id = $1',
+    values: [groupId],
+  }
+
+  try{
+    let res = await client.query(query)
+    return true
+  }
+  catch(err){
+    console.log(err);
+    return false
+  }
+}
+
+
 export default {
   getGroups,
-  createGroup
+  getGroup,
+  createGroup,
+  deleteGroup
 }
