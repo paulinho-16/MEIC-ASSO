@@ -21,6 +21,10 @@ async function getGroups(req: Request, res: Response){
 
 async function createGroup(req: Request, res: Response) {
 
+
+   // const result = await groups.createGroup(req.);
+
+
     return res.status(200).send("Create from Group")
 }
 

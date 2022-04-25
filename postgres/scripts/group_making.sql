@@ -1,20 +1,11 @@
-create table GroupType (
-    id integer,
+create table Groups (
+    id SERIAL PRIMARY KEY,
     typeName varchar(100),
-    unique (id),
-    primary key (id)
-);
-
-create table GroupBody (
-    id integer,
     title varchar(100),
     description varchar(100),
-    membersNumberLimit integer,
-    autoAccept boolean,
-    typeId integer,
-    unique (id),
-    primary key (id),
-    foreign key (typeID) references GroupType(id)
+    mlimit integer,
+    autoAccept boolean
+   
 );
 
 create table Student (
@@ -51,7 +42,7 @@ create table Group_Student (
     isAccepted boolean,
     unique (id),
     primary key (id),
-    foreign key (groupId) references GroupBody(id),
+    foreign key (groupId) references Groups(id),
     foreign key (studentId) references Student(id)
 );
 
@@ -75,28 +66,11 @@ create table Student_Course (
     foreign key (courseId) references Course(id)
 );
 
--- INSERT DATA
-insert into
-    GroupBody
-values
-    (1, 'Study Group for Class X');
+INSERT INTO Groups (typeName,title, "description" , mlimit, autoAccept)
+VALUES ('estudo','feup-meic4-study','grupo de estudo para o 4 ano do meic', 4, true);
 
-
--- INSERT GROUP TYPES.
-
-insert into
-    GroupType
-values
-    (1, 'STUDY_GROUP');
-
-
-insert into
-    GroupType
-values
-    (2, 'CLASS_GROUP');
-
-
-insert into
-    GroupType
-values
-    (3, 'PROJECT_GROUP');
+INSERT INTO Groups (typeName,title, "description" , mlimit, autoAccept)
+VALUES ('trabalho','feup-leic3-FSI','grupo de trabalho para a unidade curricular de FSI do 3 ano do meic', 3, true);
+    
+    
+    

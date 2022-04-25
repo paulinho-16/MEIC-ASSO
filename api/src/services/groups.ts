@@ -9,18 +9,35 @@ const client = new Client({
 })
 
 
+async function connectDatabase(){
 
+  let connected = false;
+
+  client.connect()
+  .then(() => connected = true)
+  .catch((err) => console.error('connection error', err.stack))
+  
+  if(connected){
+
+    console.log("Connected")
+    return true;
+
+  }
+
+  return false;
+
+}
 
 async function getGroups() {
 
-  client.connect()
-  .then(() => console.log('connected'))
-  .catch((err) => console.error('connection error', err.stack))
-
-
   console.log("Get groups");
 
-  let query = "SELECT * from GroupBody";
+  if(!connectDatabase()){
+    
+    return -1;
+  }
+
+  let query = "SELECT * from groups";
 
   try {
     let res = await client.query(query)
@@ -33,7 +50,24 @@ async function getGroups() {
 
 }
 
+async function createGroup(){
+
+    console.log("Create group");
+
+    if(!connectDatabase()){
+      return -1;
+    }
+
+    
+
+  
+
+
+
+}
+
 
 export default {
-  getGroups
+  getGroups,
+  createGroup
 }
