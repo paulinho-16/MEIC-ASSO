@@ -1,5 +1,9 @@
 import { Client } from 'pg'
 
+import {
+  Group
+} from '@/@types/groups'
+
 const client = new Client({
   user: 'postgres',
   host: 'postgres',
@@ -32,6 +36,8 @@ async function connectDatabase(){
 
 }
 
+
+
 async function getGroups() {
 
   console.log("Get groups");
@@ -54,20 +60,29 @@ async function getGroups() {
 
 }
 
-async function createGroup(){
+
+
+async function createGroup(group: Group){
 
     console.log("Create group");
 
     if(!connectDatabase()){
       return -1;
     }
-
-    
-
   
-
-
-
+    const query = {
+      text: 'INSERT INTO Groups(typeName, title, "description", mlimit, autoAccept) VALUES($1, $2, $3, $4, $5)',
+      values: [group.typeName, group.title, group.description, group.mLimit, group.autoAccept],
+    }
+  
+    try{
+      let res = await client.query(query)
+      return true
+    }
+    catch(err){
+      console.log(err);
+      return false
+    }
 }
 
 
