@@ -9,6 +9,7 @@ const port = process.env.PORT || 3000
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(express.json())
 
 app.listen(port, () => {
   console.log(`Application running in port ${port}.`)
@@ -22,3 +23,4 @@ app.use('/jobs', routes.jobs)
 app.use('/meals', routes.meals)
 app.use('/news', routes.news)
 app.use('/status', routes.status)
+app.use('/groups', routes.groups)
