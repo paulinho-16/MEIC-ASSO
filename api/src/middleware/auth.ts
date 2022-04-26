@@ -14,7 +14,6 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
       return res.status(401).json({'message': 'Invalid Token'})
       
     req.body.user_id = decoded.username
-    console.log(decoded)
   })
 
   return next()
