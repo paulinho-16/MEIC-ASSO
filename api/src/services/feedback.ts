@@ -44,19 +44,20 @@ async function postMealReview(review:MealReview){
   }
 }
 
-function postTeacherReview(){
-    // client.connect()
-    // const query = {
-    //     text: 'INSERT INTO TeacherReview(description, author, date, class, teacher) VALUES($1, $2, $3, $4, $5)',
-    //     values: ['pessimo stor', 'Utilizador123', 'NOW()', 'SDIS', 'Souto'],
-    //   }
-    // client.query(query, (err, res) => {
-    //     if (err) {
-    //       console.log(err.stack)
-    //     } else {
-    //       console.log(res.rows[0])
-    //     }
-    // })
+async function postTeacherReview(review:TeacherReview){
+  const query = {
+    text: 'INSERT INTO TeacherReview(description, author, date, class, teacher) VALUES($1, $2, $3, $4, $5)',
+    values: [review.description, review.author, review.date, review.class, review.teacher],
+  }
+    
+  try{
+    let res = await client.query(query)
+    return true
+  }
+  catch(err){
+    console.log(err);
+    return false
+  }
 }
 
 async function getMealReview(review:MealReview){
@@ -106,7 +107,7 @@ async function getMealReview(review:MealReview){
       query += "rating=$" + i + " AND "
     }
 
-    query = query.slice(0, -4)
+    query = query.slice(0, -4) // remove last 'AND '
   }
 
   try{
@@ -119,22 +120,59 @@ async function getMealReview(review:MealReview){
   }
 }
 
-function getTeacherReview(){
+async function getTeacherReview(review:TeacherReview){
   console.log('get teacher reviews')
-      
-  client.connect()
-    .then(() => console.log('connected'))
-    .catch((err) => console.error('connection error', err.stack))
+  
+  let query = "SELECT * FROM TeacherReview"
+  let values = []
 
-  client.query('SELECT * FROM TeacherReview')
-    .then((res) => {
-      console.log(res.rows[0])
+  if(review.description != null || review.author != null || review.date != null || review.class != null || review.teacher != null ){
+    query += " WHERE "
+    let i = 0
 
-    })
-    .catch((err) => {
-      console.log(err.stack)
-    })
+    if(review.description != null) {
+      i++
+      values.push(review.description)
+      query += "description=$" + i + " AND "
+    }
+
+    if(review.author != null){
+      i++
+      values.push(review.author)
+      query += "author=$" + i + " AND "
+    }
+    
+    if(review.date != null){
+      i++
+      values.push(review.date)
+      query += "date=$" + i + " AND "
+    }
+    
+    if(review.class != null) {
+      i++
+      values.push(review.class)
+      query += "class=$" + i + " AND "
+    }
+    
+    if(review.teacher != null) {
+      i++
+      values.push(review.teacher)
+      query += "teacher=$" + i + " AND "
+    }
+
+    query = query.slice(0, -4) // remove last 'AND '
+  }
+
+  try{
+    let res = await client.query(query, values)
+    return res.rows
+  }
+  catch(err){
+    console.log(err);
+    return false
+  }
 }
+
 
 export default {
     getFeedback,

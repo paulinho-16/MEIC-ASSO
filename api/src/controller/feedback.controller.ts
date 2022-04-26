@@ -53,8 +53,35 @@ async function postMealReview(req: Request, res: Response) {
 }
 
 async function postTeacherReview(req: Request, res: Response) {
-  const data = fb.postTeacherReview()
-  res.send('postTeacherReview route not implemented.')
+  
+  //const data = fb.postTeacherReview()
+
+  const review:TeacherReview = req.body
+
+
+  if(review.description == undefined || review.author == undefined || review.class == undefined || review.teacher == undefined) {
+    res.status(400).send('This request must have a json with \'description\', \'author\', and \'class\'.')
+    return
+  }
+
+  if(review.author == '' || review.class == '' || review.teacher == '') {
+    res.status(400).send('\'author\', \'class\', \'teacher\' can\'t be empty strings.')
+    return
+  }
+
+  /*
+  if(isNaN(parseInt(review.rating.toString()))){
+    res.status(400).send('Rating must be a integer.')
+    return
+  }
+
+  if(parseInt(review.rating.toString()) > 5 || parseInt(review.rating.toString()) < 0) {
+    res.status(400).send('Rating must be between 0 and 5.')
+    return
+  }
+*/
+
+  res.send(review)
 }
 
 async function getMealReview(req: Request, res: Response) {
@@ -93,7 +120,7 @@ async function getMealReview(req: Request, res: Response) {
 }
 
 async function getTeacherReview(req: Request, res: Response) {
-  const data = fb.getTeacherReview()
+  //const data = fb.getTeacherReview()
   res.send('getTeacherReview route not implemented')
 }
 
