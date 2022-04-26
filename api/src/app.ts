@@ -16,6 +16,7 @@ app.listen(port, () => {
 })
 
 app.use('/associations', routes.associations)
+app.use('/library', routes.library)
 app.use('/authentication', routes.authentication)
 app.use('/hello', routes.hello)
 app.use('/feedback', routes.feedback)
