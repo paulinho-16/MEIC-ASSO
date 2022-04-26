@@ -6,6 +6,7 @@ import library from './library'
 import meals from './meals'
 import news from './news'
 import status from './status'
+import groups from './groups'
 
 export default {
   associations,
@@ -16,4 +17,5 @@ export default {
   meals,
   news,
   status,
+  groups
 }
