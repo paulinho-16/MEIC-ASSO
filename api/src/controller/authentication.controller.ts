@@ -6,7 +6,7 @@ import constants from '@/config/constants'
 import { User } from '@/@types/user'
 
 async function testAuth(req: Request, res: Response){
-  res.status(200).json({'message': 'Welcome to auth test'});
+  res.status(200).json({'message': req.body.user_id});
 }
 
 async function register(req: Request, res: Response){
