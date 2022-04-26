@@ -1,35 +1,84 @@
 import { Request, Response } from 'express'
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
+import authService from '@/services/authentication'
+import constants from '@/config/constants'
+import { User } from '@/@types/user'
 
-import constants from '../config/constants'
-import fetch from 'node-fetch';
+async function testAuth(req: Request, res: Response){
+  res.status(200).json({'message': 'Welcome to auth test'});
+}
 
-async function postAuthentication(req: Request, res: Response) {
-  const body = new URLSearchParams();
-  body.append('pv_login', req.body.username)
-  body.append('pv_password', req.body.password)
+async function register(req: Request, res: Response){
+  // Get user credentials
+  const { username, password } = req.body
 
-  const authRes = await fetch(constants.authUrl, {
-    method: 'POST',
-    body,
-  })
-
-  // TODO: save password of users in a secret database
-  // console.log(req.body.password)
-
-  if (authRes.status != 200) {
-    return res.status(authRes.status).json({ error: 'The username or password is incorrect!' })
+  // Check if all inputs were filled
+  if(!(username && password)){
+    res.status(400).json({'message': 'Username and password are required'})
   }
 
-  const [siSession, siSecurity] = authRes.headers.get('set-Cookie').split(",")
+  // Check if user already exists
+  const oldUser = await authService.getUser(username)
+  if (oldUser) {
+    return res.status(409).json({'message': 'User Already Exist. Please Login'})
+  } 
 
-  if (!siSecurity || !siSession) {
-    return res.status(403).json({ error: 'The username or password is incorrect!' })
+  //Encrypt user password
+  const encryptedPassword = await bcrypt.hash(password, 10)
+
+  // Create token
+  const token = jwt.sign(
+    { username: username },
+    constants.secret,
+    { expiresIn: "30days"}
+  )
+  
+  const user: User = {
+    username: username,
+    password: encryptedPassword,
+    token: token
   }
 
-  const token = `${siSession};${siSecurity}`
-  return res.status(200).json({ token })
+  const data = await authService.insertUser(user)
+  if(data){
+    res.status(201).json(user)
+  }
+  else{
+    res.status(500).json({'message': 'Something went wrong. Try again!'})
+  }
+}
+
+async function login(req: Request, res: Response){
+    // Get user credentials
+    const { username, password } = req.body
+
+    // Check if all inputs were filled
+    if(!(username && password)){
+      res.status(400).json({'message': 'Username and password are required'})
+    }
+  
+    // Validate if user exist in our database
+    const user = await authService.getUser(username)
+
+    if (user && (await bcrypt.compare(password, user.password))) {
+      // Create token
+      const token = jwt.sign(
+        { username: username },
+        constants.secret,
+        { expiresIn: '30days', }
+      );
+      user.token = token;
+  
+      res.status(200).json(user);
+    }
+    else {
+      res.status(400).json({'message': 'Invalid Credentials'})
+    }
 }
 
 export default {
-  postAuthentication,
+  register,
+  login,
+  testAuth
 }

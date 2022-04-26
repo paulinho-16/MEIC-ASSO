@@ -2,8 +2,8 @@ import fetch from 'node-fetch'
 import cheerio from 'cheerio'
 import constants from '@/config/constants'
 
-async function fetchLibraryOcupation() {
-  const ocupation = [
+async function fetchLibraryOccupation() {
+  const occupation = [
     { floor: 1, max: 69, current: 0 },
     { floor: 2, max: 105, current: 0 },
     { floor: 3, max: 105, current: 0 },
@@ -14,9 +14,9 @@ async function fetchLibraryOcupation() {
 
   const data = await fetchSpreadData()
 
-  ocupation.forEach((floor, i) => floor.current = data ? data[i] || 0 : 0)
+  occupation.forEach((floor, i) => (floor.current = data ? data[i] || 0 : 0))
 
-  return ocupation
+  return occupation
 }
 
 async function fetchSpreadData() {
@@ -24,17 +24,18 @@ async function fetchSpreadData() {
 
   const body = await response.text()
 
-  const $ = cheerio.load(body);
+  const $ = cheerio.load(body)
 
   const data = $('[property="og:description"]').attr('content')
 
-  const ocupations = data?.split('\n')
-    .filter((line) => line.startsWith('Piso'))
-    .map((line) => parseInt(line.split(',')[1]))
-  
-  return ocupations
+  const occupations = data
+    ?.split('\n')
+    .filter(line => line.startsWith('Piso'))
+    .map(line => parseInt(line.split(',')[1]))
+
+  return occupations
 }
 
 export default {
-  fetchLibraryOcupation,
+  fetchLibraryOccupation,
 }

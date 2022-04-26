@@ -7,30 +7,30 @@ async function getRestaurantMeals(req: Request, res: Response) {
   let code
 
   switch (restaurant) {
-    case "grill":
+    case 'grill':
       code = [2]
       break
-    case "cafeteria":
+    case 'cafeteria':
       code = [4]
       break
-    case "inegi":
+    case 'inegi':
       code = [5]
       break
-    case "canteen":
+    case 'canteen':
       code = [6, 7]
       break
-    case "inesctec":
+    case 'inesctec':
       code = [8]
       break
     default:
-      return res.status(404).json({error: "Unknown restaurant"})
+      return res.status(404).json({ error: 'Unknown restaurant' })
   }
 
   try {
     const meals = await mealsService.fetchMealsData(code)
     return res.status(200).json(meals)
-  } catch ({message}) {
-    return res.status(503).json({error: message})
+  } catch ({ message }) {
+    return res.status(503).json({ error: message })
   }
 }
 

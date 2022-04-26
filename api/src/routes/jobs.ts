@@ -1,6 +1,6 @@
 import express from 'express'
 
-import controller from '@/controller/news.controller'
+import controller from '../controller/jobs.controller'
 
 const router = express.Router()
 
