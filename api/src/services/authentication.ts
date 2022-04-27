@@ -2,10 +2,10 @@ import { User } from '@/@types/user'
 import { Pool } from "pg";
 
 const pool = new Pool({
-    host: process.env.DB_HOST ||"postgres",
-    user: process.env.DB_USER ||"postgres",
-    database: process.env.DB_SCHEMA ||"postgres",
-    password: process.env.DB_PASSWORD ||"postgres",
+    host: "postgres",
+    user: "postgres",
+    database: "postgres",
+    password: "postgres",
     port: 5432
 });
   
@@ -13,7 +13,7 @@ const connectToDB = async () => {
     try {
         await pool.connect()
     } catch (err) {
-        setTimeout(connectToDB, 1000);
+        setTimeout(connectToDB, 2000);
         console.log('Error connecting to db. Retrying in 1s')
     }
 }

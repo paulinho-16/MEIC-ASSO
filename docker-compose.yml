@@ -6,11 +6,6 @@ services:
       context: ./api
       dockerfile: Dockerfile
     restart: always
-    environment:
-      DB_SCHEMA: postgres
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_HOST: postgres
     volumes:
       - ./api/src:/usr/src/app/api/src
     container_name: ts-node-docker
