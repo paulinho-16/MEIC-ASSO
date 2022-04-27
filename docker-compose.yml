@@ -5,11 +5,14 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
+    restart: always
     volumes:
       - ./api/src:/usr/src/app/api/src
     container_name: ts-node-docker
     ports:
       - 8080:3000
+    depends_on: 
+      - postgres
 
   postgres:
     container_name: postgres
