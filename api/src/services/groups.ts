@@ -5,6 +5,9 @@ import {
 } from '@/@types/groups'
 
 
+
+
+
 // Database Setup Methods.
 
 const client = new Client({
@@ -38,6 +41,9 @@ async function connectDatabase(){
   return false;
 
 }
+
+
+
 
 
 
@@ -144,6 +150,9 @@ async function deleteGroup(groupId: Number){
 
 
 
+
+
+
 // Member Endpoints.
 
 
@@ -170,6 +179,33 @@ async function getGroupMembers(groupId: Number) {
   }
 
 }
+
+
+
+async function getGroupStudentRelation(groupId: Number, userId: Number) { 
+
+  if(!connectDatabase()){ 
+    return -1;
+  }
+
+  const query = {
+    text: 'SELECT * FROM Group_Student WHERE groupId = $1 AND studentId = $2',
+    values: [groupId, userId],
+  }
+
+  try {
+    let res = await client.query(query)
+    return res.rows
+  }
+  catch (err) {
+    console.log(err);
+    return false
+  }
+  
+}
+
+
+
 
 
 async function createGroupMember(groupId: Number, userId: Number) { 
@@ -202,7 +238,7 @@ async function createGroupMember(groupId: Number, userId: Number) {
   }
 
 
-  // Create group - student relation.
+  // Create group-student relation.
 
   const query = {
     text: 'INSERT INTO Group_Student (groupId, studentId) VALUES ($1, $2)',
@@ -210,11 +246,8 @@ async function createGroupMember(groupId: Number, userId: Number) {
   }
 
   try {
-
     let res = await client.query(query)
-
     return await getGroupStudentRelation(groupId, userId)
-
   }
   catch (err) {
     console.log(err);
@@ -226,27 +259,55 @@ async function createGroupMember(groupId: Number, userId: Number) {
 
 
 
-async function getGroupStudentRelation(groupId: Number, userId: Number) { 
+async function deleteGroupMember(groupId: Number, userId: Number) { 
 
   if(!connectDatabase()){ 
     return -1;
   }
 
+
+  // Check if student is already member.
+  const isStudentAlreadyMember = await getGroupStudentRelation(groupId, userId)
+
+  if (isStudentAlreadyMember == false) {
+    return "The student is not a member of this group."
+  }
+
+  // Check if student exists. 
+  const student = await getStudent(userId)
+
+  if (student == false) {
+    return "Student does not exist."
+  }
+
+
+  // Check if group exists.
+  const group = await getGroup(groupId)
+
+  if (group == false) {
+    return "Group does not exist."
+  }
+
+
+  // Delete group-student relation.
+
   const query = {
-    text: 'SELECT * FROM Group_Student WHERE groupId = $1 AND studentId = $2',
+    text: 'DELETE FROM Group_Student WHERE groupId = $1 AND studentId = $2',
     values: [groupId, userId],
   }
 
   try {
     let res = await client.query(query)
-    return res.rows
+    return await getGroupStudentRelation(groupId, userId)
   }
   catch (err) {
     console.log(err);
     return false
   }
-  
+
 }
+
+
 
 
 
@@ -285,6 +346,9 @@ export default {
   getGroup,
   createGroup,
   deleteGroup,
+
   getGroupMembers,
-  createGroupMember
+  getGroupStudentRelation,
+  createGroupMember,
+  deleteGroupMember
 }

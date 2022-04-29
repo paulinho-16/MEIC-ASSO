@@ -24,6 +24,8 @@ router.delete('/:id', controller.deleteGroup)
 
 router.get('/:id/members', controller.getGroupMembers)
 
+router.get('/:id/members/:userId', controller.getGroupMember)
+
 router.post('/:id/members/:userId', controller.createGroupMember)
 
 router.delete('/:id/members/:userId', controller.deleteGroupMember)

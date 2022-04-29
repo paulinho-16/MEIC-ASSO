@@ -147,6 +147,27 @@ async function getGroupMembers(req: Request, res: Response) {
 
 }
 
+async function getGroupMember(req: Request, res: Response) {  
+
+    if (req.params.id == undefined) {
+        res.status(400).send('You need to pass an group Id.')
+    }
+
+    if(isNaN(parseInt(req.params.id.toString()))){
+        res.status(400).send('Group Id must be an integer.')
+        return
+    }
+
+    const data = await groups.getGroupStudentRelation(parseInt(req.params.id.toString()), parseInt(req.params.userId.toString()))
+
+    if(data){
+        res.json(data)
+    } else {
+        res.status(500).send('Something went wrong. Try again!')
+    }
+
+}
+
 
 
 async function createGroupMember(req: Request, res: Response) {  
@@ -167,6 +188,8 @@ async function createGroupMember(req: Request, res: Response) {
 
     const data = await groups.createGroupMember(parseInt(req.params.id.toString()), parseInt(req.params.userId.toString()))
 
+    // TODO: Fix Status Code for errors.
+
     if(data){
         res.json(data)
     } else {
@@ -179,6 +202,30 @@ async function createGroupMember(req: Request, res: Response) {
 
 async function deleteGroupMember(req: Request, res: Response) {  
 
+    if (req.params.id == undefined || req.params.userId == undefined) {
+        res.status(400).send('You need to pass an group id and a user id.')
+    }
+
+    if(isNaN(parseInt(req.params.id.toString()))){
+        res.status(400).send('Group Id must be an integer.')
+        return
+    }
+
+    if(isNaN(parseInt(req.params.userId.toString()))){
+        res.status(400).send('User Id must be an integer.')
+        return
+    }
+
+    const data = await groups.deleteGroupMember(parseInt(req.params.id.toString()), parseInt(req.params.userId.toString()))
+
+    // TODO: Fix Status Code for errors.
+
+    if(data){
+        res.status(204).json(data)
+    } else {
+        res.status(500).send('Something went wrong. Try again!')
+    }
+
 }
 
 
@@ -188,7 +235,9 @@ export default {
     getGroup,
     createGroup,
     deleteGroup,
+
     getGroupMembers,
+    getGroupMember,
     createGroupMember,
     deleteGroupMember
 }
