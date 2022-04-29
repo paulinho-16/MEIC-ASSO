@@ -4,6 +4,9 @@ import {
   Group
 } from '@/@types/groups'
 
+
+// Database Setup Methods.
+
 const client = new Client({
   user: 'postgres',
   host: 'postgres',
@@ -36,6 +39,10 @@ async function connectDatabase(){
 
 }
 
+
+
+
+// Group Methods.
 
 
 async function getGroups() {
@@ -135,9 +142,44 @@ async function deleteGroup(groupId: Number){
 }
 
 
+
+
+// Member Endpoints.
+
+
+async function getGroupMembers(groupId: Number) {
+
+  console.log("Get group");
+
+  if(!connectDatabase()){ 
+    return -1;
+  }
+
+  const query = {
+    text: 'SELECT * FROM Group_Student WHERE groupId = $1',
+    values: [groupId],
+  }
+
+  try {
+    let res = await client.query(query)
+    return res.rows
+  }
+  catch (err) {
+    console.log(err);
+    return false
+  }
+
+}
+
+
+
+
+
+
 export default {
   getGroups,
   getGroup,
   createGroup,
-  deleteGroup
+  deleteGroup,
+  getGroupMembers
 }

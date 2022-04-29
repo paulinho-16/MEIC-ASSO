@@ -6,6 +6,10 @@ import {
     Group
 } from '@/@types/groups'
 
+
+
+// Groups Endpoints.
+
 async function getGroups(req: Request, res: Response) {
 
     const data = await groups.getGroups()
@@ -116,9 +120,54 @@ async function deleteGroup(req: Request, res: Response) {
 }
 
 
+
+
+
+// Members Endpoints.
+
+
+async function getGroupMembers(req: Request, res: Response) {  
+
+    if (req.params.id == undefined) {
+        res.status(400).send('You need to pass an group Id.')
+    }
+
+    if(isNaN(parseInt(req.params.id.toString()))){
+        res.status(400).send('Group Id must be an integer.')
+        return
+    }
+
+    const data = await groups.getGroupMembers(parseInt(req.params.id.toString()))
+
+    if(data){
+        res.json(data)
+      }
+      else{
+        res.status(500).send('Something went wrong. Try again!')
+    }
+
+}
+
+
+
+async function createGroupMember(req: Request, res: Response) {  
+
+}
+
+
+
+async function deleteGroupMember(req: Request, res: Response) {  
+
+}
+
+
+
 export default {
     getGroups,
     getGroup,
     createGroup,
-    deleteGroup
+    deleteGroup,
+    getGroupMembers,
+    createGroupMember,
+    deleteGroupMember
 }
