@@ -14,6 +14,18 @@ services:
     depends_on: 
       - postgres
 
+  mongo_chat:
+    container_name: mongo_chat
+    restart: always
+    image: mongo:latest
+    volumes:
+      - ./chat/mongo:/data/db
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password12345678
+
   chat-server:
     build:
       context: ./chat/server
@@ -24,6 +36,12 @@ services:
     container_name: chat-server
     ports:
       - 8082:3000
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password12345678
+      - MONGODB_URI=mongodb://mongo_chat:27017/
+    depends_on:
+      - mongo_chat
 
   chat-client:
     build:
@@ -32,6 +50,7 @@ services:
     volumes:
       - ./chat/client/src:/usr/src/app/chat/client/src/
       - /usr/src/app/chat/client/node_modules
+
     container_name: chat-client
     ports:
       - 5500:5500

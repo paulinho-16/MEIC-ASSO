@@ -9,6 +9,9 @@ import UserManager from '@/userManager';
 
 const app = express();
 app.use(cors());
+
+require('./initMongo')();
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
