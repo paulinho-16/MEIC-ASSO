@@ -149,7 +149,7 @@ async function deleteGroup(groupId: Number){
 
 async function getGroupMembers(groupId: Number) {
 
-  console.log("Get group");
+  console.log("Get group members");
 
   if(!connectDatabase()){ 
     return -1;
@@ -158,6 +158,110 @@ async function getGroupMembers(groupId: Number) {
   const query = {
     text: 'SELECT * FROM Group_Student WHERE groupId = $1',
     values: [groupId],
+  }
+
+  try {
+    let res = await client.query(query)
+    return res.rows
+  }
+  catch (err) {
+    console.log(err);
+    return false
+  }
+
+}
+
+
+async function createGroupMember(groupId: Number, userId: Number) { 
+
+  if(!connectDatabase()){ 
+    return -1;
+  }
+
+
+  // Check if student is already member.
+  const isStudentAlreadyMember = await getGroupStudentRelation(groupId, userId)
+
+  if (isStudentAlreadyMember != false) {
+    return "The student is already a member of this group."
+  }
+
+  // Check if student exists. 
+  const student = await getStudent(userId)
+
+  if (student == false) {
+    return "Student does not exist."
+  }
+
+
+  // Check if group exists.
+  const group = await getGroup(groupId)
+
+  if (group == false) {
+    return "Group does not exist."
+  }
+
+
+  // Create group - student relation.
+
+  const query = {
+    text: 'INSERT INTO Group_Student (groupId, studentId) VALUES ($1, $2)',
+    values: [groupId, userId],
+  }
+
+  try {
+
+    let res = await client.query(query)
+
+    return await getGroupStudentRelation(groupId, userId)
+
+  }
+  catch (err) {
+    console.log(err);
+    return false
+  }
+
+}
+
+
+
+
+async function getGroupStudentRelation(groupId: Number, userId: Number) { 
+
+  if(!connectDatabase()){ 
+    return -1;
+  }
+
+  const query = {
+    text: 'SELECT * FROM Group_Student WHERE groupId = $1 AND studentId = $2',
+    values: [groupId, userId],
+  }
+
+  try {
+    let res = await client.query(query)
+    return res.rows
+  }
+  catch (err) {
+    console.log(err);
+    return false
+  }
+  
+}
+
+
+
+
+// Student Methods
+
+async function getStudent(userId: Number) { 
+
+  if(!connectDatabase()){ 
+    return -1;
+  }
+
+  const query = {
+    text: 'SELECT * FROM Student WHERE id = $1',
+    values: [userId],
   }
 
   try {
@@ -181,5 +285,6 @@ export default {
   getGroup,
   createGroup,
   deleteGroup,
-  getGroupMembers
+  getGroupMembers,
+  createGroupMember
 }
