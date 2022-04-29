@@ -5,11 +5,14 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
+    restart: always
     volumes:
       - ./api/src:/usr/src/app/api/src
     container_name: ts-node-docker
     ports:
       - 8080:3000
+    depends_on: 
+      - postgres
 
   chat-server:
     build:
@@ -46,7 +49,7 @@ services:
       - ./postgres/data:/home/postgres/data
     ports:
       - "5432:5432"
-
+      
   adminer:
     container_name: adminer
     image: adminer
