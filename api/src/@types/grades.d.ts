@@ -14,6 +14,8 @@ export type MajorGrades = {
 }
 
 export type InspectMajor = {
-  url: string
   name: string
+  pv_fest_id: number
+  academicPathUrl: string
+  planPositionUrl: string
 }

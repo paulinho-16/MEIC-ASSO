@@ -1,17 +1,17 @@
 import axios from 'axios'
 import * as cheerio from 'cheerio'
 import { Request, Response } from 'express'
-import { studentPageHTML, academicPathPageHTML, planPositionPageHTML2 } from '../config/data'
+import { studentPageHTML, planPositionPageHTML2 } from '../config/data'
 import { InspectMajor, Grade, MajorGrades } from '../@types/grades'
-import studentPageBaseUrl from '../config/constants'
-
-const MAIN_URL = 'https://sigarra.up.pt/feup'
+import constants from '../config/constants'
 
 async function get(req: Request, res: Response) {
   const mock = true
   const api = axios.create({ responseEncoding: 'binary' })
   const studentNumber = req.params.studentNumber
-  const studentPageUrl = mock ? 'https://google.com' : `${studentPageBaseUrl}=${studentNumber}`
+  const studentPageUrl = mock
+    ? 'https://google.com'
+    : `${constants.studentPageBaseUrl}=${studentNumber}`
 
   let inspectMajors: InspectMajor[]
   const studentGrades: MajorGrades[] = []
@@ -27,12 +27,7 @@ async function get(req: Request, res: Response) {
     })
     .then(() => {
       for (const major of inspectMajors) {
-        const academicPathHTML = academicPathPageHTML // TODO: get academicPathHTML using major.url
-        console.log('Major: ', major.name)
-        console.log('Major URL: ', major.url)
-
-        const planPositionURL = cheerioGetPlanPositionURL(academicPathHTML)
-        console.log('Plan Position URL: ', planPositionURL, '\n')
+        console.log(major)
 
         const planPositionHTML = planPositionPageHTML2 // TODO: get planPositionHTML using planPositionURL
         const majorGrades = cheerioScrapeGrades(major.name, planPositionHTML)
@@ -61,11 +56,15 @@ function cheerioGetInspectMajors(studentHTML: string): InspectMajor[] {
     const clickableMajor = $(activeMajor).find('.estudante-lista-curso-nome a').text()
     const unclickableMajor = $(activeMajor).find('.estudante-lista-curso-nome').text()
 
-    if (href)
+    if (href) {
+      const pv_fest_id: number = parseInt(href.split('pv_fest_id=')[1])
       inspectMajors.push({
-        url: href ? `${MAIN_URL}/${href}` : null,
         name: clickableMajor || unclickableMajor,
+        pv_fest_id: pv_fest_id,
+        academicPathUrl: href ? `${constants.academicPathBaseUrl}=${pv_fest_id}` : null,
+        planPositionUrl: href ? `${constants.planPositionBaseUrl}=${pv_fest_id}` : null,
       })
+    }
   }
 
   // collect previous majors
@@ -76,35 +75,19 @@ function cheerioGetInspectMajors(studentHTML: string): InspectMajor[] {
     const name = $(historyMajorNames[i]).text()
     const href = $(historyMajorHrefs[i]).attr('href')
 
-    if (href)
+    if (href) {
+      const pv_fest_id: number = parseInt(href.split('pv_fest_id=')[1])
       inspectMajors.push({
-        url: href ? `${MAIN_URL}/${href}` : null,
         name: name,
+        pv_fest_id: pv_fest_id,
+        academicPathUrl: href ? `${constants.academicPathBaseUrl}=${pv_fest_id}` : null,
+        planPositionUrl: href ? `${constants.planPositionBaseUrl}=${pv_fest_id}` : null,
       })
+    }
   }
 
   if (inspectMajors.length === 0) return null
   else return inspectMajors
-}
-
-/**
- * @brief get url to student's plan position in a major
- */
-function cheerioGetPlanPositionURL(academicPathHTML: string): string {
-  const $ = cheerio.load(academicPathHTML.toString())
-  const target = $('.estudantes-curso-lista-opcoes')
-  let href
-
-  $(target)
-    .find('li.estudantes-curso-opcao a')
-    .each(function (index, element) {
-      if ($(element).text() === 'Posição no plano') {
-        href = $(element).attr('href')
-        return
-      }
-    })
-
-  return `${MAIN_URL}/${href}`
 }
 
 /**
