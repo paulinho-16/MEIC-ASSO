@@ -1,8 +1,6 @@
 import 'module-alias/register'
 import 'source-map-support/register'
-
 import express from 'express'
-
 import routes from '@/routes'
 
 const app = express()
@@ -20,3 +18,4 @@ app.use('/jobs', routes.jobs)
 app.use('/meals', routes.meals)
 app.use('/news', routes.news)
 app.use('/status', routes.status)
+app.use('/profile', routes.profile)
