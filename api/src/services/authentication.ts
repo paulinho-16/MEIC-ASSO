@@ -53,8 +53,18 @@ async function getUserByEmail(email: string) {
   return result.rows[0]
 }
 
+async function updatePassword(id: number, password: string) {
+  const query = {
+    text: 'UPDATE UniUser SET password=$1 WHERE id=$2',
+    values: [password, id],
+  }
+
+  await pool.query(query)
+}
+
 export default {
   getUserByEmail,
   getUserById,
   insertUser,
+  updatePassword
 }

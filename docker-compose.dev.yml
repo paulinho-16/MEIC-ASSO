@@ -6,8 +6,14 @@ services:
       context: ./api
       dockerfile: Dockerfile.dev
     restart: always
-    env_file:
-      - ./api/.env
+    environment:
+      - SECRET_KEY="#%&b6Fr*JDjnBn6ZyiexmW%Aus^!dM2gs^nVtJ5W*YhXW9KEFw"
+      - PASS_RESET_KEY="g6nhHbBKetu1IpQj3icPs3lH7mgo7tv5iRBOzrGq9n94Q1OaUY"
+      - SESSION_TOKEN_LIFETIME=259200
+      - RESET_TOKEN_LIFETIME=600
+      - MAIL_USER=${MAIL_USER}
+      - MAIL_PASS=${MAIL_PASS}
+      - SERVER_URL="https://uni4all.servehttp.com"
     volumes:
       - ./api/src:/usr/src/app/api/src
     container_name: ts-node-docker
