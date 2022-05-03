@@ -6,6 +6,8 @@ services:
       context: ./api
       dockerfile: Dockerfile.dev
     restart: always
+    env_file:
+      - ./api/.env
     volumes:
       - ./api/src:/usr/src/app/api/src
     container_name: ts-node-docker

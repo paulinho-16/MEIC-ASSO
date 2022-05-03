@@ -2,12 +2,14 @@ import 'module-alias/register'
 import 'source-map-support/register'
 import express from 'express'
 import routes from '@/routes'
+import cookieParser from 'cookie-parser'
 
 const app = express()
 const port = process.env.PORT || 3000
 
 app.use(express.json())
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
 
 app.listen(port, () => {
   console.log(`Application running in port ${port}.`)
