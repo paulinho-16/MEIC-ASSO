@@ -79,7 +79,7 @@ async function login(req: Request, res: Response) {
   const id = user.id
   const token = jwt.sign({ id }, process.env.SECRET_KEY, { expiresIn: constants.tokenLifetime })
   res.cookie('jwt', token, { httpOnly: true, maxAge: constants.tokenLifetime * 1000 })
-  return res.status(200).json({ message: 'Login with success', token: token })
+  return res.status(200).json({ message: 'Login with success', token: token, id: id})
 }
 
 function logout(req: Request, res: Response) {
