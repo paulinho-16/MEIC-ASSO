@@ -17,7 +17,7 @@ async function verifyToken(req: Request, res: Response, next: NextFunction) {
     // Verify if user exists
     let user
     try {
-      user = await userService.getUserById(req.body.id)
+      user = await userService.existsUserById(req.body.id)
     } catch (err) {
       return res.status(400).json({ message: `Get user failed with error: ${err}` })
     }
@@ -32,7 +32,7 @@ async function verifyAuthorization(req: Request, res: Response, next: NextFuncti
   const userId = req.params.id
 
   if (!token || !userId) {
-    return res.status(403).json({ message: 'A token and a resource identifier are required' })
+    return res.status(403).json({ message: 'A token is required' })
   }
 
   jwt.verify(token, process.env.SECRET_KEY, async (err: Error | null, decoded: { id: number }) => {
@@ -46,7 +46,7 @@ async function verifyAuthorization(req: Request, res: Response, next: NextFuncti
     // Verify if user exists
     let user
     try {
-      user = await userService.getUserById(req.body.id)
+      user = await userService.existsUserById(req.body.id)
     } catch (err) {
       return res.status(400).json({ message: `Get user failed with error: ${err}` })
     }

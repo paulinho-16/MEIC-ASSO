@@ -3,11 +3,30 @@ import bcrypt from 'bcrypt'
 import userService from '@/services/user'
 
 async function deleteUser(req: Request, res: Response) {
-  res.cookie('jwt', '', { maxAge: 0 })
+  // Get password
+  const { password } = req.body
+
+  // Check if password was provided
+  if (!password)
+    return res.status(400).json({ message: 'Password is required' })
+
+  // Get user
+  let user
+  try {
+    user = await userService.getUserById(req.body.id)
+  } catch (err) {
+    return res.status(400).json({ message: `Get user failed with error: ${err}` })
+  }
+  if (!user) return res.status(400).json({ message: 'The user does not exist' })
+
+  // Validate password
+  if (!(await bcrypt.compare(password, user.password)))
+    return res.status(400).json({ message: 'Invalid password' })
 
   // Delete User
   try {
     await userService.deleteUserById(req.body.id)
+    res.cookie('jwt', '', { maxAge: 0 })
     return res.status(201).json({ message: 'Account deleted with success' })
   } catch (err) {
     return res.status(400).json({ message: 'Account deletion failed' })
@@ -15,11 +34,28 @@ async function deleteUser(req: Request, res: Response) {
 }
 
 async function updatePassword(req: Request, res: Response) {
-  // Get password
-  const { password } = req.body
+  // Get old and new password
+  const { oldPassword, newPassword } = req.body
 
-  // Encrypt user password
-  const encryptedPassword = await bcrypt.hash(password, 10)
+  // Check if all inputs were filled
+  if (!oldPassword || !newPassword)
+    return res.status(400).json({ message: 'New and old passwords are required' })
+
+  // Get user
+  let user
+  try {
+    user = await userService.getUserById(req.body.id)
+  } catch (err) {
+    return res.status(400).json({ message: `Get user failed with error: ${err}` })
+  }
+  if (!user) return res.status(400).json({ message: 'The user does not exist' })
+
+  // Validate password
+  if (!(await bcrypt.compare(oldPassword, user.password)))
+    return res.status(400).json({ message: 'Invalid current password' })
+
+  // Encrypt user new password
+  const encryptedPassword = await bcrypt.hash(newPassword, 10)
 
   try {
     await userService.updatePassword(req.body.id, encryptedPassword)
