@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
-import authService from '@/services/authentication'
+import userService from '@/services/user'
 
-const verifyToken = (req: Request, res: Response, next: NextFunction) => {
+async function verifyToken(req: Request, res: Response, next: NextFunction) {
   const token = req.cookies.jwt
 
   if (!token) {
@@ -17,16 +17,16 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     // Verify if user exists
     let user
     try {
-      user = await authService.getUserById(req.body.id)
+      user = await userService.getUserById(req.body.id)
     } catch (err) {
       return res.status(400).json({ message: `Get user failed with error: ${err}` })
     }
-
-    // Verify existence of user
     if (!user) return res.status(400).json({ message: 'The user does not exist' })
 
     next()
   })
 }
 
-export default verifyToken
+export default {
+  verifyToken
+}

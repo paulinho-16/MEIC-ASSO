@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
-import authService from '@/services/authentication'
+import userService from '@/services/user'
 import constants from '@/config/constants'
 import { User } from '@/@types/user'
 
@@ -15,7 +15,7 @@ async function register(req: Request, res: Response) {
 
   // Check if all inputs were filled
   if (!(email && password))
-    return res.status(400).json({ message: 'Username and password are required' })
+    return res.status(400).json({ message: 'Email and password are required' })
 
   // Check if email is valid
   const regexp = new RegExp(
@@ -26,7 +26,7 @@ async function register(req: Request, res: Response) {
 
   // Check if user already exists
   try {
-    const oldUser = await authService.getUserByEmail(email)
+    const oldUser = await userService.getUserByEmail(email)
     if (oldUser) return res.status(409).json({ message: 'This user already exists. Please Login' })
   } catch (err) {
     return res.status(400).json({ message: `Get user failed with error: ${err}` })
@@ -43,7 +43,7 @@ async function register(req: Request, res: Response) {
   // Insert user
   let id = -1
   try {
-    id = await authService.insertUser(user)
+    id = await userService.insertUser(user)
     if (id == -1) return res.status(400).json({ message: `Insert user failed` })
   } catch (err) {
     return res.status(400).json({ message: `Insert user failed with error: ${err}` })
@@ -58,12 +58,12 @@ async function login(req: Request, res: Response) {
 
   // Check if all inputs were filled
   if (!(email && password))
-    return res.status(400).json({ message: 'Username and password are required' })
+    return res.status(400).json({ message: 'Email and password are required' })
 
   // Validate if user exists
   let user
   try {
-    user = await authService.getUserByEmail(email)
+    user = await userService.getUserByEmail(email)
   } catch (err) {
     return res.status(400).json({ message: `Get user failed with error: ${err}` })
   }
@@ -82,7 +82,7 @@ async function login(req: Request, res: Response) {
   return res.status(200).json({ message: 'Login with success', token: token })
 }
 
-async function logout(req: Request, res: Response) {
+function logout(req: Request, res: Response) {
   // Delete cookie
   res.cookie('jwt', '', { maxAge: 0 })
 
