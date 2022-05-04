@@ -6,8 +6,9 @@ services:
       context: ./api
       dockerfile: Dockerfile.dev
     restart: always
-    env_file:
-      - ./api/.env
+    environment:
+      - SECRET_KEY="#%&b6Fr*JDjnBn6ZyiexmW%Aus^!dM2gs^nVtJ5W*YhXW9KEFw"
+      - SESSION_TOKEN_LIFETIME=259200
     volumes:
       - ./api/src:/usr/src/app/api/src
     container_name: ts-node-docker
