@@ -4,6 +4,6 @@ import controller from '@/controller/curricular-unit.controller'
 
 const router = express.Router()
 
-router.get('/', controller.getCurricularUnitInfo)
+router.get('/:id', controller.getCurricularUnitInfo)
 
 export default router

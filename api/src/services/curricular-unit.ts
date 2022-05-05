@@ -27,8 +27,7 @@ function getTextualInfo($: cheerio.CheerioAPI, target: cheerio.Cheerio<cheerio.E
   return text.trim()
 }
 
-async function getCurricularUnitInfo() {
-  const curricularUnitID = 486249
+async function getCurricularUnitInfo(curricularUnitID: string) {
   const curricularUnitUrl = `${constants.curricularUnitUrl}?pv_ocorrencia_id=${curricularUnitID}`
 
   const promise = axios.get(curricularUnitUrl, { responseEncoding: 'binary' })
