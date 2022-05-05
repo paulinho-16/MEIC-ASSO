@@ -1,6 +1,12 @@
 export type Course = {
   acronym: string
+  year: number
   credits: number
+  hours: number
+}
+
+export type Teacher = {
+  name: string
 }
 
 export type CurricularUnit = {
@@ -8,4 +14,8 @@ export type CurricularUnit = {
   acronym: string
   name: string
   courses: Course[]
+  teachers: Teacher[]
+  language: string
+  objectives: string
+  evaluation: string
 }
