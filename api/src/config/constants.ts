@@ -5,4 +5,5 @@ export default {
     'https://docs.google.com/spreadsheets/d/1gZRbEX4y8vNW7vrl15FCdAQ3pVNRJw_uRZtVL6ORP0g/edit#gid=75324596',
   servicesUrl: 'https://sigarra.up.pt/feup/pt/uni_geral.nivel_list?pv_nivel_id=4',
   mainUrl: 'https://sigarra.up.pt/feup/pt',
-}
+  secret: 'uni4all-secret-key'
+  }
