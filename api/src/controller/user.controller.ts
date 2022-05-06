@@ -138,6 +138,11 @@ async function updatePassword(req: Request, res: Response) {
   if (!(await bcrypt.compare(oldPassword, user.password)))
     return res.status(400).json({ message: 'Invalid current password' })
 
+  // Check if password has errors
+  const passwordErrors = getPasswordErrors(newPassword);
+  if (passwordErrors !== null)
+    return res.status(400).json({ message: `The new password is not strong enough: ${passwordErrors}` })
+
   // Encrypt user new password
   const encryptedPassword = await bcrypt.hash(newPassword, 10)
 
