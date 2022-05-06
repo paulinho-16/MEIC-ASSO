@@ -8,6 +8,7 @@ import jobs from './jobs'
 import library from './library'
 import meals from './meals'
 import news from './news'
+import profile from './profile'
 import status from './status'
 
 export default {
@@ -21,5 +22,6 @@ export default {
   library,
   meals,
   news,
-  status
+  profile,
+  status,
 }

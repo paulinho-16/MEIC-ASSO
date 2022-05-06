@@ -52,3 +52,20 @@ For communication with the client, the chat server needs to send messages autono
 - chat server
   - **backend** node.js
   - **websockets** socket.io
+
+## Operations
+
+### Non Functional Requirements
+
+#### Fitness Functions
+
+Based on [ISO 25010](https://iso25000.com/index.php/en/iso-25000-standards/iso-25010).
+
+|Name                                                                   |Type       |Quality Attribute|Min Value|Ideal Value|Max Value|Automation                                                                                                                                                                  |
+|-----------------------------------------------------------------------|-----------|-----------------|---------|-----------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|The number of users online per time unit                               |Performance|Capacity         |10 000   |-          |-        |Not on production, connect Y amount of machines                                                                                                                             |
+|Latency: Time spent to send a chat message                             |Performance|Time Behaviour   |-        |1sec       |10sec    |Send message to self every X seconds and calculate the time between sending and receiving                                                                                   |
+|Channel capacity: The number of messages we are able to send per X time|Performance|Capacity         |1/5sec   |1/1sec     |-        |Send a set of messages in a given rate to self, and calculate the time between sending and receiving, and verify if this time is still in between the acceptable time bounds|
+|Respond to unusual number of simultaneous requests (such as DDOS)      |Reliability|Availability     |-        |20 000 000 |-        |Try a DDoS attack every X time                                                                                                                                              |
+|Have a relatively high uptime with MTBF / MTRS                         |Reliability|Maturity         |99%      |100%       |-        |Try to connect to the chat server every X seconds, checking if its up or down, calculating MTBF / MTRS                                                                      |
+|CVE Analysis, should not use libraries with known vulnerabilities      |Security   |-                |-        |0          |0        |Defect tracking software                                                                                                                                                    |
