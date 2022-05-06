@@ -8,8 +8,9 @@ import jobs from './jobs'
 import library from './library'
 import meals from './meals'
 import news from './news'
-import profile from './profile'
 import status from './status'
+import services from './services'
+import profile from './profile'
 
 export default {
   associations,
@@ -22,6 +23,7 @@ export default {
   library,
   meals,
   news,
-  profile,
   status,
+  services,
+  profile,
 }
