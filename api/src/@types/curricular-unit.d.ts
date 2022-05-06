@@ -17,5 +17,12 @@ export type CurricularUnit = {
   teachers: Teacher[]
   language: string
   objectives: string
+  program: string
+  mandatoryLiterature: string
+  teachingMethodsAndActivities: string
   evaluation: string
+  outcomesAndCompetences?: string
+  workingMethod?: string
+  requirements?: string
+  complementaryBibliography?: string
 }
