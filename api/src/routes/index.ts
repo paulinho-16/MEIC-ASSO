@@ -1,25 +1,27 @@
-import authentication from './authentication'
 import associations from './associations'
-import hello from './hello'
+import authentication from './authentication'
+import curricularUnit from './curricular-unit'
 import feedback from './feedback'
+import groups from './groups'
+import hello from './hello'
 import jobs from './jobs'
 import library from './library'
 import meals from './meals'
 import news from './news'
-import status from './status'
 import profile from './profile'
-import groups from './groups'
+import status from './status'
 
 export default {
   associations,
   authentication,
-  hello,
+  curricularUnit,
   feedback,
+  groups,
+  hello,
   jobs,
   library,
   meals,
   news,
-  status,
   profile,
-  groups
+  status,
 }
