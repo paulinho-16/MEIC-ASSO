@@ -11,7 +11,6 @@ import news from './news'
 import status from './status'
 import services from './services'
 import profile from './profile'
-import status from './status'
 
 export default {
   associations,
@@ -27,5 +26,4 @@ export default {
   status,
   services,
   profile,
-  status,
 }
