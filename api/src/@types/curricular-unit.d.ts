@@ -25,20 +25,20 @@ export type CurricularUnit = {
   name: string
   courses: Course[]
   teachers: Teacher[]
-  language: string
-  objectives: string
-  program: string
-  mandatoryLiterature: string
-  teachingMethodsAndActivities: string
-  evaluation: string
-  assessmentComponents: AssessmentComponent[]
-  courseUnitsTimes: CourseUnitTime[]
-  examEligibility: string
-  calculationFormula: string
-  specialAssessment: string
-  classificationImprovement: string
+  language?: string
+  objectives?: string
   outcomesAndCompetences?: string
   workingMethod?: string
   requirements?: string
+  program?: string
+  mandatoryLiterature?: string
   complementaryBibliography?: string
+  teachingMethodsAndActivities?: string
+  evaluation?: string
+  assessmentComponents: AssessmentComponent[]
+  courseUnitsTimes: CourseUnitTime[]
+  examEligibility?: string
+  calculationFormula?: string
+  specialAssessment?: string
+  classificationImprovement?: string
 }

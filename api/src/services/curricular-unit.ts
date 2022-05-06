@@ -134,14 +134,6 @@ async function getCurricularUnitInfo(curricularUnitID: string) {
         teachers.push(teacher)
       })
 
-      // Get the teaching language, objectives, program, mandatory literature, teaching method and learning activities, evaluation type
-      const language = $(languageTarget).text().trim()
-      let objectives = getTextualInfo($, objectivesTarget)
-      let program = getTextualInfo($, programTarget)
-      let mandatoryLiterature = getTextualInfo($, mandatoryLiteratureTarget)
-      let teachingMethodsAndActivities = getTextualInfo($, teachingMethodsAndActivitiesTarget)
-      let evaluation = getTextualInfo($, evaluationTarget)
-
       // Get the assessment components
       const assessmentComponents: AssessmentComponent[] = []
       assessmentComponentsTarget.each((i, e) => {
@@ -164,12 +156,6 @@ async function getCurricularUnitInfo(curricularUnitID: string) {
         courseUnitsTimes.push(unit)
       })
 
-      // Get the eligibility for exams, calculation formula of final grade, special assessment (TE, DA, ...) and classification improvement
-      let examEligibility = getTextualInfo($, examEligibilityTarget)
-      let calculationFormula = getTextualInfo($, calculationFormulaTarget)
-      let specialAssessment = getTextualInfo($, specialAssessmentTarget)
-      let classificationImprovement = getTextualInfo($, classificationImprovementTarget)
-
       // Group the information of the curricular unit
       const curricularUnit: CurricularUnit = {
         code: code,
@@ -177,37 +163,39 @@ async function getCurricularUnitInfo(curricularUnitID: string) {
         name: name,
         courses: courses,
         teachers: Array.from(new Set(teachers)),
-        language: language,
-        objectives: objectives,
-        program: program,
-        mandatoryLiterature: mandatoryLiterature,
-        teachingMethodsAndActivities: teachingMethodsAndActivities,
-        evaluation: evaluation,
         assessmentComponents: assessmentComponents,
         courseUnitsTimes: courseUnitsTimes,
-        examEligibility: examEligibility,
-        calculationFormula: calculationFormula,
-        specialAssessment: specialAssessment,
-        classificationImprovement: classificationImprovement
       }
 
       // Get the optional fields information
-      if (outcomesAndCompetencesTarget.length != 0) {
-        let outcomesAndCompetences = getTextualInfo($, outcomesAndCompetencesTarget)
-        curricularUnit.outcomesAndCompetences = outcomesAndCompetences
-      }
-      if (workingMethodTarget.length != 0) {
-        let workingMethod = getTextualInfo($, workingMethodTarget)
-        curricularUnit.workingMethod = workingMethod
-      }
-      if (requirementsTarget.length != 0) {
-        let requirements = getTextualInfo($, requirementsTarget)
-        curricularUnit.requirements = requirements
-      }
-      if (complementaryBibliographyTarget.length != 0) {
-        let complementaryBibliography = getTextualInfo($, complementaryBibliographyTarget)
-        curricularUnit.complementaryBibliography = complementaryBibliography
-      }
+      if (languageTarget)
+        curricularUnit.language = $(languageTarget).text().trim()
+      if (objectivesTarget.length != 0)
+        curricularUnit.objectives = getTextualInfo($, objectivesTarget)
+      if (programTarget.length != 0)
+        curricularUnit.program = getTextualInfo($, programTarget)
+      if (mandatoryLiteratureTarget.length != 0)
+        curricularUnit.mandatoryLiterature = getTextualInfo($, mandatoryLiteratureTarget)
+      if (teachingMethodsAndActivitiesTarget.length != 0)
+        curricularUnit.teachingMethodsAndActivities = getTextualInfo($, teachingMethodsAndActivitiesTarget)
+      if (evaluationTarget.length != 0)
+        curricularUnit.evaluation = getTextualInfo($, evaluationTarget)
+      if (outcomesAndCompetencesTarget.length != 0)
+        curricularUnit.outcomesAndCompetences = getTextualInfo($, outcomesAndCompetencesTarget)
+      if (workingMethodTarget.length != 0)
+        curricularUnit.workingMethod = getTextualInfo($, workingMethodTarget)
+      if (requirementsTarget.length != 0)
+        curricularUnit.requirements = getTextualInfo($, requirementsTarget)
+      if (complementaryBibliographyTarget.length != 0)
+        curricularUnit.complementaryBibliography = getTextualInfo($, complementaryBibliographyTarget)
+      if (examEligibilityTarget.length != 0)
+        curricularUnit.examEligibility = getTextualInfo($, examEligibilityTarget)
+      if (calculationFormulaTarget.length != 0)
+        curricularUnit.calculationFormula = getTextualInfo($, calculationFormulaTarget)
+      if (specialAssessmentTarget.length != 0)
+        curricularUnit.specialAssessment = getTextualInfo($, specialAssessmentTarget)
+      if (classificationImprovementTarget.length != 0)
+        curricularUnit.classificationImprovement = getTextualInfo($, classificationImprovementTarget)
 
       return curricularUnit
     })
