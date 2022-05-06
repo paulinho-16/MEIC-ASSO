@@ -8,6 +8,7 @@ import jobs from './jobs'
 import library from './library'
 import meals from './meals'
 import news from './news'
+import user from './user'
 import status from './status'
 import services from './services'
 import profile from './profile'
@@ -17,12 +18,13 @@ export default {
   authentication,
   curricularUnit,
   feedback,
-  groups,
   hello,
   jobs,
   library,
   meals,
   news,
+  groups,
+  user,
   status,
   services,
   profile,

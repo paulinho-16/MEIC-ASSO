@@ -1,7 +1,7 @@
 import axios from 'axios'
 import * as cheerio from 'cheerio'
 import { Request, Response } from 'express'
-import { profilePageHTML } from '../config/data'
+//import { profilePageHTML } from '../config/data'
 
 async function get(req: Request, res: Response) {
     const mock = true
@@ -15,7 +15,7 @@ async function get(req: Request, res: Response) {
         .get(studentPageUrl)
         .then(response => {
 
-            const studentHTML = mock ? profilePageHTML : response.data
+            const studentHTML = response.data //mock ? profilePageHTML : response.data
             const $ = cheerio.load(studentHTML.toString())
             const target = $('#conteudoinner > div:nth-child(8) > div:nth-child(1)')
             const targetBody = $(target).find('tbody')
