@@ -4,6 +4,8 @@ import constants from '@/config/constants'
 import {
   Course,
   Teacher,
+  AssessmentComponent,
+  CourseUnitTime,
   CurricularUnit
 } from '@/@types/curricular-unit'
 
@@ -11,21 +13,21 @@ import {
 function getTextualInfo($: cheerio.CheerioAPI, target: cheerio.Cheerio<cheerio.Element>) {
   let text = ''
   do {
-    if (target.get(0).tagName === 'br') text += '\n'
+    if (target.get(0) && target.get(0).tagName === 'br') text += '\n'
     else if (target.get(0).tagName != 'h3') { // text inside tags
       text += target.text().trim()
       if (target.text().trim()) text += ' '
     }
 
     let nextSibling = target.get(0).nextSibling
-    while (nextSibling.nodeType === 3) { // loose text blocks
+    while (nextSibling && nextSibling.nodeType === 3) { // loose text blocks
       text += $(nextSibling).text().trim()
       if ($(nextSibling).text().trim()) text += ' '
       nextSibling = nextSibling.nextSibling
     }
 
     target = target.next()
-  } while (target && target.get(0).tagName != 'h3')
+  } while (target.get(0) && target.get(0).tagName != 'h3')
   return text.trim()
 }
 
@@ -62,6 +64,24 @@ async function getCurricularUnitInfo(curricularUnitID: string) {
       })
       const evaluationTarget = $('h3').filter(function () {
         return $(this).text() === 'Tipo de avaliação';
+      })
+      const assessmentComponentsTarget = $('h3').filter(function () {
+        return $(this).text() === 'Componentes de Avaliação';
+      }).next().find('tr').slice(1);
+      const courseUnitsTimesTarget = $('h3').filter(function () {
+        return $(this).text() === 'Componentes de Ocupação';
+      }).next().find('tr').slice(1);
+      const examEligibilityTarget = $('h3').filter(function () {
+        return $(this).text() === 'Obtenção de frequência';
+      })
+      const calculationFormulaTarget = $('h3').filter(function () {
+        return $(this).text() === 'Fórmula de cálculo da classificação final';
+      })
+      const specialAssessmentTarget = $('h3').filter(function () {
+        return $(this).text() === 'Avaliação especial (TE, DA, ...)';
+      })
+      const classificationImprovementTarget = $('h3').filter(function () {
+        return $(this).text() === 'Melhoria de classificação';
       })
       const teachingMethodsAndActivitiesTarget = $('h3').filter(function () {
         return $(this).text() === 'Métodos de ensino e atividades de aprendizagem';
@@ -122,6 +142,34 @@ async function getCurricularUnitInfo(curricularUnitID: string) {
       let teachingMethodsAndActivities = getTextualInfo($, teachingMethodsAndActivitiesTarget)
       let evaluation = getTextualInfo($, evaluationTarget)
 
+      // Get the assessment components
+      const assessmentComponents: AssessmentComponent[] = []
+      assessmentComponentsTarget.each((i, e) => {
+        const component: AssessmentComponent = {
+          designation: $($(e).find('td')[0]).text(),
+          weight: parseInt($($(e).find('td')[1]).text())
+        }
+
+        assessmentComponents.push(component)
+      })
+
+      // Get the amount of time allocated to each course unit
+      const courseUnitsTimes: CourseUnitTime[] = []
+      courseUnitsTimesTarget.each((i, e) => {
+        const unit: CourseUnitTime = {
+          designation: $($(e).find('td')[0]).text(),
+          hours: parseInt($($(e).find('td')[1]).text())
+        }
+
+        courseUnitsTimes.push(unit)
+      })
+
+      // Get the eligibility for exams, calculation formula of final grade, special assessment (TE, DA, ...) and classification improvement
+      let examEligibility = getTextualInfo($, examEligibilityTarget)
+      let calculationFormula = getTextualInfo($, calculationFormulaTarget)
+      let specialAssessment = getTextualInfo($, specialAssessmentTarget)
+      let classificationImprovement = getTextualInfo($, classificationImprovementTarget)
+
       // Group the information of the curricular unit
       const curricularUnit: CurricularUnit = {
         code: code,
@@ -134,7 +182,13 @@ async function getCurricularUnitInfo(curricularUnitID: string) {
         program: program,
         mandatoryLiterature: mandatoryLiterature,
         teachingMethodsAndActivities: teachingMethodsAndActivities,
-        evaluation: evaluation
+        evaluation: evaluation,
+        assessmentComponents: assessmentComponents,
+        courseUnitsTimes: courseUnitsTimes,
+        examEligibility: examEligibility,
+        calculationFormula: calculationFormula,
+        specialAssessment: specialAssessment,
+        classificationImprovement: classificationImprovement
       }
 
       // Get the optional fields information
