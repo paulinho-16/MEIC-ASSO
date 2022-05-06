@@ -5,6 +5,40 @@ import userService from '@/services/user'
 import constants from '@/config/constants'
 import { User } from '@/@types/user'
 
+function getPasswordErrors(password: string): string | null {
+  const errors = []
+
+  // At least 6 characters
+  const characters = password.length
+  if (characters === 0)
+    errors.push("no characters")
+  else if (characters < 6)
+    errors.push(`only ${password.length} character${characters == 1 ? "" : "s"}`)
+
+  // One numeric digit
+  if (!password.match(/^.*\d.*$/))
+    errors.push("no digits")
+
+  // One uppercase character
+  if (!password.match(/^.*(?=.*[A-Z]).*$/))
+    errors.push("no uppercase letters")
+
+  // One lowercase character
+  if (!password.match(/^.*(?=.*[a-z]).*$/))
+    errors.push("no lowercase letters")
+
+  // No errors
+  if (errors.length === 0)
+    return null
+
+  // Build a message with all the errors of the password
+  let errorMessage = errors.pop()
+  if (errors.length !== 0)
+    errorMessage = errors.join(", ") + " and " + errorMessage
+
+  return `it needs at least 6 characters, one numeric digit, one uppercase and one lowercase letter, but it has ${errorMessage}`
+}
+
 async function testAuth(req: Request, res: Response) {
   return res.status(200).json({ message: req.body.id })
 }
@@ -31,6 +65,11 @@ async function register(req: Request, res: Response) {
   } catch (err) {
     return res.status(400).json({ message: `Get user failed with error: ${err}` })
   }
+
+  // Check if password has errors
+  const passwordErrors = getPasswordErrors(password);
+  if (passwordErrors !== null)
+    return res.status(400).json({ message: `The password is not strong enough: ${passwordErrors}` })
 
   // Encrypt user password
   const encryptedPassword = await bcrypt.hash(password, 10)
