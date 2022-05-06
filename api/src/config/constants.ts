@@ -4,4 +4,5 @@ export default {
   libraryUrl:
     'https://docs.google.com/spreadsheets/d/1gZRbEX4y8vNW7vrl15FCdAQ3pVNRJw_uRZtVL6ORP0g/edit#gid=75324596',
   tokenLifetime: parseInt(process.env.SESSION_TOKEN_LIFETIME),
-}
+  curricularUnitUrl: 'https://sigarra.up.pt/feup/pt/ucurr_geral.ficha_uc_view',
+  }
