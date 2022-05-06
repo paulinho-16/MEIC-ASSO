@@ -17,7 +17,7 @@ function getTextualInfo($: cheerio.CheerioAPI, target: cheerio.Cheerio<cheerio.E
       if ($(nextSibling).text().trim()) text += ' '
       nextSibling = nextSibling.nextSibling
     }
-    if (target.get(0).tagName === 'p') { // text paragraph
+    if (target.get(0).tagName != 'br' && target.get(0).tagName != 'h3') { // text inside tags
       text += target.text().trim()
       if (target.text().trim()) text += ' '
     }
