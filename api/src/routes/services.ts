@@ -4,6 +4,6 @@ import controller from '../controller/services.controller'
 
 const router = express.Router()
 
-router.get('/', controller.get)
+router.get('/:id', controller.getServices)
 
 export default router
