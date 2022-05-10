@@ -12,6 +12,7 @@ import user from './user'
 import status from './status'
 import services from './services'
 import profile from './profile'
+import examsCalendar from './exams-calendar'
 
 export default {
   associations,
@@ -28,4 +29,5 @@ export default {
   status,
   services,
   profile,
+  examsCalendar,
 }
