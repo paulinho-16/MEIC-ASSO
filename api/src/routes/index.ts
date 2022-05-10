@@ -27,10 +27,7 @@ export default {
   groups,
   user,
   status,
-<<<<<<< HEAD
   services,
   profile,
-=======
   calendar
->>>>>>> endpoint/calendar
 }
