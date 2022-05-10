@@ -7,12 +7,38 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
+    environment:
+      - SECRET_KEY="#%&b6Fr*JDjnBn6ZyiexmW%Aus^!dM2gs^nVtJ5W*YhXW9KEFw"
+      - SESSION_TOKEN_LIFETIME=259200
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres
     volumes:
       - ./api/src:/usr/src/app/api/src
     ports:
       - 8080:3000
-    depends_on:
+    depends_on: 
       - postgres
+
+  chat-server:
+    build:
+      context: ./chat/server
+      dockerfile: Dockerfile
+    volumes:
+      - ./chat/server/src:/usr/src/app/chat/server/src/
+    container_name: chat-server
+    ports:
+      - 8082:3000
+
+  chat-client:
+    build:
+      context: ./chat/client
+      dockerfile: Dockerfile
+    volumes:
+      - ./chat/client/src:/usr/src/app/chat/client/src/
+    container_name: chat-client
+    ports:
+      - 5500:5500
+    depends_on:
+      - chat-server
 
   postgres:
     container_name: postgres
