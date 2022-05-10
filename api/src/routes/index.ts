@@ -12,6 +12,7 @@ import user from './user'
 import status from './status'
 import services from './services'
 import profile from './profile'
+import calendar from './calendar'
 
 export default {
   associations,
@@ -26,6 +27,10 @@ export default {
   groups,
   user,
   status,
+<<<<<<< HEAD
   services,
   profile,
+=======
+  calendar
+>>>>>>> endpoint/calendar
 }
