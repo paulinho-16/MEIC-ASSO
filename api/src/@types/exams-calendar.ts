@@ -1,7 +1,7 @@
 export type Exam = {
-    subject?: string
+    acronym: string
     time?: string
-    room?: string
+    rooms?: string
   }
 
 export type ExamsCalendar = {

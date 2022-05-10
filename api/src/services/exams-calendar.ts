@@ -16,7 +16,7 @@ async function getExamsCalendar(courseID: string) {
 
 			// Get Targets
 			const courseTarget = $('a[name=ancora-conteudo] + h1 + h2')
-			const examsTarget = $('td[class=exame]') // not working
+			const examsTarget = $('td.exame') // not working
 
 			// Get Name
 			const course = $(courseTarget).text()
@@ -25,11 +25,13 @@ async function getExamsCalendar(courseID: string) {
 			const exams: Exam[] = []
 			examsTarget.each((i, e) => {
 				const exam: Exam = {
-					subject: $($(e).find('a')[0]).text(),
-
+					acronym: $($(e).find('a')[0]).text(),
+					time: "",
+					rooms: $($(e).find('span.exame-sala')[0]).text(),
 				}
 				exams.push(exam)
 			})
+			
 
 			// Get Exams Calendar
 			const examsCalendar: ExamsCalendar = {
