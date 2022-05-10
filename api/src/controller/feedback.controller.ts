@@ -7,10 +7,6 @@ import {
   TeacherReview,
 } from '@/@types/reviews'
 
-// async function get(req: Request, res: Response) {
-//   const data = fb.getFeedback(2)
-//   res.send('Feedback route')
-// }
 
 async function postMealReview(req: Request, res: Response) {
   const query = req.query
@@ -69,19 +65,21 @@ async function postTeacherReview(req: Request, res: Response) {
     return
   }
 
-  /*
-  if(isNaN(parseInt(review.rating.toString()))){
-    res.status(400).send('Rating must be a integer.')
-    return
+  const reviewToPost: TeacherReview = {
+    description: review.description.toString(),
+    author: review.author.toString(),
+    date: new Date(),
+    class: review.class.toString(),
+    teacher: review.teacher.toString()
   }
 
-  if(parseInt(review.rating.toString()) > 5 || parseInt(review.rating.toString()) < 0) {
-    res.status(400).send('Rating must be between 0 and 5.')
-    return
+  const data = await fb.postTeacherReview(reviewToPost)
+  if (data) {
+    res.send("Success")
   }
-*/
-
-  res.send(review)
+  else {
+    res.status(500).send("Something went wrong. Try again!")
+  }
 }
 
 async function getMealReview(req: Request, res: Response) {

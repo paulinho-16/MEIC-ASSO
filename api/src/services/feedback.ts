@@ -1,5 +1,6 @@
 import { Client } from 'pg'
 
+
 import {
     MealReview,
     TeacherReview,
@@ -30,7 +31,7 @@ async function postMealReview(review:MealReview){
   console.log('post meal review')
   
   const query = {
-    text: 'INSERT INTO MealReview(description, author, date, restaurant, dish, rating) VALUES($1, $2, $3, $4, $5, $6)',
+    text: 'INSERT INTO meal_review(description, author, date, restaurant, dish, rating) VALUES($1, $2, $3, $4, $5, $6)',
     values: [review.description, review.author, review.date, review.restaurant, review.dish, review.rating],
   }
 
@@ -46,7 +47,7 @@ async function postMealReview(review:MealReview){
 
 async function postTeacherReview(review:TeacherReview){
   const query = {
-    text: 'INSERT INTO TeacherReview(description, author, date, class, teacher) VALUES($1, $2, $3, $4, $5)',
+    text: 'INSERT INTO teacher_review(description, author, date, class, teacher) VALUES($1, $2, $3, $4, $5)',
     values: [review.description, review.author, review.date, review.class, review.teacher],
   }
     
@@ -63,7 +64,7 @@ async function postTeacherReview(review:TeacherReview){
 async function getMealReview(review:MealReview){
   console.log('get meal reviews')
   
-  let query = "SELECT * FROM MealReview"
+  let query = "SELECT * FROM meal_review"
   let values = []
 
   if(review.description != null || review.author != null || review.date != null || review.restaurant != null || review.dish != null || review.rating != null)  {
@@ -123,7 +124,7 @@ async function getMealReview(review:MealReview){
 async function getTeacherReview(review:TeacherReview){
   console.log('get teacher reviews')
   
-  let query = "SELECT * FROM TeacherReview"
+  let query = "SELECT * FROM teacher_review"
   let values = []
 
   if(review.description != null || review.author != null || review.date != null || review.class != null || review.teacher != null ){

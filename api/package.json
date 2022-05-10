@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "tsc-watch --onSuccess \"node dist/app.js\"",
     "start": "node dist/app.js",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\""
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "migrate": "node-pg-migrate"
   },
   "_moduleAliases": {
     "@": "dist"
@@ -34,11 +35,12 @@
   "dependencies": {
     "axios": "^0.26.1",
     "cheerio": "^1.0.0-rc.10",
+    "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "iconv-lite": "^0.6.3",
     "module-alias": "^2.2.2",
     "node-fetch": "2",
-    "pg": "^8.7.3",
+    "node-pg-migrate": "^6.2.1",
     "source-map-support": "^0.5.21"
   }
 }
