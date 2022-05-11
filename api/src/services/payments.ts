@@ -28,20 +28,21 @@ function parseTable(table: cheerio.Element): PaymentsTable {
     const payment: Payment = {}
 
     let offset = 0
-    let text = ""
+
     $(row).find('td').each(function(j, cell) {
+      let text = ""
+      
       if ($(cell).attr('class')=="l") {
         text = "("+$(cell).find('img').attr('alt')+")"
       } else {
         text = $(cell).text().trim()
-
       }
 
-      if (text == "") return 
-
-      payment[tableHeadingsWithColspans[j + offset]] = payment[tableHeadingsWithColspans[j + offset]] 
-        ? payment[tableHeadingsWithColspans[j + offset]] + " | " + text
-        : text
+      if (payment[tableHeadingsWithColspans[j + offset]]) {
+        if (text != "") payment[tableHeadingsWithColspans[j + offset]] += " | " + text
+      } else {
+        payment[tableHeadingsWithColspans[j + offset]] = text
+      }
 
       offset += parseInt($(cell).attr('colspan') || "1") - 1
     })
