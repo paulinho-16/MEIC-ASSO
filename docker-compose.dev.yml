@@ -33,7 +33,7 @@ services:
       context: ./chat/client
       dockerfile: Dockerfile.dev
     volumes:
-      - ./chat/client/src:/usr/src/app/chat/client/src/
+      - ./chat/client/:/usr/src/app/chat/client/
       - /usr/src/app/chat/client/node_modules
     container_name: chat-client
     ports:
