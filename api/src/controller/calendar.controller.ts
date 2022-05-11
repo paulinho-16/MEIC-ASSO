@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 async function getCalendarEvents(req: Request, res: Response) {
     // TODO: connect with database (not set up yet)
 
-    var event = {
+    const event = {
         'summary': 'Google I/O 2015',
         'location': '800 Howard St., San Francisco, CA 94103',
         'description': 'A chance to hear more about Google\'s developer products.',
@@ -38,15 +38,15 @@ async function addCalendarEvent(req: Request, res: Response) {
         return
     }
 
-    var summary = req.query["summary"];
-    var location = req.query["location"];
-    var description = req.query["description"];
-    var start_time = req.query["start_time"];
-    var start_time_timezone = req.query["start_time_timezone"];
-    var end_time = req.query["end_time"];
-    var end_time_timezone = req.query["end_time_timezone"];
+    const summary = req.query["summary"];
+    const location = req.query["location"];
+    const description = req.query["description"];
+    const start_time = req.query["start_time"];
+    const start_time_timezone = req.query["start_time_timezone"];
+    const end_time = req.query["end_time"];
+    const end_time_timezone = req.query["end_time_timezone"];
 
-    var event = {
+    const event = {
         'summary': summary,
         'location': location,
         'description': description,
