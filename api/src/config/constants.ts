@@ -8,4 +8,5 @@ export default {
   servicesUrl: 'https://sigarra.up.pt/feup/pt/uni_geral.nivel_list?pv_nivel_id=4',
   mainUrl: 'https://sigarra.up.pt/feup/pt',
   curricularUnitUrl: 'https://sigarra.up.pt/feup/pt/ucurr_geral.ficha_uc_view',
-  }
+  studentSchedulePageBaseUrl: 'https://sigarra.up.pt/feup/pt/hor_geral.estudantes_view',
+}
