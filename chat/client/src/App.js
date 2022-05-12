@@ -1,11 +1,12 @@
 import React from 'react'
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { UsernameProvider } from './hooks/username'
-import Chat from './pages/Chat'
+import Groups from "./pages/Groups";
 
 function App() {
 	return (
 		<UsernameProvider>
-			<Chat />
+			<Groups />
 		</UsernameProvider>
 	)
 }
