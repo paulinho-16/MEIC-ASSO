@@ -2,5 +2,4 @@
 **.DS_Store
 .vscode
 .idea
-chat/mongo
 .env
