@@ -4,23 +4,26 @@ export async function sendEmail(email: string, subject: string, text: string) {
 
     try {
         const transporter = nodemailer.createTransport({
-            host: 'smtp.mailtrap.io',
-            port: 2525,
+            service:'gmail',
             auth: {
                 user: process.env.MAIL_USER,
                 pass: process.env.MAIL_PASS
             }
         });
 
-        const info = await transporter.sendMail({
-            from: "Uni4All",
+        await transporter.sendMail({
+            from: process.env.MAIL_USER,
             to: email,
             subject: subject,
             text: text,
+        }, (err, _info) => {
+            if(err){
+                return {status:false, message: err}
+            } else {
+                return {status: true, message: "Email sent with success"}
+            }
         });
-        
-        return info.response
-    } catch (error) {
-        throw Error(`Couldn't send email: ${error}`)
+    } catch (err) {
+        return {status:false, message: err}
     }
 }

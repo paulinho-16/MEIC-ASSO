@@ -7,8 +7,8 @@ services:
       dockerfile: Dockerfile
     restart: always
     environment:
-      - SECRET_KEY=#%&b6Fr*JDjnBn6ZyiexmW%Aus^!dM2gs^nVtJ5W*YhXW9KEFw
-      - PASS_RESET_KEY=g6nhHbBKetu1IpQj3icPs3lH7mgo7tv5iRBOzrGq9n94Q1OaUY
+      - JWT_GENERATOR_KEY=${JWT_GENERATOR_KEY}
+      - JWT_PASS_RESET_KEY=${JWT_PASS_RESET_KEY}
       - SESSION_TOKEN_LIFETIME=259200
       - RESET_TOKEN_LIFETIME=600
       - MAIL_USER=${MAIL_USER}

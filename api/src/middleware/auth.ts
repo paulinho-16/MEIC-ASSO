@@ -9,7 +9,7 @@ function verifySessionToken(req: Request, res: Response, next: NextFunction){
     return res.status(403).json({ message: 'A token is required for authentication' })
   }
 
-  jwt.verify(token, process.env.SECRET_KEY, async (err: Error | null, decoded: { id: number }) => {
+  jwt.verify(token, process.env.JWT_GENERATOR_KEY, async (err: Error | null, decoded: { id: number }) => {
     if (err) return res.status(401).json({ message: 'Invalid Token' })
 
     req.body.id = decoded.id
@@ -36,7 +36,7 @@ function verifyPasswordResetToken(req: Request, res: Response, next: NextFunctio
     return res.status(403).json({ message: 'A token is required for authentication' })
   }
 
-  jwt.verify(token, process.env.PASS_RESET_KEY, async (err: Error | null, decoded: { id: number }) => {
+  jwt.verify(token, process.env.JWT_PASS_RESET_KEY, async (err: Error | null, decoded: { id: number }) => {
     if (err) return res.status(401).json({ message: 'Invalid Token' })
 
     req.body.id = decoded.id

@@ -78,7 +78,7 @@ async function login(req: Request, res: Response) {
 
   // Create token
   const id = user.id
-  const token = jwt.sign({ id }, process.env.SECRET_KEY, { expiresIn: constants.tokenLifetime })
+  const token = jwt.sign({ id }, process.env.JWT_GENERATOR_KEY, { expiresIn: constants.tokenLifetime })
   res.cookie('jwt', token, { httpOnly: true, maxAge: constants.tokenLifetime * 1000 })
   return res.status(200).json({ message: 'Login with success', token: token })
 }
@@ -107,7 +107,7 @@ async function forgotPassword(req: Request, res: Response){
   }
   if (!user) return res.status(400).json({ message: 'The user does not exist' })
   
-  const token = jwt.sign({ id: user.id }, process.env.PASS_RESET_KEY, { expiresIn: constants.passResetTokenLifetime })
+  const token = jwt.sign({ id: user.id }, process.env.JWT_PASS_RESET_KEY, { expiresIn: constants.passResetTokenLifetime })
   const link = `${process.env.SERVER_URL}/authentication/resetPassword/${token}`;
   
   try {

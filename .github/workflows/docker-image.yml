@@ -21,6 +21,11 @@ jobs:
         context_name: 'uni4all-remote'
         ssh_cert: ${{ secrets.SSH_CERT }}
         ssh_key: ${{ secrets.SSH_KEY }}
+      env:
+        MAIL_USER: ${{ secrets.MAIL_USER }}
+        MAIL_PASS: ${{ secrets.MAIL_PASS }}
+        JWT_GENERATOR_KEY: ${{ secrets.JWT_GENERATOR_KEY }}
+        JWT_PASS_RESET_KEY: ${{ secrets.JWT_PASS_RESET_KEY }}
 
     - run: docker context use uni4all-remote
     - run: COMPOSE_DOCKER_CLI_BUILD=0 docker-compose up -d --build
