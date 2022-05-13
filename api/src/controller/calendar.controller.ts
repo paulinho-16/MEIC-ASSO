@@ -1,5 +1,61 @@
 import { Request, Response } from 'express'
 
+const marketing = {
+  'acronym': 'MK',
+  'week day': 'Tuesday',
+  'time': '14:00-17:00',
+  'room': 'B020',
+  'teacher': 'GB',
+  'type': 'TP'
+}
+
+const gestao_empresas = {
+  'acronym': 'GEE',
+  'week day': 'Thursday',
+  'time': '14:00-17:00',
+  'room': 'B006',
+  'teacher': 'MR',
+  'type': 'TP'
+}
+
+const cpm1 = {
+  'acronym': 'CPM',
+  'week day': 'Tuesday',
+  'time': '09:00-10:30',
+  'room': 'B229',
+  'teacher': 'APM',
+  'type': 'TP'
+}
+
+const cpm2 = {
+  'acronym': 'CPM',
+  'week day': 'Thursday',
+  'time': '15:30-17:00',
+  'room': 'B343',
+  'teacher': 'APM',
+  'type': 'TP'
+}
+
+const sigarra_timetable = [
+  marketing, gestao_empresas, cpm1, cpm2
+]
+
+const evaluation_assessment = {
+  'acronym': 'MK',
+  'day': '21 junho',
+  'time': '11:30-13:30',
+  'rooms': 'B113'
+} 
+
+function parseJSONTimetable (sigarra_timetable){
+  for(let i = 0; i  < sigarra_timetable.length; i++){
+    
+  }
+} 
+
+
+
+
 async function getCalendarEvents(req: Request, res: Response) {
     // TODO: connect with database (not set up yet)
 

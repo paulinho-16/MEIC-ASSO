@@ -7,6 +7,7 @@ CREATE TABLE Event (
     summary         TEXT NOT NULL,
     description     TEXT,
     location        TEXT,
+    date            DATE,
     start           TIMESTAMP NOT NULL,
     end             TIMESTAMP NOT NULL,
     recurrence      TEXT,
