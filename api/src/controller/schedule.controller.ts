@@ -9,11 +9,10 @@ async function getStudentSchedule(req: Request, res: Response) {
   const api = axios.create({ responseEncoding: 'binary' })
   const studentFestId = req.query.studentFestId
   const academicYear = req.query.academicYear
-  const semesterNumber = req.query.semesterNumber
 
   const studentSchedulePageUrl = mock
     ? 'https://google.com'
-    : `${constants.studentSchedulePageBaseUrl}?pv_fest_id=${studentFestId}&pv_ano_lectivo=${academicYear}&pv_periodos=${semesterNumber}`
+    : `${constants.studentSchedulePageBaseUrl}?pv_fest_id=${studentFestId}&pv_ano_lectivo=${academicYear}`
 
   //TODO: Admin authentication to access student schedule page
 
@@ -28,11 +27,15 @@ async function getStudentSchedule(req: Request, res: Response) {
 
       const schedule: string[] = []
 
+      const daysOfTheWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+      let currentTime = ''
+
       $(scheduleTable)
         .find('tr')
         .each((i, tr) => {
           $(tr)
-            .find('td')
+            .find('tr > td.TP,td.L,td.T,td.TE,td.PL,td.horas')
             .each((j, td) => {
               const attributes = Object.keys(td.attribs).map(name => ({
                 name: name.toString(),
@@ -40,11 +43,22 @@ async function getStudentSchedule(req: Request, res: Response) {
               }))
               const attributesArr = Object.values(attributes)
 
+              if (j == 0) currentTime = $(td).text()
+
+              console.log(currentTime)
+
               for (let w = 0; w < attributesArr.length; w++) {
                 if (Object.values(attributesArr[w]).includes('rowspan')) {
                   const rowspan = attributesArr[w].value
                   schedule.push(
-                    i + ' : ' + j + ' : ' + $(td).text() + ' : ' + 'rowspan = ' + rowspan
+                    currentTime.split(' - ')[0] +
+                      ' : ' +
+                      daysOfTheWeek[j] +
+                      ' : ' +
+                      $(td).text() +
+                      ' : ' +
+                      'rowspan = ' +
+                      rowspan
                   )
                 }
               }
