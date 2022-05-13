@@ -1,5 +1,5 @@
 import axios from 'axios'
-// import * as cheerio from 'cheerio'
+import * as cheerio from 'cheerio'
 import { Request, Response } from 'express'
 import { studentScheduleHTML } from '../config/data'
 import constants from '../config/constants'
@@ -22,7 +22,36 @@ async function getStudentSchedule(req: Request, res: Response) {
     .then(response => {
       const studentSchedulePageHTML = mock ? studentScheduleHTML : response.data
 
-      res.send({ studentSchedulePageHTML })
+      const $ = cheerio.load(studentSchedulePageHTML.toString('latin1'))
+
+      const scheduleTable = $(`table.horario`)
+
+      const schedule: string[] = []
+
+      $(scheduleTable)
+        .find('tr')
+        .each((i, tr) => {
+          $(tr)
+            .find('td')
+            .each((j, td) => {
+              const attributes = Object.keys(td.attribs).map(name => ({
+                name: name.toString(),
+                value: td.attribs[name].toString(),
+              }))
+              const attributesArr = Object.values(attributes)
+
+              for (let w = 0; w < attributesArr.length; w++) {
+                if (Object.values(attributesArr[w]).includes('rowspan')) {
+                  const rowspan = attributesArr[w].value
+                  schedule.push(
+                    i + ' : ' + j + ' : ' + $(td).text() + ' : ' + 'rowspan = ' + rowspan
+                  )
+                }
+              }
+            })
+        })
+
+      res.send({ scheduleTable: schedule })
     })
     .catch(function (e) {
       console.log(e)
