@@ -4,6 +4,24 @@ import { Request, Response } from 'express'
 import { studentScheduleHTML } from '../config/data'
 import constants from '../config/constants'
 
+function addMinutesToTime(time: string, minsToAdd: number): string {
+  return new Date(new Date('1970/01/01 ' + time).getTime() + minsToAdd * 60000).toLocaleTimeString(
+    'en-UK',
+    { hour: '2-digit', minute: '2-digit', hour12: false }
+  )
+}
+
+type ScheduleEntry = {
+  dayOfTheWeek: string
+  startTime: string
+  endTime: string
+  curricularUnitName: string
+  classType: string
+  class: string
+  professors: string
+  room: string
+}
+
 async function getStudentSchedule(req: Request, res: Response) {
   const mock = true
   const api = axios.create({ responseEncoding: 'binary' })
@@ -25,11 +43,11 @@ async function getStudentSchedule(req: Request, res: Response) {
 
       const scheduleTable = $(`table.horario`)
 
-      const schedule: string[] = []
+      const schedule: ScheduleEntry[] = []
 
       const daysOfTheWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
-      let currentTime = ''
+      let classStartTime = ''
 
       $(scheduleTable)
         .find('tr')
@@ -43,23 +61,25 @@ async function getStudentSchedule(req: Request, res: Response) {
               }))
               const attributesArr = Object.values(attributes)
 
-              if (j == 0) currentTime = $(td).text()
-
-              console.log(currentTime)
+              if (j == 0) classStartTime = $(td).text().split(' - ')[0]
 
               for (let w = 0; w < attributesArr.length; w++) {
                 if (Object.values(attributesArr[w]).includes('rowspan')) {
                   const rowspan = attributesArr[w].value
-                  schedule.push(
-                    currentTime.split(' - ')[0] +
-                      ' : ' +
-                      daysOfTheWeek[j] +
-                      ' : ' +
-                      $(td).text() +
-                      ' : ' +
-                      'rowspan = ' +
-                      rowspan
-                  )
+
+                  const minutesToAdd = Number(rowspan) * 30
+                  const classEndTime = addMinutesToTime(classStartTime, minutesToAdd)
+
+                  schedule.push({
+                    dayOfTheWeek: daysOfTheWeek[j],
+                    startTime: classStartTime,
+                    endTime: classEndTime,
+                    curricularUnitName: $(td).text().split(' ')[0],
+                    classType: $(td).text().split('(')[1].split(')')[0],
+                    class: $(td).text().split('\n')[1].split('\n')[0],
+                    professors: $(td).text().split('\n').at(-2),
+                    room: $(td).text().split('\n\n\n\n')[1].split('\n')[0],
+                  })
                 }
               }
             })
