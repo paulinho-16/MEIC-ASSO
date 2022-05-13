@@ -1,14 +1,18 @@
-export type Payment = { 
+export type Movement = { 
     [attribute: string]: string 
 }
 
-export type PaymentsTableHeadings = string[]
+export type MovementTableHeadings = string[]
 
-export type PaymentsTable = {
-    headings: PaymentsTableHeadings,
-    payments: Payment[],
+export type MovementTable = {
+    headings: MovementTableHeadings,
+    movements: Movement[],
+}
+
+export type Movements = {
+    [attribute: string]: MovementTable 
 }
 
 export type PaymentsResponse = {
-    [attribute: string]: PaymentsTable 
+    [attribute: string]: string | Movements
 }

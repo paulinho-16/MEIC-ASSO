@@ -1,15 +1,15 @@
 import * as cheerio from 'cheerio'
 
-import { Payment, PaymentsTable, PaymentsTableHeadings, PaymentsResponse } from '@/@types/payments'
+import { Movement, MovementTable, MovementTableHeadings, Movements, PaymentsResponse } from '@/@types/payments'
 
 import { paymentsPageHTML } from '../config/data'
 
-function parseTable(table: cheerio.Element): PaymentsTable {
+function parseTable(table: cheerio.Element): MovementTable {
   const $ = cheerio.load(table)
   
   // Get table headings
-  const tableHeadings: PaymentsTableHeadings = []
-  const tableHeadingsWithColspans: PaymentsTableHeadings = []
+  const tableHeadings: MovementTableHeadings = []
+  const tableHeadingsWithColspans: MovementTableHeadings = []
   
   $(table).find('tr').first().find('th').each(function(j, cell) {
     let colspan = parseInt($(cell).attr('colspan') || "1")
@@ -22,10 +22,10 @@ function parseTable(table: cheerio.Element): PaymentsTable {
   })
   
   // Get table rows
-  const payments: Payment[] = []
+  const movements: Movement[] = []
 
   $(table).find('tr').each(function(i, row) {
-    const payment: Payment = {}
+    const movement: Movement = {}
 
     let offset = 0
 
@@ -38,32 +38,38 @@ function parseTable(table: cheerio.Element): PaymentsTable {
         text = $(cell).text().trim()
       }
 
-      if (payment[tableHeadingsWithColspans[j + offset]]) {
-        if (text != "") payment[tableHeadingsWithColspans[j + offset]] += " | " + text
+      if (movement[tableHeadingsWithColspans[j + offset]]) {
+        if (text != "") movement[tableHeadingsWithColspans[j + offset]] += " | " + text
       } else {
-        payment[tableHeadingsWithColspans[j + offset]] = text
+        movement[tableHeadingsWithColspans[j + offset]] = text
       }
 
       offset += parseInt($(cell).attr('colspan') || "1") - 1
     })
 
     // Skip blank rows
-    if (JSON.stringify(payment) != '{}')
-      payments.push(payment)
+    if (JSON.stringify(movement) != '{}')
+      movements.push(movement)
   })
 
-  const paymentsTable: PaymentsTable = {
+  const movementTable: MovementTable = {
     headings: tableHeadings,
-    payments: payments
+    movements: movements
   }
 
-  return paymentsTable
+  return movementTable
 }
 
 async function fetchPayments() {
   const $ = cheerio.load(paymentsPageHTML.toString())
 
-  const paymentsTables: PaymentsResponse = {}
+  const payments: PaymentsResponse = {}
+
+  const infos = ["code", "name", "nif", "balance"]
+
+  $('table.formulario').first().find('tr td.formulario-legenda + td').each((i, el) => {
+    payments[infos[i] as keyof PaymentsResponse] = $(el).text().trim()
+  })
 
   // Get table names
   const indexList = $('#GPAG_CCORRENTE_GERAL_CONTA_CORRENTE_VIEW > ul').first().find('li')
@@ -71,13 +77,17 @@ async function fetchPayments() {
 
   // Get tables
   const tabs = $('#GPAG_CCORRENTE_GERAL_CONTA_CORRENTE_VIEW').find('div.tab')
-  const parsedTables: PaymentsTable[] = tabs.map((i, el) => parseTable(el)).toArray()
+  const parsedTables: MovementTable[] = tabs.map((i, el) => parseTable(el)).toArray()
+
+  const movements: Movements = {}
 
   index.forEach((val, i) => {
-    paymentsTables[val] = parsedTables[i]
+    movements[val] = parsedTables[i]
   })
 
-  return paymentsTables
+  payments.movements = movements
+
+  return payments
 }
 
 export default {
