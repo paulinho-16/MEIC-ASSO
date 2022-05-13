@@ -1,84 +1,52 @@
 import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
-import authService from '@/services/authentication'
+import userService from '@/services/user'
 import constants from '@/config/constants'
-import { User } from '@/@types/user'
 
-async function testAuth(req: Request, res: Response){
-  return res.status(200).json({'message': req.body.user_id});
+async function testAuth(req: Request, res: Response) {
+  return res.status(200).json({ message: req.body.id })
 }
 
-async function register(req: Request, res: Response){
+async function login(req: Request, res: Response) {
   // Get user credentials
-  const { username, password } = req.body
+  const { email, password } = req.body
 
   // Check if all inputs were filled
-  if(!(username && password)){
-    return res.status(400).json({'message': 'Username and password are required'})
+  if (!(email && password))
+    return res.status(400).json({ message: 'Email and password are required' })
+
+  // Validate if user exists
+  let user
+  try {
+    user = await userService.getUserByEmail(email)
+  } catch (err) {
+    return res.status(400).json({ message: `Get user failed with error: ${err}` })
   }
 
-  // Check if user already exists
-  const oldUser = await authService.getUser(username)
-  if (oldUser) {
-    return res.status(409).json({'message': 'User Already Exist. Please Login'})
-  } 
+  // Verify existence of user
+  if (!user) return res.status(400).json({ message: 'The user does not exist' })
 
-  //Encrypt user password
-  const encryptedPassword = await bcrypt.hash(password, 10)
+  // Validate password
+  if (!(await bcrypt.compare(password, user.password)))
+    return res.status(400).json({ message: 'Invalid credentials' })
 
   // Create token
-  const token = jwt.sign(
-    { username: username },
-    constants.secret,
-    { expiresIn: "30days"}
-  )
-  
-  const user: User = {
-    username: username,
-    password: encryptedPassword,
-    token: token
-  }
-
-  const data = await authService.insertUser(user)
-  if(data){
-    return res.status(201).json(user)
-  }
-  else{
-    return res.status(500).json({'message': 'Something went wrong. Try again!'})
-  }
+  const id = user.id
+  const token = jwt.sign({ id }, process.env.SECRET_KEY, { expiresIn: constants.tokenLifetime })
+  res.cookie('jwt', token, { httpOnly: true, maxAge: constants.tokenLifetime * 1000 })
+  return res.status(200).json({ message: 'Login with success', id: id })
 }
 
-async function login(req: Request, res: Response){
-    // Get user credentials
-    const { username, password } = req.body
+function logout(req: Request, res: Response) {
+  // Delete cookie
+  res.cookie('jwt', '', { maxAge: 0 })
 
-    // Check if all inputs were filled
-    if(!(username && password)){
-      return res.status(400).json({'message': 'Username and password are required'})
-    }
-  
-    // Validate if user exist in our database
-    const user = await authService.getUser(username)
-
-    if (user && (await bcrypt.compare(password, user.password))) {
-      // Create token
-      const token = jwt.sign(
-        { username: username },
-        constants.secret,
-        { expiresIn: '30days', }
-      );
-      user.token = token;
-  
-      return res.status(200).json(user);
-    }
-    else {
-      return res.status(400).json({'message': 'Invalid Credentials'})
-    }
+  return res.status(200).json({ message: 'Logout with success' })
 }
 
 export default {
-  register,
   login,
-  testAuth
+  logout,
+  testAuth,
 }
