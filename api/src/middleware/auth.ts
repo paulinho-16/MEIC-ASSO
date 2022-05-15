@@ -71,7 +71,7 @@ function verifyPasswordResetToken(req: Request, res: Response, next: NextFunctio
     // Verify if user exists
     let user
     try {
-      user = await authService.getUserById(req.body.id)
+      user = await userService.getUserById(req.body.id)
     } catch (err) {
       return res.status(400).json({ message: `Get user failed with error: ${err}` })
     }

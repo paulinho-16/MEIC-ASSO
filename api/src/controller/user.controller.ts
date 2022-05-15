@@ -3,6 +3,8 @@ import bcrypt from 'bcrypt'
 import userService from '@/services/user'
 import { sendEmail } from '@/util/sendEmail'
 import { User } from '@/@types/user'
+import jwt from 'jsonwebtoken'
+import constants from '@/config/constants'
 
 function getPasswordErrors(password: string): string | null {
   const errors = []
