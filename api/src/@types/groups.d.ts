@@ -1,5 +1,3 @@
-
-
 export type Group = {
     id?: number
     typeName: string

@@ -35,13 +35,11 @@ create table Course (
 );
 
 create table Group_Student (
-    id integer,
+    id SERIAL PRIMARY KEY,
     groupId integer,
     studentId integer,
     isAdmin boolean,
     isAccepted boolean,
-    unique (id),
-    primary key (id),
     foreign key (groupId) references Groups(id),
     foreign key (studentId) references Student(id)
 );
@@ -72,5 +70,16 @@ VALUES ('estudo','feup-meic4-study','grupo de estudo para o 4 ano do meic', 4, t
 INSERT INTO Groups (typeName,title, "description" , mlimit, autoAccept)
 VALUES ('trabalho','feup-leic3-FSI','grupo de trabalho para a unidade curricular de FSI do 3 ano do meic', 3, true);
     
-    
-    
+INSERT INTO Student 
+VALUES (1, '23123', 'john', 'doe');
+
+INSERT INTO Student 
+VALUES (2, '23123', 'jane', 'doe');
+
+INSERT INTO Student 
+VALUES (3, '23123', 'Laura', 'doe');
+
+INSERT INTO Group_Student (groupId, studentId)
+VALUES (2, 1);    
+
+

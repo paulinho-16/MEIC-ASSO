@@ -53,6 +53,37 @@ async function getUserByEmail(email: string) {
   return result.rows[0]
 }
 
+async function existsUserById(id: number) {
+  const query = {
+    text: 'SELECT id FROM UniUser WHERE id = $1',
+    values: [id],
+  }
+
+  const result = await pool.query(query)
+  if (result.rows.length == 0) return false
+  return true
+}
+
+async function existsUserByEmail(email: string) {
+  const query = {
+    text: 'SELECT id FROM UniUser WHERE email = $1',
+    values: [email],
+  }
+
+  const result = await pool.query(query)
+  if (result.rows.length == 0) return false
+  return true
+}
+
+async function deleteUserById(id: number) {
+  const query = {
+    text: 'DELETE FROM UniUser WHERE id = $1',
+    values: [id],
+  }
+
+  await pool.query(query)
+}
+
 async function updatePassword(id: number, password: string) {
   const query = {
     text: 'UPDATE UniUser SET password=$1 WHERE id=$2',
@@ -65,6 +96,9 @@ async function updatePassword(id: number, password: string) {
 export default {
   getUserByEmail,
   getUserById,
+  existsUserById,
+  existsUserByEmail,
   insertUser,
+  deleteUserById,
   updatePassword
 }
