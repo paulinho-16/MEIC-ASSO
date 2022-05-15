@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import userService from '@/services/user'
-import { sendEmail } from '@/util/sendEmail'
+import { sendEmail } from '@/util/send-email'
 import { User } from '@/@types/user'
 import jwt from 'jsonwebtoken'
 import constants from '@/config/constants'
@@ -173,31 +173,43 @@ async function forgotPassword(req: Request, res: Response){
   }
   if (!user) return res.status(400).json({ message: 'The user does not exist' })
   
-  const token = jwt.sign({ id: user.id }, process.env.JWT_PASS_RESET_KEY, { expiresIn: constants.passResetTokenLifetime })
-  const link = `${process.env.SERVER_URL}/authentication/resetPassword/${token}`;
-  
-  try {
-    const result = await sendEmail(user.email, "Password reset", link);
-    return res.status(200).json({'message': result })
-  } catch(err){
-    return res.status(400).json({'message': err})
-  }
-  
+  const resetToken = jwt.sign({ id: user.id }, process.env.JWT_PASS_RESET_KEY, { expiresIn: constants.passResetTokenLifetime })
+
+  const emailResult = await sendEmail(user.email, "Password reset", messageText(resetToken));
+
+  const status = emailResult.status ? 200 : 400 
+  return res.status(status).json({ message: emailResult.message })
 }
 
 async function resetPassword(req: Request, res: Response){
-  // Get token and password
+  // Get password
   const { password } = req.body;
+
+  if(!password) {
+    return res.status(400).json({ message: 'New password is required' })
+  }
+
+  // Check if password has errors
+  const passwordErrors = getPasswordErrors(password);
+  if (passwordErrors !== null)
+    return res.status(400).json({ message: `The password is not strong enough: ${passwordErrors}` })
 
   // Encrypt user password
   const encryptedPassword = await bcrypt.hash(password, 10)
 
+  // TODO: should invalidate token
   try {
     await userService.updatePassword(req.body.id, encryptedPassword)
     return res.status(200).json({'message': 'Update password with success'})
   } catch(err){
     return res.status(400).json({'message': 'Update password failed'})
   }
+}
+
+function messageText(resetToken: string){
+  return `<p>To recover your password use the following token: ${resetToken}</p>. 
+  <p>This password expires in ${constants.passResetTokenLifetime/60} minutes. 
+  Be sure to access your account and update it within this period.</p>`
 }
 
 export default {

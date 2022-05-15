@@ -14,7 +14,7 @@ const connectToDB = async () => {
     await pool.connect()
   } catch (err) {
     setTimeout(connectToDB, 2000)
-    console.log('Error connecting to db. Retrying in 1s')
+    console.log('Error connecting to db. Retrying in 2s')
   }
 }
 
@@ -100,5 +100,5 @@ export default {
   existsUserByEmail,
   insertUser,
   deleteUserById,
-  updatePassword
+  updatePassword,
 }
