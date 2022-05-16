@@ -1,115 +1,114 @@
 import { Request, Response } from 'express'
+
 import {v4 as uuidv4} from 'uuid';
 import fetch from 'node-fetch';
 import fb from '@/services/notifications'
-import { fdatasync } from 'fs';
 
-async function createNotification(req: Request, res: Response) {
 
-  const { client } = req.params
-  const userId = req.params.userId
-  const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-    method: 'POST',
-    body: JSON.stringify({
-          "to" : "DEVICE_REGISTRATION_TOKEN",
-          "notification" : {
-              "body" : "Notification Body",
-              "title": "Notification Title"
-          },
-          "data" : {
-              "body" : "Notification Body",
-              "title": "Notification Title"
-          },
-    }),
-    headers: {
-      ContentType: 'application/json',
-      Authorization: 'key = AAAArP_sy-s:APA91bFbcwvy_mjJtt94nZZ9rd7CDWNI2wykQ_t9hYQejRVj7IkN2VyRor1ZGM-p8jx5VoU_Uuwgk22fsWhMaixcUIw3JaNpmgdzxtJXxnACIxc8TFzhiAXiimlLjq-TwDngrman-G3f'
-    }
-  });
+async function addDeviceToken(req: Request, res: Response) {
+    const deviceToken = req.params.client
+    const {userID} = req.body
 
-  if (!response.ok) {
-    throw new Error(`Error! status: ${response.status}`);
-  }
+    await fb.addDeviceToken(deviceToken, userID)
 
-  // DataBase
-  let status = await fb.createNotification(parseInt(userId))
-
-  if(status)
-    res.send(status)
-
-  else 
-    res.status(500).send()
-
-  return;
+    res.send( {"status":"ok"})
 }
 
-async function updateNotification(req: Request, res: Response) {
-  // BataBase request to retrive the id of the notification
-  const id = req.params.id
-  if(id != null){
-    const notificationBody = req.params.notificationBody
-    const notificationText = req.params.notificationText
-    const dataBody = req.params.dataBody
-    const dataText = req.params.dataText
+async function removeDeviceToken(req: Request, res: Response) {
+    const deviceToken = req.params.client
+    const {userID} = req.body
 
-    res.send({"status":"Update Notification"})
-  }
-  else
-    res.send('Update Nofication Failed!')
-}
+    await fb.removeDeviceToken(deviceToken, userID)
 
-async function getAllUnseenNotifications(req: Request, res: Response) {
-  // BataBase request to retrive the user id
-  const userId = req.params.userId
-  if(userId != null){
-    res.send('Get All Seen Notifications!')
-  }
-  else
-    res.send('Get All Seen Notifications Failed!')
-}
-
-async function getAllNotifications(req: Request, res: Response) {
-  
-  // BataBase request to retrive the user id
-  const userId = req.params.userId
-  if(userId != null){
-    res.send('Get All Notifications!')
-  }
-  else
-    res.send('Get All Notifications Failed!')
-
-  // DataBase Functionality
-  // user ID = 1
-  let status = await fb.getAllNotifications(parseInt(userId))
-
-  if(status)
-    res.send(status)
-
-  else 
-    res.status(500).send()
+    res.send( {"status":"ok"})
 }
 
 async function createTopic(req: Request, res: Response) {
     const name = req.params.topic
     const identification_token = uuidv4();
-    const answer = {"status":"ok","identification_token":identification_token}
+    let answer
+
+    if (await fb.createTopic(name, identification_token)){
+        answer = {"status":"ok","identification_token":identification_token}
+    }else{
+        answer = {"status":"error","error":"topic already exists"}
+    }
 
     res.send(answer)
 }
 
 async function deleteTopic(req: Request, res: Response) {
-    const topic = req.params.topic
-    const identification_token = req.body.identification_token;
-    const answer = {"status":"ok"}
+    const identification_token = req.params.topic
+
+    let answer
+
+    if (await fb.deleteTopic(identification_token)){
+        answer = {"status":"ok"}
+    }else {
+        answer = {"status":"error","error":"topic missing"}
+    }
 
     res.send(answer)
 }
 
+async function createNotification(req: Request, res: Response) {
+  const userID = req.params.client;
+  const {topic_identification_token,title,content} = req.body
+
+  let answer
+
+  if(await fb.createNotification(userID, topic_identification_token, title, content)){
+      answer = {"status":"ok"}
+      await sendNotification(title, content, await fb.getDevicesTokens(userID))
+  }else {
+      answer = {"status":"error","error":"error creating notification,check the userId and topic_identification_token"}
+  }
+
+  res.send(answer)
+}
+
+async function getAllNotifications(req: Request, res: Response) {
+  // BataBase request to retrive the user id
+  const userId = req.params.userId
+  if(userId == null){
+    res.send({"status":'error',"error":"user does not exist"})
+      return
+  }
+
+  const notifications = await fb.getAllNotifications(userId)
+
+  if(notifications)
+    res.send({"status":'error',"notifications":notifications})
+}
+
+async function sendNotification(title:string, content:string,devices_tokens:string){
+    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+        method: 'POST',
+        body: JSON.stringify({
+            "to" : "device_token",
+            "notification" : {
+                "body" : content,
+                "title": title
+            },
+            "data" : {
+                "body" : content,
+                "title": title
+            },
+        }),
+        headers: {
+            ContentType: 'application/json',
+            Authorization: 'key = AAAArP_sy-s:APA91bFbcwvy_mjJtt94nZZ9rd7CDWNI2wykQ_t9hYQejRVj7IkN2VyRor1ZGM-p8jx5VoU_Uuwgk22fsWhMaixcUIw3JaNpmgdzxtJXxnACIxc8TFzhiAXiimlLjq-TwDngrman-G3f'
+        }
+    });
+}
+
 export default {
-  createNotification,
-  updateNotification,
-  getAllNotifications,
-  getAllUnseenNotifications,
-  createTopic,
-  deleteTopic,
+    addDeviceToken,
+    removeDeviceToken,
+
+    createTopic,
+    deleteTopic,
+
+    createNotification,
+    getAllNotifications,
 }
