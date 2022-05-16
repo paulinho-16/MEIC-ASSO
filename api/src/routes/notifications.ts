@@ -14,10 +14,10 @@ router.post('/topic/:topic', controller.createTopic)
 router.delete('/topic/:topic', controller.deleteTopic)
 
 // Route to create notification
-router.post('/:client', controller.createNotification)
+router.post('/:user', controller.createNotification)
 
 // Route to get all notifications
-router.get('/:client/all', controller.getAllNotifications)
+router.get('/:user/all', controller.getAllNotifications)
 
 
 export default router

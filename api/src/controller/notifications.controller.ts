@@ -6,7 +6,7 @@ import fb from '@/services/notifications'
 
 
 async function addDeviceToken(req: Request, res: Response) {
-    const deviceToken = req.params.client
+    const deviceToken = req.params.deviceToken
     const {userID} = req.body
 
     await fb.addDeviceToken(deviceToken, userID)
@@ -15,7 +15,7 @@ async function addDeviceToken(req: Request, res: Response) {
 }
 
 async function removeDeviceToken(req: Request, res: Response) {
-    const deviceToken = req.params.client
+    const deviceToken = req.params.deviceToken
     const {userID} = req.body
 
     await fb.removeDeviceToken(deviceToken, userID)
@@ -52,7 +52,7 @@ async function deleteTopic(req: Request, res: Response) {
 }
 
 async function createNotification(req: Request, res: Response) {
-  const userID = req.params.client;
+  const userID = req.params.user;
   const {topic_identification_token,title,content} = req.body
 
   let answer
@@ -69,7 +69,7 @@ async function createNotification(req: Request, res: Response) {
 
 async function getAllNotifications(req: Request, res: Response) {
   // BataBase request to retrive the user id
-  const userId = req.params.userId
+  const userId = req.params.user
   if(userId == null){
     res.send({"status":'error',"error":"user does not exist"})
       return
@@ -78,7 +78,7 @@ async function getAllNotifications(req: Request, res: Response) {
   const notifications = await fb.getAllNotifications(userId)
 
   if(notifications)
-    res.send({"status":'error',"notifications":notifications})
+    res.send({"status":'ok',"notifications":notifications})
 }
 
 async function sendNotification(title:string, content:string,devices_tokens:string){

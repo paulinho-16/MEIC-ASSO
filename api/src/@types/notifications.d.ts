@@ -6,6 +6,6 @@ export type Topic = {
 export type Notifications = {
   title: string
   content: string
-  topic: Topic
+  topic: string
   userID: string
 }
