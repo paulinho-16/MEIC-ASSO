@@ -14,48 +14,18 @@ services:
     container_name: ts-node-docker
     ports:
       - 8080:3000
-    depends_on: 
-      - postgres
-
-  chat-server:
-    build:
-      context: ./chat/server
-      dockerfile: Dockerfile
-    volumes:
-      - ./chat/server/src:/usr/src/app/chat/server/src/
-    container_name: chat-server
-    ports:
-      - 8082:3000
-
-  chat-client:
-    build:
-      context: ./chat/client
-      dockerfile: Dockerfile
-    volumes:
-      - ./chat/client/src:/usr/src/app/chat/client/src/
-    container_name: chat-client
-    ports:
-      - 5500:5500
-    depends_on:
-      - chat-server
-
-  postgres:
-    container_name: postgres
-    restart: always
-    build:
-      context: ./postgres
-      dockerfile: Dockerfile
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - ./postgres/data:/home/postgres/data
-    ports:
-      - "5432:5432"
+  
+  
+  postgres-groupMaking:
+      image: postgres:14.1-alpine
+      restart: always
+      build:
+        context: ./api
+        dockerfile: Dockerfile-postgres
       
-  adminer:
-    container_name: adminer
-    image: adminer
-    restart: always
-    ports:
-      - 8081:8080 
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+      container_name: postgres-docker
+      ports:
+        - '5432:5432'
