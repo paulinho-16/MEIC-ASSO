@@ -136,8 +136,10 @@ async function resetPassword(req: Request, res: Response){
 }
 
 function messageText(resetToken: string){
-  return `<p>To recover your password use the following token: ${resetToken}</p>. 
-  <p>This password expires in ${constants.passResetTokenLifetime/60} minutes. 
+  return `<p>To recover your password use the following token: ${resetToken}
+  in the POST <a href='https://uni4all.servehttp.com/user/reset-password'>user/reset-password</a>
+  endpoint</p>. 
+  <p>This token expires in ${constants.passResetTokenLifetime/60} minutes. 
   Be sure to access your account and update it within this period.</p>`
 }
 
