@@ -5,8 +5,9 @@ import controller from '@/controller/authentication.controller'
 
 const router = express.Router()
 
-router.get('/', auth.verifyToken, controller.testAuth)
+router.get('/', auth.verifySessionToken, controller.testAuth)
+router.post('/register', controller.register)
 router.post('/login', controller.login)
-router.post('/logout', auth.verifyToken, controller.logout)
+router.post('/logout', auth.verifySessionToken, controller.logout)
 
 export default router
