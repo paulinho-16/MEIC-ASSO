@@ -7,7 +7,7 @@ Welcome to the repository supporting the development of the uni4all project, dev
 * [Product envisioning](#product-envisioning)
 * [High-level architecture](#high-level-architecture)
 * [Technologies](#technologies)
-* [Development](#development)
+* [Design and architecture](#design-and-architecture)
 * [Operation](#operation)
 * [Usage](#usage)
 * [Contributing](#contributing)
@@ -205,7 +205,7 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 - **T1G4** Scraping
 - Authentication
 - **T1G3** Chat
-- **T1G2** Calendar
+- **T1G2** Calendar and Jobs
 - **T1G1** Payments
 - Notifications
 - External API / Services
@@ -217,6 +217,8 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 - Registrations
 
 ## Technologies
+
+_Instructions: Tools and rationale for choosing them (programming languages, frameworks, libraries, database engines, message queues)._
 
 ### Backend Framework
 - Node.js
@@ -263,9 +265,9 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
     - [beautifulsoup4](https://pypi.org/project/beautifulsoup4/)
     - [selenium](https://www.selenium.dev/)
 
-## Development
+## Design and architecture
 
-_Instructions: Document design and architecture problems and solutions, preferably using pattern instances. 
+_Instructions: Document design and architecture problems and solutions, preferably using pattern instances. Justify all design and architectural choices, preferably based on operational data.<br><br>
 Documenting pattern instances is important because it will help other developers 
 to better understand the resulting concrete classes, attributes and methods, 
 and the underneath design decisions. <br>
@@ -277,10 +279,10 @@ to certify himself that he is taking the right decision.  <br>
 In general terms, this results in better communication within the development team, and consequently on less bugs.
 To more formally document a pattern instance we must describe the design context, to justify the selection of the 
 pattern, to explain how the pattern roles, operations and associations were mapped to the concrete design classes, 
-and to state the benefits and liabilities of instantiating the pattern, eventually in comparison with other alternatives.
-<ins>For each pattern instance</ins> that you would like to document, use the following template:_
+and to state the benefits and liabilities of instantiating the pattern, eventually in comparison with other alternatives.<br><br>
+It is expected that you start this section with system-wide patterns, but you should link to component-specific pages for describing the design of individual components. <ins>For each pattern instance</ins> that you would like to document, use the following template:_
 
-### _name the goal that you would like to achieve_
+### _name the goal that you would like to achieve, or problem to solve_
 
 **Context**: _Describe the design context that justifies the selection of the pattern. Link to your best reference of the pattern, if available._
 
@@ -288,13 +290,14 @@ and to state the benefits and liabilities of instantiating the pattern, eventual
 
 **Consequences**: _Explain the pros and cons of instantiating the pattern, eventually in comparison with other alternatives._
 
+
 ## Operation
 
-_Instructions: Information about setting up a production environment, building and packaging the system for deployment, deploying the system to production, and operating the system (where the logs are, what monitoring tools are in place, etc.)_
+_Instructions: Information about how to set up a production environment, how to build and package the system for deployment, how to deploy the system to production, how to operate the system (where the logs are, how to access monitoring tools, etc.), and how to run and access architectural fitness functions and use them to decide (or not) to the intended quality attributes._
 
 ## Usage
 
-_Instructions: Information about how the product can be used from the standpoint of its users (e.g., endpoints and how to use them). Should include a link to the API documenttion._
+_Instructions: Information about how the product can be used from the standpoint of its users (e.g., API endpoints and how to use them). The API documention should be usable, accurate and up-to-date._
 
 The following endpoints are work in progress:
 
@@ -313,4 +316,4 @@ The following endpoints are work in progress:
 
 ## Contributing
 
-_Instructions: Information about setting up the development environment, running the system in development, running the tests, and creating and reviewing pull requests._
+_Instructions: Information about setting up the development environment, running the system in development, running the tests. Also, should include documentation on all the API endpoints (including internal ones) and how to use them. The API documention should be usable, accurate and up-to-date._

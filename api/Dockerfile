@@ -2,13 +2,12 @@ FROM node:16
 
 WORKDIR /usr/src/app/api/
 
-COPY package.json ./
-COPY yarn.lock ./
+COPY package.json /usr/src/app/api/
 
-RUN yarn install
+COPY yarn.lock /usr/src/app/api/
 
-COPY src/ src/
+RUN yarn install && npm install typescript -g
 
-COPY tsconfig.json ./
+COPY ./src/ /usr/src/app/api/src/
 
 CMD [ "yarn", "start"]
