@@ -79,31 +79,25 @@ function getPasswordErrors(password: string): string | null {
 
   // At least 6 characters
   const characters = password.length
-  if (characters === 0)
-    errors.push("no characters")
+  if (characters === 0) errors.push('no characters')
   else if (characters < 6)
-    errors.push(`only ${password.length} character${characters == 1 ? "" : "s"}`)
+    errors.push(`only ${password.length} character${characters == 1 ? '' : 's'}`)
 
   // One numeric digit
-  if (!password.match(/^.*\d.*$/))
-    errors.push("no digits")
+  if (!password.match(/^.*\d.*$/)) errors.push('no digits')
 
   // One uppercase character
-  if (!password.match(/^.*(?=.*[A-Z]).*$/))
-    errors.push("no uppercase letters")
+  if (!password.match(/^.*(?=.*[A-Z]).*$/)) errors.push('no uppercase letters')
 
   // One lowercase character
-  if (!password.match(/^.*(?=.*[a-z]).*$/))
-    errors.push("no lowercase letters")
+  if (!password.match(/^.*(?=.*[a-z]).*$/)) errors.push('no lowercase letters')
 
   // No errors
-  if (errors.length === 0)
-    return null
+  if (errors.length === 0) return null
 
   // Build a message with all the errors of the password
   let errorMessage = errors.pop()
-  if (errors.length !== 0)
-    errorMessage = errors.join(", ") + " and " + errorMessage
+  if (errors.length !== 0) errorMessage = errors.join(', ') + ' and ' + errorMessage
 
   return `it needs at least 6 characters, one numeric digit, one uppercase and one lowercase letter, but it has ${errorMessage}`
 }

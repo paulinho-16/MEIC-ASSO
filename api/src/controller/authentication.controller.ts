@@ -2,9 +2,25 @@ import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import { User } from '@/@types/user'
 import userService from '@/services/user'
-import redisClient from '@/util/connect-redis';
+import redisClient from '@/util/connect-redis'
 import bcrypt from 'bcrypt'
 import constants from '@/config/constants'
+
+// ----------------------------------------------------------------------------
+// Auxiliary functions
+// ----------------------------------------------------------------------------
+
+function checkEmail(email: string): string | null {
+  const regexp = new RegExp(
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  )
+  if (!regexp.test(email)) return `The email '${email}' is not valid`
+  return null
+}
+
+// ----------------------------------------------------------------------------
+// Endpoints
+// ----------------------------------------------------------------------------
 
 async function testAuth(req: Request, res: Response) {
   return res.status(200).json({ message: req.body.id })
@@ -19,11 +35,8 @@ async function register(req: Request, res: Response) {
     return res.status(400).json({ message: 'Email and password are required' })
 
   // Check if email is valid
-  const regexp = new RegExp(
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  )
-  if (!regexp.test(email))
-    return res.status(400).json({ message: `The email '${email}' is not valid` })
+  const message = checkEmail(email)
+  if (message) return res.status(400).json(message)
 
   // Check if user already exists
   try {
@@ -34,7 +47,7 @@ async function register(req: Request, res: Response) {
   }
 
   // Check if password has errors
-  const passwordErrors = userService.getPasswordErrors(password);
+  const passwordErrors = userService.getPasswordErrors(password)
   if (passwordErrors !== null)
     return res.status(400).json({ message: `The password is not strong enough: ${passwordErrors}` })
 
@@ -83,12 +96,14 @@ async function login(req: Request, res: Response) {
 
   // Create token
   const id = user.id
-  const token = jwt.sign({ id }, process.env.JWT_GENERATOR_KEY, { expiresIn: constants.tokenLifetime })
+  const token = jwt.sign({ id }, process.env.JWT_GENERATOR_KEY, {
+    expiresIn: constants.tokenLifetime,
+  })
 
-  // Set session 
-  try{
-    await redisClient.set(JSON.stringify(id), JSON.stringify(user), { EX: constants.tokenLifetime });
-  } catch(err){
+  // Set session
+  try {
+    await redisClient.set(JSON.stringify(id), JSON.stringify(user), { EX: constants.tokenLifetime })
+  } catch (err) {
     return res.status(400).json({ message: 'Error creating session' })
   }
 
@@ -100,7 +115,7 @@ async function login(req: Request, res: Response) {
 
 async function logout(req: Request, res: Response) {
   // Delete session
-  await redisClient.del(JSON.stringify(req.body.id));
+  await redisClient.del(JSON.stringify(req.body.id))
   // Delete cookie
   res.cookie('jwt', '', { maxAge: 0 })
   return res.status(200).json({ message: 'Logout with success' })

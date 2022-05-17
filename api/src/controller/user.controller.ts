@@ -6,6 +6,14 @@ import redisClient from '@/util/connect-redis'
 import { sendEmail } from '@/util/send-email'
 import constants from '@/config/constants'
 
+// ----------------------------------------------------------------------------
+// Auxiliary functions
+// ----------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------
+// Endpoints
+// ----------------------------------------------------------------------------
+
 async function deleteUser(req: Request, res: Response) {
   // Get password
   const { password } = req.body
