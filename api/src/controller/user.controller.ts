@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import userService from '@/services/user'
-import redisClient from '@/util/connect-redis';
+import redisClient from '@/util/connect-redis'
 import { sendEmail } from '@/util/send-email'
 import constants from '@/config/constants'
 
