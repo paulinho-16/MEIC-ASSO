@@ -10,4 +10,8 @@ RUN yarn install && npm install typescript -g
 
 COPY ./src/ /usr/src/app/api/src/
 
+COPY tsconfig.json /usr/src/app/api/
+
+RUN tsc
+
 CMD [ "yarn", "start"]
