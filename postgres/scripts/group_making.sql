@@ -5,7 +5,6 @@ create table Groups (
     description varchar(100),
     mlimit integer,
     autoAccept boolean
-   
 );
 
 create table Student (
@@ -79,7 +78,10 @@ VALUES (2, '23123', 'jane', 'doe');
 INSERT INTO Student 
 VALUES (3, '23123', 'Laura', 'doe');
 
-INSERT INTO Group_Student (groupId, studentId)
-VALUES (2, 1);    
+INSERT INTO Group_Student (groupId, studentId, isAdmin)
+VALUES (2, 1, true);
+
+INSERT INTO Group_Student (groupId, studentId, isAdmin)
+VALUES (2, 2, false);
 
 

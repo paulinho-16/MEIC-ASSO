@@ -147,6 +147,87 @@ async function deleteGroup(groupId: Number){
   }
 }
 
+// Group Admin Endpoints
+async function getGroupAdmins(groupId: Number)
+{
+  console.log("Get group admins");
+
+  if(!connectDatabase()){ 
+    return -1;
+  }
+
+  const query = {
+    text: 'SELECT * \
+           FROM Student\
+           INNER JOIN Group_Student\
+           ON Student.id = Group_Student.studentId\
+           AND isAdmin = true\
+           AND Group_Student.groupId = $1',
+    values: [groupId],
+  }
+
+  try {
+    let res = await client.query(query)
+    return res.rows
+  }
+  catch (err) {
+    console.log(err);
+    return false
+  }
+}
+
+
+async function addGroupAdmin(studentId: Number, groupId: Number){
+
+  console.log("Add group admin");
+
+  if(!connectDatabase()){
+    return -1;
+  }
+
+  const query = {
+    text: 'ALTER TABLE Group_Student\
+           SET isAdmin = true\
+           WHERE studentID = $1\
+           AND groupId = $2',
+    values: [studentId, groupId],
+  }
+
+  try{
+    let res = await client.query(query)
+    return true
+  }
+  catch(err){
+    console.log(err);
+    return false
+  }
+}
+
+async function deleteGroupAdmin(studentId: Number, groupId: Number){
+
+  console.log("Delete group admin");
+
+  if(!connectDatabase()){
+    return -1;
+  }
+
+  const query = {
+    text: 'ALTER TABLE Group_Student\
+           SET isAdmin = false\
+           WHERE studentID = $1\
+           AND groupId = $2',
+    values: [studentId, groupId],
+  }
+
+  try{
+    let res = await client.query(query)
+    return true
+  }
+  catch(err){
+    console.log(err);
+    return false
+  }
+}
 
 
 
@@ -346,6 +427,10 @@ export default {
   getGroup,
   createGroup,
   deleteGroup,
+
+  getGroupAdmins,
+  addGroupAdmin,
+  deleteGroupAdmin,
 
   getGroupMembers,
   getGroupStudentRelation,

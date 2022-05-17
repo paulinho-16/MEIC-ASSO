@@ -17,6 +17,11 @@ router.post('/', controller.createGroup)
 
 router.delete('/:id', controller.deleteGroup)
 
+// Group admin endpoints
+
+router.get('/:id/admins', controller.getGroupAdmins)
+router.post('/:id/admins/:userId', controller.addGroupAdmin)
+router.delete('/:id/admins/:userId', controller.deleteGroupAdmin)
 
 
 
