@@ -7,13 +7,15 @@ services:
       dockerfile: Dockerfile
     restart: always
     environment:
-      - JWT_GENERATOR_KEY=${JWT_GENERATOR_KEY}
-      - JWT_PASS_RESET_KEY=${JWT_PASS_RESET_KEY}
-      - SESSION_TOKEN_LIFETIME=259200
-      - RESET_TOKEN_LIFETIME=600
-      - MAIL_USER=${MAIL_USER}
-      - MAIL_PASS=${MAIL_PASS}
-      - SERVER_URL=http://localhost:8080
+      JWT_GENERATOR_KEY: ${JWT_GENERATOR_KEY}
+      JWT_PASS_RESET_KEY: ${JWT_PASS_RESET_KEY}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASS: ${MAIL_PASS}
+      DB_SCHEMA: ${POSTGRES_SCHEMA}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASS}
+      DB_HOST: ${POSTGRES_HOST}
+      DB_PORT: ${POSTGRES_PORT}
     volumes:
       - ./api/src:/usr/src/app/api/src
     container_name: ts-node-docker
@@ -21,6 +23,7 @@ services:
       - 8080:3000
     depends_on: 
       - postgres
+      - redis
 
   chat-server:
     build:
@@ -51,12 +54,20 @@ services:
       context: ./postgres
       dockerfile: Dockerfile
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASS}
     volumes:
       - ./postgres/data:/home/postgres/data
     ports:
       - "5432:5432"
+  
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - ./redis:/data
       
   adminer:
     container_name: adminer
@@ -64,3 +75,6 @@ services:
     restart: always
     ports:
       - 8081:8080 
+
+volumes:
+  redis:
