@@ -49,7 +49,7 @@ async function verifyAuthorization(req: Request, res: Response, next: NextFuncti
     return res.status(403).json({ message: 'Access token and user id are required' })
 
   // Verify access token
-  jwt.verify(token, process.env.SECRET_KEY, async (err: Error | null, decoded: { id: number }) => {
+  jwt.verify(token, process.env.JWT_GENERATOR_KEY, async (err: Error | null, decoded: { id: number }) => {
     if (err) return res.status(401).json({ message: 'Invalid Token' })
     req.body.id = decoded.id
 
