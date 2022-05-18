@@ -25,7 +25,7 @@ async function verifySessionToken(req: Request, res: Response, next: NextFunctio
         return res.status(401).json({ message: 'Invalid session' })
       }
     } catch(err) {
-      return res.status(401).json({ message: 'Couldn not process session' })
+      return res.status(401).json({ message: 'Could not process session' })
     }
 
     // Verify if user exists
@@ -33,10 +33,10 @@ async function verifySessionToken(req: Request, res: Response, next: NextFunctio
     try {
       user = await userService.existsUserById(req.body.id)
     } catch (err) {
-      return res.status(400).json({ message: `Get user failed with error: ${err}` })
+      return res.status(500).json({ message: `Get user failed with error: ${err}` })
     }
-    if (!user) return res.status(400).json({ message: 'The user does not exist' })
-    
+    if (!user) return res.status(406).json({ message: 'The user does not exist' })
+
     next()
   })
 }
@@ -72,9 +72,9 @@ async function verifyAuthorization(req: Request, res: Response, next: NextFuncti
     try {
       user = await userService.existsUserById(req.body.id)
     } catch (err) {
-      return res.status(400).json({ message: `Get user failed with error: ${err}` })
+      return res.status(500).json({ message: `Get user failed with error: ${err}` })
     }
-    if (!user) return res.status(400).json({ message: 'The user does not exist' })
+    if (!user) return res.status(406).json({ message: 'The user does not exist' })
 
     next()
   })
@@ -96,11 +96,11 @@ async function verifyPasswordResetToken(req: Request, res: Response, next: NextF
     try {
       user = await userService.getUserById(req.body.id)
     } catch (err) {
-      return res.status(400).json({ message: `Get user failed with error: ${err}` })
+      return res.status(500).json({ message: `Get user failed with error: ${err}` })
     }
 
     // Verify existence of user
-    if (!user) return res.status(400).json({ message: 'The user does not exist' })
+    if (!user) return res.status(406).json({ message: 'The user does not exist' })
 
     next()
   })

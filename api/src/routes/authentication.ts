@@ -57,12 +57,63 @@ const router = express.Router()
  *                 message:
  *                   type: string
  *                   example: "The user does not exist"
+ *       500:
+ *         description: Unexpected error
 */
 router.get('/', auth.verifySessionToken, controller.testAuth)
 
 /**
  * @swagger
- *
+ * /authentication/register:
+ *   post:
+ *     description: Create an account
+ *     requestBody:
+ *       description: Login credentials
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "example@email.com"
+ *               password:
+ *                 type: string
+ *                 example: "password"
+ *     responses:
+ *       201:
+ *         description: Created an account
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Account created successfully"
+ *       400:
+ *         description: One of the parameters is missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "The email is not valid"
+ *       409:
+ *         description: User already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "The user already exists. Please login."
+ *       500:
+ *         description: Unexpected error
  */
 router.post('/register', controller.register)
 
@@ -109,6 +160,8 @@ router.post('/register', controller.register)
  *                 message:
  *                   type: string
  *                   example: "Invalid credentials"
+ *       500:
+ *         description: Unexpected error
  */
 router.post('/login', controller.login)
 
@@ -164,6 +217,8 @@ router.post('/login', controller.login)
  *                 message:
  *                   type: string
  *                   example: "The user does not exist"
+ *       500:
+ *         description: Unexpected error
  */
 router.post('/logout', auth.verifySessionToken, controller.logout)
 

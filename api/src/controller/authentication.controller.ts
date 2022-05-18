@@ -63,9 +63,9 @@ async function register(req: Request, res: Response) {
   let id = -1
   try {
     id = await userService.insertUser(user)
-    if (id == -1) return res.status(400).json({ message: `Insert user failed` })
+    if (id == -1) return res.status(500).json({ message: `Insert user failed` })
   } catch (err) {
-    return res.status(400).json({ message: `Insert user failed with error: ${err}` })
+    return res.status(500).json({ message: `Insert user failed with error: ${err}` })
   }
 
   return res.status(201).json({ message: 'Registered with success' })
@@ -84,11 +84,11 @@ async function login(req: Request, res: Response) {
   try {
     user = await userService.getUserByEmail(email)
   } catch (err) {
-    return res.status(400).json({ message: `Get user failed with error: ${err}` })
+    return res.status(500).json({ message: `Get user failed with error: ${err}` })
   }
 
   // Verify existence of user
-  if (!user) return res.status(400).json({ message: 'The user does not exist' })
+  if (!user) return res.status(406).json({ message: 'The user does not exist' })
 
   // Validate password
   if (!(await bcrypt.compare(password, user.password)))
