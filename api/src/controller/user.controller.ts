@@ -7,10 +7,6 @@ import { sendEmail } from '@/util/send-email'
 import constants from '@/config/constants'
 
 // ----------------------------------------------------------------------------
-// Auxiliary functions
-// ----------------------------------------------------------------------------
-
-// ----------------------------------------------------------------------------
 // Endpoints
 // ----------------------------------------------------------------------------
 
@@ -61,9 +57,9 @@ async function updatePassword(req: Request, res: Response) {
   try {
     user = await userService.getUserById(req.body.id)
   } catch (err) {
-    return res.status(400).json({ message: `Get user failed with error: ${err}` })
+    return res.status(500).json({ message: `Get user failed with error: ${err}` })
   }
-  if (!user) return res.status(400).json({ message: 'The user does not exist' })
+  if (!user) return res.status(406).json({ message: 'The user does not exist' })
 
   // Validate password
   if (!(await bcrypt.compare(oldPassword, user.password)))
@@ -81,7 +77,7 @@ async function updatePassword(req: Request, res: Response) {
     await userService.updatePassword(req.body.id, encryptedPassword)
     return res.status(200).json({ message: 'Update password with success' })
   } catch (err) {
-    return res.status(400).json({ message: 'Update password failed' })
+    return res.status(500).json({ message: 'Update password failed' })
   }
 }
 
@@ -98,15 +94,15 @@ async function forgotPassword(req: Request, res: Response){
   try {
     user = await userService.getUserByEmail(email)
   } catch (err) {
-    return res.status(400).json({ message: `Get user failed with error: ${err}` })
+    return res.status(500).json({ message: `Get user failed with error: ${err}` })
   }
-  if (!user) return res.status(400).json({ message: 'The user does not exist' })
-  
+  if (!user) return res.status(406).json({ message: 'The user does not exist' })
+
   const resetToken = jwt.sign({ id: user.id }, process.env.JWT_PASS_RESET_KEY, { expiresIn: constants.passResetTokenLifetime })
 
   const emailResult = await sendEmail(user.email, "Password reset", messageText(resetToken));
 
-  const status = emailResult.status ? 200 : 400 
+  const status = emailResult.status ? 200 : 500
   return res.status(status).json({ message: emailResult.message })
 }
 
@@ -138,8 +134,8 @@ async function resetPassword(req: Request, res: Response){
 function messageText(resetToken: string){
   return `<p>To recover your password use the following token: ${resetToken}
   in the POST <a href='https://uni4all.servehttp.com/user/reset-password'>user/reset-password</a>
-  endpoint</p>. 
-  <p>This token expires in ${constants.passResetTokenLifetime/60} minutes. 
+  endpoint</p>.
+  <p>This token expires in ${constants.passResetTokenLifetime/60} minutes.
   Be sure to access your account and update it within this period.</p>`
 }
 
