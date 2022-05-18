@@ -3,6 +3,8 @@ import controller from '@/controller/chat.controller'
 
 const router = express.Router()
 
-router.get('/', controller.get)
+router.get('/location', controller.location)
+router.get('/:group/message', controller.groupMessage)
+router.get('/message', controller.message)
 
 export default router

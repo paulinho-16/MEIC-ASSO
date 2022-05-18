@@ -12,20 +12,25 @@ Uni4all chat backend implementation.
 - chat directly to another user
 - notifications for user connections and disconnections
 - update user username
-
-## Architecture and Choices
-
-```mermaid
-flowchart LR
-    client[Client]
-    chat-server[Chat Server]
-    client -->|websocket| chat-server
-```
-
-For communication with the client, the chat server needs to send messages autonomously. For this polling, long-polling, and websockets are possibilities. Polling and long-polling are more demanding computationally, hence the coice for **websockets**.
-
+## API Endpoints
+For more detailed documentation, refer to the swagger hub documentation.
+### `GET` /chat/location
+Gets the URL for the client to connect with.
+To be used when the client wants to connect a socket to a chat server.
+### `GET` /chat/:group/message
+Gets messages for a given group.
+This may be useful for when, for example, the user opens a chat group and scrolls up.
+- [Information Holder Resource](https://microservice-api-patterns.org/patterns/responsibility/endpointRoles/InformationHolderResource);
+- Returns a [Parameter Forest](https://microservice-api-patterns.org/patterns/structure/representationElements/ParameterForest) with information regarding each received message;
+- Given the sheer amount of possible messages, includes [Pagination](https://microservice-api-patterns.org/patterns/structure/compositeRepresentations/Pagination):
+	- If the page is not requested it returns the first page.
+### `GET` /chat/message
+Gets all possible messages.
+- Really a [Request Bundle](https://microservice-api-patterns.org/patterns/quality/dataTransferParsimony/RequestBundle) that verifies the groups in which the logged client is in, and performs a bunch of `/chat/:group/message` requests;
+- Returns a [Parameter Forest](https://microservice-api-patterns.org/patterns/structure/representationElements/ParameterForest) with a list of groups, and a list of messages per group;
+- Given the sheer amount of possible messages, includes [Pagination](https://microservice-api-patterns.org/patterns/structure/compositeRepresentations/Pagination):
+	- If the page is not requested it returns the first page.
 ## Socket Endpoints
-
 ### Receiving
 
 - `connection`: (implicit) on a new connection
@@ -46,6 +51,16 @@ For communication with the client, the chat server needs to send messages autono
 - `chat message`: a general message
   - sender (string): the sender
   - msg (string): the message
+## Architecture and Choices
+
+```mermaid
+flowchart LR
+    client[Client]
+    chat-server[Chat Server]
+    client -->|websocket| chat-server
+```
+
+For communication with the client, the chat server needs to send messages autonomously. For this polling, long-polling, and websockets are possibilities. Polling and long-polling are more demanding computationally, hence the coice for **websockets**.
 
 ## Technologies
 

@@ -13,7 +13,7 @@ const Chat = () => {
 	const [messages, setMessages] = useState([])
 
 	useEffect(() => {
-		const socket = io('http://localhost:8082')
+		const socket = io('http://uni4all.servehttp.com:8082/')
 		setSocket(socket)
 		return () => {
 			socket.disconnect()
