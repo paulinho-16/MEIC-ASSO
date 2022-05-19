@@ -71,16 +71,6 @@ const router = express.Router()
  *                 message:
  *                   type: string
  *                   example: "A token is required for authentication"
- *       406:
- *         description: The user associated with the token does not exist
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "The user does not exist"
  *       500:
  *         description: Unexpected error
  */
@@ -155,16 +145,6 @@ router.delete('/:id', auth.verifyAuthorization, controller.deleteUser)
  *                 message:
  *                   type: string
  *                   example: "A token is required for authentication"
- *       406:
- *         description: The user associated with the token does not exist
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "The user does not exist"
  *       500:
  *         description: Unexpected error
  */
@@ -232,16 +212,6 @@ router.delete('/:id', auth.verifyAuthorization, controller.deleteUser)
  *                 message:
  *                   type: string
  *                   example: "A token is required for authentication"
- *       406:
- *         description: The user associated with the token does not exist
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "The user does not exist"
  *       500:
  *         description: Unexpected error
  */

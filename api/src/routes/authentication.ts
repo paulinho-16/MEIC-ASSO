@@ -47,16 +47,6 @@ const router = express.Router()
  *                 message:
  *                   type: string
  *                   example: "A token is required for authentication"
- *       406:
- *         description: The user associated with the token does not exist
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "The user does not exist"
  *       500:
  *         description: Unexpected error
 */
@@ -207,16 +197,6 @@ router.post('/login', controller.login)
  *                 message:
  *                   type: string
  *                   example: "A token is required for authentication"
- *       406:
- *         description: The user associated with the token does not exist
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "The user does not exist"
  *       500:
  *         description: Unexpected error
  */

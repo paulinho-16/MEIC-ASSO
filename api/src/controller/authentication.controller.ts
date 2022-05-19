@@ -88,7 +88,7 @@ async function login(req: Request, res: Response) {
   }
 
   // Verify existence of user
-  if (!user) return res.status(406).json({ message: 'The user does not exist' })
+  if (!user) return res.status(401).json({ message: 'The user does not exist' })
 
   // Validate password
   if (!(await bcrypt.compare(password, user.password)))

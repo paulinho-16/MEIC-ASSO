@@ -35,7 +35,7 @@ async function verifySessionToken(req: Request, res: Response, next: NextFunctio
     } catch (err) {
       return res.status(500).json({ message: `Get user failed with error: ${err}` })
     }
-    if (!user) return res.status(406).json({ message: 'The user does not exist' })
+    if (!user) return res.status(401).json({ message: 'The user does not exist' })
 
     next()
   })
@@ -74,7 +74,7 @@ async function verifyAuthorization(req: Request, res: Response, next: NextFuncti
     } catch (err) {
       return res.status(500).json({ message: `Get user failed with error: ${err}` })
     }
-    if (!user) return res.status(406).json({ message: 'The user does not exist' })
+    if (!user) return res.status(401).json({ message: 'The user does not exist' })
 
     next()
   })
@@ -100,7 +100,7 @@ async function verifyPasswordResetToken(req: Request, res: Response, next: NextF
     }
 
     // Verify existence of user
-    if (!user) return res.status(406).json({ message: 'The user does not exist' })
+    if (!user) return res.status(401).json({ message: 'The user does not exist' })
 
     next()
   })

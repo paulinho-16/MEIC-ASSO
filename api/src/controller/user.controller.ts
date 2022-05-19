@@ -59,7 +59,7 @@ async function updatePassword(req: Request, res: Response) {
   } catch (err) {
     return res.status(500).json({ message: `Get user failed with error: ${err}` })
   }
-  if (!user) return res.status(406).json({ message: 'The user does not exist' })
+  if (!user) return res.status(401).json({ message: 'The user does not exist' })
 
   // Validate password
   if (!(await bcrypt.compare(oldPassword, user.password)))
@@ -96,7 +96,7 @@ async function forgotPassword(req: Request, res: Response){
   } catch (err) {
     return res.status(500).json({ message: `Get user failed with error: ${err}` })
   }
-  if (!user) return res.status(406).json({ message: 'The user does not exist' })
+  if (!user) return res.status(401).json({ message: 'The user does not exist' })
 
   const resetToken = jwt.sign({ id: user.id }, process.env.JWT_PASS_RESET_KEY, { expiresIn: constants.passResetTokenLifetime })
 
