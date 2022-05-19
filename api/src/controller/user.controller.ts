@@ -127,7 +127,7 @@ async function resetPassword(req: Request, res: Response){
     await userService.updatePassword(req.body.id, encryptedPassword)
     return res.status(200).json({'message': 'Update password with success'})
   } catch(err){
-    return res.status(400).json({'message': 'Update password failed'})
+    return res.status(500).json({'message': 'Update password failed'})
   }
 }
 
