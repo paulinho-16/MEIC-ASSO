@@ -1,14 +1,11 @@
 import { Schema, model } from 'mongoose';
-
-type IUser = {
-    username: string;
-    online: boolean;
-}
+import {IUser} from '../@types/user';
 
 const userSchema = new Schema<IUser>({
-    username: { type: String, required: true, unique: true},
+    _id: { type: String, required: true},
+    name: {type: String, required: true},
     online: { type: Boolean, required: true },
 });
 
-
-module.exports = model<IUser>('User', userSchema);
+const User =  model<IUser>('User', userSchema);
+export default User;

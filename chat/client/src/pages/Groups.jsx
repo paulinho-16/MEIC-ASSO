@@ -19,9 +19,9 @@ export default function Groups() {
     <div className='mt-3 ms-3'>
       <Username />
       <Stack gap={3} className='ms-5 mt-3'>
-        <GroupChat name="EsofT1" socket={socket}/>
-        <GroupChat name="EsofT2" socket={socket}/>
-        <GroupChat name="EsofT3" socket={socket}/>
+        <GroupChat name="AssoT1" socket={socket}/>
+        <GroupChat name="AssoT2" socket={socket}/>
+        <GroupChat name="AssoT3" socket={socket}/>
       </Stack>
     </div>
   )

@@ -7,6 +7,7 @@ services:
       context: ./mongo_chat_server
       dockerfile: Dockerfile.dev
     volumes:
+      - ./mongo_chat_server/src:/usr/src/app/mongo_chat_server/src
       - /usr/src/app/mongo_chat_server/node_modules
     container_name: mongo_chat_server
     ports:

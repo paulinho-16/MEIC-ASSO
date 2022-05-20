@@ -22,7 +22,7 @@ services:
       context: ./mongo_chat_server
       dockerfile: Dockerfile.dev
     volumes:
-      - /usr/src/app/mongo_chat_server/node_modules
+      - ./mongo_chat_server/src:/usr/src/app/mongo_chat_server/src
     container_name: mongo_chat_server
     ports:
       - 8083:3000

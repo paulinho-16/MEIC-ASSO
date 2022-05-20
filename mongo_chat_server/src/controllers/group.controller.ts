@@ -1,5 +1,6 @@
+import { Request, Response } from 'express';
 
-async function getExample(req, res) {
+async function getExample(req: Request, res: Response) {
     console.log("Hi")
  }
  

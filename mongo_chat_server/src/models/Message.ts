@@ -14,4 +14,5 @@ const messageSchema = new Schema<IMessage>({
     date: {type: Schema.Types.Date, required: true},
 });
 
-module.exports = model<IMessage>('Message', messageSchema);
+const Message = model<IMessage>('Message', messageSchema);
+export default Message;
