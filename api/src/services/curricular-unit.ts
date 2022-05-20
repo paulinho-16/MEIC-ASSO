@@ -1,11 +1,14 @@
 import * as cheerio from 'cheerio'
 import axios from 'axios'
 import constants from '@/config/constants'
+import { classesHTML } from '../config/classes'
 import {
   Course,
   Teacher,
   AssessmentComponent,
   CourseUnitTime,
+  Student,
+  Class,
   CurricularUnit
 } from '@/@types/curricular-unit'
 
@@ -33,6 +36,9 @@ function getTextualInfo($: cheerio.CheerioAPI, target: cheerio.Cheerio<cheerio.E
 
 async function getCurricularUnitInfo(curricularUnitID: string) {
   const curricularUnitUrl = `${constants.curricularUnitUrl}?pv_ocorrencia_id=${curricularUnitID}`
+  const classesUrl = `${constants.classesUrl}?pv_curso_id=742&pv_ocorrencia_id=272558&pv_ano_lectivo=2011&pv_periodo_id=1&pv_no_menu=1` // TODO: Dynamic Url after the authentication is resolved
+
+  const curricularUnit: CurricularUnit = <CurricularUnit>{}
 
   const promise = axios.get(curricularUnitUrl, { responseEncoding: 'binary' })
     .then(response => {
@@ -156,16 +162,14 @@ async function getCurricularUnitInfo(curricularUnitID: string) {
         courseUnitsTimes.push(unit)
       })
 
-      // Group the information of the curricular unit
-      const curricularUnit: CurricularUnit = {
-        code: code,
-        acronym: acronym,
-        name: name,
-        courses: courses,
-        teachers: Array.from(new Set(teachers)),
-        assessmentComponents: assessmentComponents,
-        courseUnitsTimes: courseUnitsTimes,
-      }
+      // Set the information of the curricular unit
+      curricularUnit.code = code
+      curricularUnit.acronym = acronym
+      curricularUnit.name = name
+      curricularUnit.courses = courses
+      curricularUnit.teachers = teachers
+      curricularUnit.assessmentComponents = assessmentComponents
+      curricularUnit.courseUnitsTimes = courseUnitsTimes
 
       // Get the optional fields information
       if (languageTarget)
@@ -196,6 +200,53 @@ async function getCurricularUnitInfo(curricularUnitID: string) {
         curricularUnit.specialAssessment = getTextualInfo($, specialAssessmentTarget)
       if (classificationImprovementTarget.length != 0)
         curricularUnit.classificationImprovement = getTextualInfo($, classificationImprovementTarget)
+
+      return curricularUnit
+    })
+    .then(() => {
+      // TODO: Change to a request after the authentication is resolved, for now use a static HTML page
+      /*axios.get(classesUrl, { responseEncoding: 'binary' })
+      .then(response => {
+        const classesHTML = response.data
+
+        const $ = cheerio.load(classesHTML.toString('latin1'))
+      })*/
+
+      const $ = cheerio.load(classesHTML)
+
+      const classesTarget = $('h3').slice(1)
+      const studentsTarget = $('h3 + table').slice(1)
+
+      const classes: Class[] = []
+
+      // Get the information about the classes of the given curricular unit
+      classesTarget.each((i, e) => {
+        const students: Student[] = []
+        const classStudents = $(studentsTarget[i]).find('tr').slice(1);
+
+        // Get the information about the students of each class
+        classStudents.each((i, e) => {
+          const student: Student = {
+            name: $($(e).find('td')[0]).text(),
+            number: $($(e).find('td')[1]).text(),
+            email: $($(e).find('td')[2]).text(),
+            allocationDate: $($(e).find('td')[3]).text().trim(),
+            enrolled: ($($(e).find('td')[4]).children().first().attr('alt') === 'Verificar') ? true : false
+          }
+
+          students.push(student)
+        })
+
+        // Set the information of each class
+        const classObj: Class = {
+          name: $(e).text().trim().split(' ')[1],
+          students: students
+        }
+
+        classes.push(classObj)
+      })
+
+      curricularUnit.classes = classes
 
       return curricularUnit
     })
