@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio'
 import axios from 'axios'
 import constants from '@/config/constants'
-import { classesHTML } from '../config/classes'
+import { classesHTML } from '../config/mockHtml/classes'
 import {
   Course,
   Teacher,
