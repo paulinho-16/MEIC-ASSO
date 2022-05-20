@@ -10,9 +10,9 @@ export type MovementTable = {
 }
 
 export type Movements = {
-    [attribute: string]: MovementTable 
+    [attribute: string]: MovementTable
 }
 
 export type PaymentsResponse = {
-    [attribute: string]: string | Movements
+    [attribute: string]: string | Movements | MovementTableHeadings
 }

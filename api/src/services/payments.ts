@@ -79,11 +79,13 @@ async function fetchPayments(paymentsPageHTML: string) {
 
   const movements: Movements = {}
 
+  payments.headings = index
+
   index.forEach((val, i) => {
     movements[val] = parsedTables[i]
   })
 
-  payments.movements = movements
+  payments.tables = movements
 
   return payments
 }

@@ -77,3 +77,6 @@ services:
     restart: always
     ports:
       - 8081:8080 
+
+volumes:
+  redis:
