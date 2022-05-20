@@ -2,8 +2,6 @@ import * as cheerio from 'cheerio'
 
 import { Movement, MovementTable, MovementTableHeadings, Movements, PaymentsResponse } from '@/@types/payments'
 
-import { paymentsPageHTML } from '../config/data'
-
 function parseTable(table: cheerio.Element): MovementTable {
   const $ = cheerio.load(table)
   
@@ -60,8 +58,8 @@ function parseTable(table: cheerio.Element): MovementTable {
   return movementTable
 }
 
-async function fetchPayments() {
-  const $ = cheerio.load(paymentsPageHTML.toString())
+async function fetchPayments(paymentsPageHTML: string) {
+  const $ = cheerio.load(paymentsPageHTML)
 
   const payments: PaymentsResponse = {}
 
