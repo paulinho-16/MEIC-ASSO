@@ -1,7 +1,7 @@
 import axios from 'axios'
 import * as cheerio from 'cheerio'
 import { Request, Response } from 'express'
-import { studentScheduleHTML } from '../config/data'
+import { studentScheduleHTML } from '../config/mockHtml/studentSchedule'
 import constants from '../config/constants'
 
 function addMinutesToTime(time: string, minsToAdd: number): string {
