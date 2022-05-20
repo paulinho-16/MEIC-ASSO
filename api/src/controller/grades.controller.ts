@@ -1,7 +1,7 @@
 import axios from 'axios'
 import * as cheerio from 'cheerio'
 import { Request, Response } from 'express'
-import { studentPageHTML, planPositionPageHTML2 } from '../config/data'
+import { studentPageHTML, planPositionPageHTML } from '../config/mockHtml/studentGrades'
 import { InspectMajor, Grade, MajorGrades } from '../@types/grades'
 import constants from '../config/constants'
 
@@ -29,7 +29,7 @@ async function get(req: Request, res: Response) {
       for (const major of inspectMajors) {
         console.log(major)
 
-        const planPositionHTML = planPositionPageHTML2 // TODO: get planPositionHTML using planPositionURL
+        const planPositionHTML = planPositionPageHTML // TODO: get planPositionHTML using planPositionURL
         const majorGrades = cheerioScrapeGrades(major.name, planPositionHTML)
         studentGrades.push(majorGrades)
       }
