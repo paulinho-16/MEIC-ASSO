@@ -27,8 +27,6 @@ async function get(req: Request, res: Response) {
     })
     .then(() => {
       for (const major of inspectMajors) {
-        console.log(major)
-
         const planPositionHTML = planPositionPageHTML // TODO: get planPositionHTML using planPositionURL
         const majorGrades = cheerioScrapeGrades(major.name, planPositionHTML)
         studentGrades.push(majorGrades)
