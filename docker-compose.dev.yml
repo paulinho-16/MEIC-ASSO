@@ -1,79 +1,82 @@
 version: "3.7"
 
 services:
-  ts-node-docker:
-    build:
-      context: ./api
-      dockerfile: Dockerfile.dev
-    restart: always
-    environment:
-      JWT_GENERATOR_KEY: ${JWT_GENERATOR_KEY}
-      JWT_PASS_RESET_KEY: ${JWT_PASS_RESET_KEY}
-      MAIL_USER: ${MAIL_USER}
-      MAIL_PASS: ${MAIL_PASS}
-      DB_SCHEMA: ${POSTGRES_SCHEMA}
-      DB_USER: ${POSTGRES_USER}
-      DB_PASSWORD: ${POSTGRES_PASS}
-      DB_HOST: ${POSTGRES_HOST}
-      DB_PORT: ${POSTGRES_PORT}
-    volumes:
-      - ./api/src:/usr/src/app/api/src
-    container_name: ts-node-docker
-    ports:
-      - 8080:3000
-    depends_on: 
-      - postgres
-      - redis
+    ts-node-docker:
+        build:
+            context: ./api
+            dockerfile: Dockerfile.dev
+        restart: always
+        environment:
+            JWT_GENERATOR_KEY: ${JWT_GENERATOR_KEY}
+            JWT_PASS_RESET_KEY: ${JWT_PASS_RESET_KEY}
+            MAIL_USER: ${MAIL_USER}
+            MAIL_PASS: ${MAIL_PASS}
+            DB_SCHEMA: ${POSTGRES_SCHEMA}
+            DB_USER: ${POSTGRES_USER}
+            DB_PASSWORD: ${POSTGRES_PASS}
+            DB_HOST: ${POSTGRES_HOST}
+            DB_PORT: ${POSTGRES_PORT}
+        volumes:
+            - ./api/src:/usr/src/app/api/src
+        container_name: ts-node-docker
+        ports:
+            - 8080:3000
+        depends_on:
+            - postgres
+            - redis
 
-  chat-server:
-    build:
-      context: ./chat/server
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ./chat/server/src:/usr/src/app/chat/server/src/
-      - /usr/src/app/chat/server/node_modules
-    container_name: chat-server
-    ports:
-      - 8082:3000
+    chat-server:
+        build:
+            context: ./chat/server
+            dockerfile: Dockerfile.dev
+        volumes:
+            - ./chat/server/src:/usr/src/app/chat/server/src/
+            - /usr/src/app/chat/server/node_modules
+        container_name: chat-server
+        ports:
+            - 8082:3000
 
-  chat-client:
-    build:
-      context: ./chat/client
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ./chat/client/src:/usr/src/app/chat/client/src/
-      - /usr/src/app/chat/client/node_modules
-    container_name: chat-client
-    ports:
-      - 5500:5500
-    depends_on:
-      - chat-server
+    chat-client:
+        build:
+            context: ./chat/client
+            dockerfile: Dockerfile.dev
+        volumes:
+            - ./chat/client/src:/usr/src/app/chat/client/src/
+            - /usr/src/app/chat/client/node_modules
+        container_name: chat-client
+        ports:
+            - 5500:5500
+        depends_on:
+            - chat-server
 
-  postgres:
-    container_name: postgres
-    restart: always
-    build:
-      context: ./postgres
-      dockerfile: Dockerfile
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASS}
-    volumes:
-      - ./postgres/data:/home/postgres/data
-    ports:
-      - "5432:5432"
+    postgres:
+        container_name: postgres
+        restart: always
+        build:
+            context: ./postgres
+            dockerfile: Dockerfile
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASS}
+        volumes:
+            - ./postgres/data:/home/postgres/data
+        ports:
+            - "5432:5432"
 
-  redis:
-    image: redis:latest
-    container_name: redis
-    ports:
-      - '6379:6379'
-    volumes:
-      - redis:/data
+    redis:
+        image: redis:latest
+        container_name: redis
+        ports:
+            - "6379:6379"
+        volumes:
+            - redis:/data
 
-  adminer:
-    container_name: adminer
-    image: adminer
-    restart: always
-    ports:
-      - 8081:8080 
+    adminer:
+        container_name: adminer
+        image: adminer
+        restart: always
+        ports:
+            - 8081:8080
+
+volumes:
+    redis:
