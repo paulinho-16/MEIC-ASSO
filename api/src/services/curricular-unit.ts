@@ -12,6 +12,13 @@ import {
   CurricularUnit
 } from '@/@types/curricular-unit'
 
+// Retrieve the heading tag <h3> with a given title
+function getHeading($: cheerio.CheerioAPI, title: string) {
+  return $('h3').filter(function () {
+    return $(this).text() === title;
+  })
+}
+
 // Retrieve the textual information of a Sigarra field
 function getTextualInfo($: cheerio.CheerioAPI, target: cheerio.Cheerio<cheerio.Element>) {
   let text = ''
@@ -50,60 +57,24 @@ async function getCurricularUnitInfo(curricularUnitID: string) {
       const codeTarget = $('td[class=formulario-legenda] + td')[0]
       const acronymTarget = $('td[class=formulario-legenda] + td')[1]
       const nameTarget = $('a[name=ancora-conteudo] + h1')
-      const coursesTarget = $('h3').filter(function () {
-        return $(this).text() === 'Ciclos de Estudo/Cursos';
-      }).next().find('tr').slice(1);
-      const teachersTarget = $('h3').filter(function () {
-        return $(this).text() === 'Docência - Horas';
-      }).next().next().find('tr').slice(1);
-      const languageTarget = $('h3').filter(function () {
-        return $(this).text() === 'Língua de trabalho';
-      })[0].nextSibling;
-      const objectivesTarget = $('h3').filter(function () {
-        return $(this).text() === 'Objetivos';
-      })
-      const programTarget = $('h3').filter(function () {
-        return $(this).text() === 'Programa';
-      })
-      const mandatoryLiteratureTarget = $('h3').filter(function () {
-        return $(this).text() === 'Bibliografia Obrigatória';
-      })
-      const evaluationTarget = $('h3').filter(function () {
-        return $(this).text() === 'Tipo de avaliação';
-      })
-      const assessmentComponentsTarget = $('h3').filter(function () {
-        return $(this).text() === 'Componentes de Avaliação';
-      }).next().find('tr').slice(1);
-      const courseUnitsTimesTarget = $('h3').filter(function () {
-        return $(this).text() === 'Componentes de Ocupação';
-      }).next().find('tr').slice(1);
-      const examEligibilityTarget = $('h3').filter(function () {
-        return $(this).text() === 'Obtenção de frequência';
-      })
-      const calculationFormulaTarget = $('h3').filter(function () {
-        return $(this).text() === 'Fórmula de cálculo da classificação final';
-      })
-      const specialAssessmentTarget = $('h3').filter(function () {
-        return $(this).text() === 'Avaliação especial (TE, DA, ...)';
-      })
-      const classificationImprovementTarget = $('h3').filter(function () {
-        return $(this).text() === 'Melhoria de classificação';
-      })
-      const teachingMethodsAndActivitiesTarget = $('h3').filter(function () {
-        return $(this).text() === 'Métodos de ensino e atividades de aprendizagem';
-      })
-      const outcomesAndCompetencesTarget = $('h3').filter(function () {
-        return $(this).text() === 'Resultados de aprendizagem e competências';
-      })
-      const workingMethodTarget = $('h3').filter(function () {
-        return $(this).text() === 'Modo de trabalho';
-      })
-      const requirementsTarget = $('h3').filter(function () {
-        return $(this).text() === 'Pré-requisitos (conhecimentos prévios) e co-requisitos (conhecimentos simultâneos)';
-      })
-      const complementaryBibliographyTarget = $('h3').filter(function () {
-        return $(this).text() === 'Bibliografia Complementar';
-      })
+      const coursesTarget = getHeading($, 'Ciclos de Estudo/Cursos').next().find('tr').slice(1);
+      const teachersTarget = getHeading($, 'Docência - Horas').next().next().find('tr').slice(1);
+      const languageTarget = getHeading($, 'Língua de trabalho')[0].nextSibling;
+      const objectivesTarget = getHeading($, 'Objetivos')
+      const programTarget = getHeading($, 'Programa')
+      const mandatoryLiteratureTarget = getHeading($, 'Bibliografia Obrigatória')
+      const evaluationTarget = getHeading($, 'Tipo de avaliação')
+      const assessmentComponentsTarget = getHeading($, 'Componentes de Avaliação').next().find('tr').slice(1);
+      const courseUnitsTimesTarget = getHeading($, 'Componentes de Ocupação').next().find('tr').slice(1);
+      const examEligibilityTarget = getHeading($, 'Obtenção de frequência')
+      const calculationFormulaTarget = getHeading($, 'Fórmula de cálculo da classificação final')
+      const specialAssessmentTarget = getHeading($, 'Avaliação especial (TE, DA, ...)')
+      const classificationImprovementTarget = getHeading($, 'Melhoria de classificação')
+      const teachingMethodsAndActivitiesTarget = getHeading($, 'Métodos de ensino e atividades de aprendizagem')
+      const outcomesAndCompetencesTarget = getHeading($, 'Resultados de aprendizagem e competências')
+      const workingMethodTarget = getHeading($, 'Modo de trabalho')
+      const requirementsTarget = getHeading($, 'Pré-requisitos (conhecimentos prévios) e co-requisitos (conhecimentos simultâneos)')
+      const complementaryBibliographyTarget = getHeading($, 'Bibliografia Complementar')
 
       // Get the basic information (code, acronym and name)
       const code = $(codeTarget).text()
@@ -172,34 +143,20 @@ async function getCurricularUnitInfo(curricularUnitID: string) {
       curricularUnit.courseUnitsTimes = courseUnitsTimes
 
       // Get the optional fields information
-      if (languageTarget)
-        curricularUnit.language = $(languageTarget).text().trim()
-      if (objectivesTarget.length != 0)
-        curricularUnit.objectives = getTextualInfo($, objectivesTarget)
-      if (programTarget.length != 0)
-        curricularUnit.program = getTextualInfo($, programTarget)
-      if (mandatoryLiteratureTarget.length != 0)
-        curricularUnit.mandatoryLiterature = getTextualInfo($, mandatoryLiteratureTarget)
-      if (teachingMethodsAndActivitiesTarget.length != 0)
-        curricularUnit.teachingMethodsAndActivities = getTextualInfo($, teachingMethodsAndActivitiesTarget)
-      if (evaluationTarget.length != 0)
-        curricularUnit.evaluation = getTextualInfo($, evaluationTarget)
-      if (outcomesAndCompetencesTarget.length != 0)
-        curricularUnit.outcomesAndCompetences = getTextualInfo($, outcomesAndCompetencesTarget)
-      if (workingMethodTarget.length != 0)
-        curricularUnit.workingMethod = getTextualInfo($, workingMethodTarget)
-      if (requirementsTarget.length != 0)
-        curricularUnit.requirements = getTextualInfo($, requirementsTarget)
-      if (complementaryBibliographyTarget.length != 0)
-        curricularUnit.complementaryBibliography = getTextualInfo($, complementaryBibliographyTarget)
-      if (examEligibilityTarget.length != 0)
-        curricularUnit.examEligibility = getTextualInfo($, examEligibilityTarget)
-      if (calculationFormulaTarget.length != 0)
-        curricularUnit.calculationFormula = getTextualInfo($, calculationFormulaTarget)
-      if (specialAssessmentTarget.length != 0)
-        curricularUnit.specialAssessment = getTextualInfo($, specialAssessmentTarget)
-      if (classificationImprovementTarget.length != 0)
-        curricularUnit.classificationImprovement = getTextualInfo($, classificationImprovementTarget)
+      if (languageTarget) curricularUnit.language = $(languageTarget).text().trim()
+      if (objectivesTarget.length != 0) curricularUnit.objectives = getTextualInfo($, objectivesTarget)
+      if (programTarget.length != 0) curricularUnit.program = getTextualInfo($, programTarget)
+      if (mandatoryLiteratureTarget.length != 0) curricularUnit.mandatoryLiterature = getTextualInfo($, mandatoryLiteratureTarget)
+      if (teachingMethodsAndActivitiesTarget.length != 0) curricularUnit.teachingMethodsAndActivities = getTextualInfo($, teachingMethodsAndActivitiesTarget)
+      if (evaluationTarget.length != 0) curricularUnit.evaluation = getTextualInfo($, evaluationTarget)
+      if (outcomesAndCompetencesTarget.length != 0) curricularUnit.outcomesAndCompetences = getTextualInfo($, outcomesAndCompetencesTarget)
+      if (workingMethodTarget.length != 0) curricularUnit.workingMethod = getTextualInfo($, workingMethodTarget)
+      if (requirementsTarget.length != 0) curricularUnit.requirements = getTextualInfo($, requirementsTarget)
+      if (complementaryBibliographyTarget.length != 0) curricularUnit.complementaryBibliography = getTextualInfo($, complementaryBibliographyTarget)
+      if (examEligibilityTarget.length != 0) curricularUnit.examEligibility = getTextualInfo($, examEligibilityTarget)
+      if (calculationFormulaTarget.length != 0) curricularUnit.calculationFormula = getTextualInfo($, calculationFormulaTarget)
+      if (specialAssessmentTarget.length != 0) curricularUnit.specialAssessment = getTextualInfo($, specialAssessmentTarget)
+      if (classificationImprovementTarget.length != 0) curricularUnit.classificationImprovement = getTextualInfo($, classificationImprovementTarget)
 
       return curricularUnit
     })
