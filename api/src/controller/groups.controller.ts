@@ -137,7 +137,7 @@ async function getGroupMembers(req: Request, res: Response) {
         return
     }
 
-    const data = await groups.getGroupMembers(parseInt(req.params.id.toString()))
+    const data = await groups.getGroupMembers(parseInt(req.params.id.toString()), req)
 
     if(data){
         res.json(data)

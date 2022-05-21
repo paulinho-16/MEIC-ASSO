@@ -66,8 +66,6 @@ async function getGroups(req: Request) {
   // In the case of pagination
   if (req.query.offset !== undefined && req.query.limit !== undefined) {
 
-    console.log("HEY HEY HEY")
-
     var limitInt = parseInt(req.query.limit.toString())
     var offsetInt = parseInt(req.query.offset.toString())
 
@@ -168,7 +166,7 @@ async function deleteGroup(groupId: Number){
 // Member Endpoints.
 
 
-async function getGroupMembers(groupId: Number) {
+async function getGroupMembers(groupId: Number, req: Request) {
 
   console.log("Get group members");
 
@@ -176,9 +174,22 @@ async function getGroupMembers(groupId: Number) {
     return -1;
   }
 
-  const query = {
+  var query = {
     text: 'SELECT * FROM Group_Student WHERE groupId = $1',
     values: [groupId],
+  }
+
+  // In the case of pagination
+  if (req.query.offset !== undefined && req.query.limit !== undefined) {
+
+    var limitInt = parseInt(req.query.limit.toString())
+    var offsetInt = parseInt(req.query.offset.toString())
+
+    query = {
+      text: 'SELECT * FROM Group_Student WHERE groupId = $1 ORDER BY Group_Student.id DESC LIMIT $2 OFFSET $3 ;',
+      values: [groupId, limitInt, offsetInt],
+    }
+
   }
 
   try {
