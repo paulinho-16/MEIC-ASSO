@@ -21,9 +21,13 @@ This component helps students on their academic daily life by proving an API tha
 ### GET `/groups`
 
 Provides a list of groups. 
+Supports pagination through "limit" and "offset" query parameters.
 
 #### Parameters
-None yet.
+
+- Query:
+- - limit: Int?
+- - offset: Int?
 
 #### Responses
 
