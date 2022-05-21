@@ -134,11 +134,16 @@ Returns a single group that matches the groupId specified.
 ### GET `/groups/{groupId}/members`
 
 Provides a list with the members of a group.
+Supports pagination through "limit" and "offset" query parameters.
 
 #### Parameters
 
 - Path: 
 - - groupId: Int 
+
+- Query:
+- - limit: Int?
+- - offset: Int?
 
 #### Responses
 
