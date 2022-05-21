@@ -1,4 +1,10 @@
 import { Request, Response } from 'express'
+import {
+  Event
+} from '@/@types/events'
+
+import events from '@/services/calendar'
+
 
 const marketing = {
   'acronym': 'MK',
@@ -47,87 +53,72 @@ const evaluation_assessment = {
   'rooms': 'B113'
 } 
 
-function parseJSONTimetable (sigarra_timetable){
-  for(let i = 0; i  < sigarra_timetable.length; i++){
+function parseJSONTimetable (sigarra_timetable: JSON){
+  //for(let i = 0; i  < sigarra_timetable; i++){
     
-  }
+  //}
 } 
 
 
 
 
 async function getCalendarEvents(req: Request, res: Response) {
-    // TODO: connect with database (not set up yet)
-
-    const event = {
-        'summary': 'Google I/O 2015',
-        'location': '800 Howard St., San Francisco, CA 94103',
-        'description': 'A chance to hear more about Google\'s developer products.',
-        'start': {
-          'dateTime': '2016-09-28T09:00:00-07:00',
-          'timeZone': 'America/Los_Angeles',
-        },
-        'end': {
-          'dateTime': '2016-09-28T17:00:00-07:00',
-          'timeZone': 'America/Los_Angeles',
-        },
-        'recurrence': [
-          'RRULE:FREQ=DAILY;COUNT=2'
-        ],
-        'reminders': {
-          'useDefault': false,
-          'overrides': [
-            {'method': 'email', 'minutes': 24 * 60},
-            {'method': 'popup', 'minutes': 10},
-          ],
-        },
+    let startDate;
+    if(req.query.startDate == null){
+      const today = new Date();
+      startDate = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
     }
-
-    return res.send(event)
+    else{
+      startDate = req.query.startDate.toString()
+    }
+    const endDate = req.query.endDate == null ? null : req.query.endDate.toString();
+    const retval = await events.getCalendarEvents(req.body.id, startDate, endDate);
+    if(retval !== false){
+      res.status(201).send(retval)
+    }
+    else{
+      res.status(500).send('Something went wrong. Try again!')
+    }
 }
 
 async function addCalendarEvent(req: Request, res: Response) {
     console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
-    if (req.query["summary"] == null || req.query["location"] == null || req.query["description"] == null || req.query["start_time"] == null || req.query["end_time"] == null)
+    if (req.query["summary"] == null || req.query["date"] == null || req.query["startTime"] == null || req.query["endTime"] == null)
     {
-        res.send("Invalid syntax!")
+        console.log(req);
+        res.status(400).send("Invalid syntax!") // trocar para json com codigo de erro
         return
     }
-
-    const summary = req.query["summary"];
-    const location = req.query["location"];
-    const description = req.query["description"];
-    const start_time = req.query["start_time"];
-    const start_time_timezone = req.query["start_time_timezone"];
-    const end_time = req.query["end_time"];
-    const end_time_timezone = req.query["end_time_timezone"];
-
-    const event = {
-        'summary': summary,
-        'location': location,
-        'description': description,
-        'start': {
-          'dateTime': start_time,
-          'timeZone': start_time_timezone,
-        },
-        'end': {
-          'dateTime': end_time,
-          'timeZone': end_time_timezone,
-        },
-        'recurrence': [
-          'RRULE:FREQ=DAILY;COUNT=2'
-        ],
-        'reminders': {
-          'useDefault': false,
-          'overrides': [
-            {'method': 'email', 'minutes': 24 * 60},
-            {'method': 'popup', 'minutes': 10},
-          ],
-        },
+    
+    const new_event: Event = {
+      summary: req.query.summary.toString(),
+      description: req.query.description == null ? null : req.query.description.toString(),
+      location: req.query.location == null ? null : req.query.location.toString(),
+      date: new Date(req.query.date.toString()),
+      startTime: new Date(req.query.date.toString() + ' ' + req.query.startTime.toString()),
+      endTime: new Date(req.query.date.toString() + ' ' + req.query.endTime.toString()),
+      recurrence: req.query.recurrence == null ? null: req.query.recurrence.toString(),
+      isUni: false
     }
 
-    return res.send(event)
+  const retval = await events.createEvent(new_event);
+
+  if(retval != false){
+    const eventId = retval
+    const data = await events.createEventRelation(eventId, req.body.id);
+    if(data){
+        res.status(201).send('Success')
+    }
+    else{
+      res.status(500).send('Something went wrong. Try again!')
+    }
+  }
+  else{
+    res.status(500).send('Something went wrong. Try again!')
+
+  }
 }
+
 
 export default {
     getCalendarEvents,
