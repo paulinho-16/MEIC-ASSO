@@ -1,4 +1,6 @@
 import { Client } from 'pg'
+import { Request, Response } from 'express'
+
 
 import {
   Group
@@ -51,16 +53,24 @@ async function connectDatabase(){
 // Group Methods.
 
 
-async function getGroups() {
+async function getGroups(req: Request) {
 
   console.log("Get groups");
 
   if(!connectDatabase()){
-    
     return -1;
   }
 
-  let query = "SELECT * from groups";
+  var query = "SELECT * from groups";
+
+  // In the case of pagination
+  if (req.query.offset !== undefined && req.query.limit !== undefined) {
+
+    var limitInt = parseInt(req.query.limit.toString())
+    var offsetInt = parseInt(req.query.offset.toString())
+
+    query = "SELECT * from groups ORDER BY groups.id DESC LIMIT " + limitInt + " OFFSET " + offsetInt + " ;";
+  }
 
   try {
     let res = await client.query(query)
@@ -156,7 +166,7 @@ async function deleteGroup(groupId: Number){
 // Member Endpoints.
 
 
-async function getGroupMembers(groupId: Number) {
+async function getGroupMembers(groupId: Number, req: Request) {
 
   console.log("Get group members");
 
@@ -164,9 +174,22 @@ async function getGroupMembers(groupId: Number) {
     return -1;
   }
 
-  const query = {
+  var query = {
     text: 'SELECT * FROM Group_Student WHERE groupId = $1',
     values: [groupId],
+  }
+
+  // In the case of pagination
+  if (req.query.offset !== undefined && req.query.limit !== undefined) {
+
+    var limitInt = parseInt(req.query.limit.toString())
+    var offsetInt = parseInt(req.query.offset.toString())
+
+    query = {
+      text: 'SELECT * FROM Group_Student WHERE groupId = $1 ORDER BY Group_Student.id DESC LIMIT $2 OFFSET $3 ;',
+      values: [groupId, limitInt, offsetInt],
+    }
+
   }
 
   try {
