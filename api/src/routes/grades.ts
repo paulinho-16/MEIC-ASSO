@@ -33,14 +33,13 @@ const router = express.Router()
  *                       items:
  *                         type: object
  *                         properties:
- *                           uc:
- *                             type: string
- *                             year: number
- *                             code: string
- *                             result: number
- *                             credits: number
- *                             acronym: string
- *                             semester: number
+ *                           uc: string
+ *                           year: number
+ *                           code: string
+ *                           result: number
+ *                           credits: number
+ *                           acronym: string
+ *                           semester: number
  *           Student Grades:
  *             - major: Mestrado em Engenharia Informática e Computação
  *               grades:
