@@ -11,8 +11,8 @@ import {
 // Groups Endpoints.
 
 async function getGroups(req: Request, res: Response) {
-
-    const data = await groups.getGroups()
+    
+    const data = await groups.getGroups(req)
 
     if (data) {
         res.json(data)

@@ -1,4 +1,6 @@
 import { Client } from 'pg'
+import { Request, Response } from 'express'
+
 
 import {
   Group
@@ -51,16 +53,26 @@ async function connectDatabase(){
 // Group Methods.
 
 
-async function getGroups() {
+async function getGroups(req: Request) {
 
   console.log("Get groups");
 
   if(!connectDatabase()){
-    
     return -1;
   }
 
-  let query = "SELECT * from groups";
+  var query = "SELECT * from groups";
+
+  // In the case of pagination
+  if (req.query.offset !== undefined && req.query.limit !== undefined) {
+
+    console.log("HEY HEY HEY")
+
+    var limitInt = parseInt(req.query.limit.toString())
+    var offsetInt = parseInt(req.query.offset.toString())
+
+    query = "SELECT * from groups ORDER BY groups.id DESC LIMIT " + limitInt + " OFFSET " + offsetInt + " ;";
+  }
 
   try {
     let res = await client.query(query)
