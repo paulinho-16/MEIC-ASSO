@@ -1,5 +1,5 @@
 export type IUser = {
-    _id: string;
-    name: string;
-    online: boolean;
-}
+  number: string;
+  name: string;
+  online: boolean;
+};

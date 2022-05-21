@@ -1,16 +1,43 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model } from "mongoose";
 
 type IGroup = {
-    name: string;
-    users: [{type: Schema.Types.ObjectId, ref: 'User'}];
-    messages: [{type: Schema.Types.ObjectId, ref: 'Message'}]
-}
+  name: string;
+  userNumbers: string[];
+  messages: [{ type: Schema.Types.ObjectId; ref: "Message" }];
+};
 
-const groupSchema = new Schema<IGroup>({
+const groupSchema = new Schema<IGroup>(
+  {
     name: { type: String, required: true },
-    users: [{type: Schema.Types.ObjectId, ref: 'User'}],
-    messages: [{type: Schema.Types.ObjectId, ref: 'Message'}],
+    userNumbers: [
+      {
+        type: String,
+      },
+    ],
+    messages: [{ type: Schema.Types.ObjectId, ref: "Message" }],
+  },
+  {
+    toJSON: {
+      virtuals: true,
+    },
+    toObject: {
+      virtuals: true,
+    },
+  }
+);
+
+groupSchema.virtual("users", {
+  ref: "User",
+  localField: "userNumbers",
+  foreignField: "number",
 });
 
-const Group = model<IGroup>('Group', groupSchema);
+const autoPopulateLead = function (next: any) {
+  this.populate("users");
+  next();
+};
+
+groupSchema.pre("findOne", autoPopulateLead).pre("find", autoPopulateLead);
+
+const Group = model<IGroup>("Group", groupSchema);
 export default Group;
