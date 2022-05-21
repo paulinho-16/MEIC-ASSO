@@ -10,4 +10,10 @@ export default {
   curricularUnitUrl: 'https://sigarra.up.pt/feup/pt/ucurr_geral.ficha_uc_view',
   classesUrl: 'https://sigarra.up.pt/feup/pt/it_listagem.lista_turma_disciplina',
   studentSchedulePageBaseUrl: 'https://sigarra.up.pt/feup/pt/hor_geral.estudantes_view',
+  secret: 'uni4all-secret-key',
+  studentPageBaseUrl: 'https://sigarra.up.pt/feup/fest_geral.cursos_list?pv_num_unico',
+  academicPathBaseUrl:
+    'https://sigarra.up.pt/feup/pt/fest_geral.curso_percurso_academico_view?pv_fest_id',
+  planPositionBaseUrl:
+    'https://sigarra.up.pt/feup/pt/fest_geral.curso_posicao_plano_view?pv_fest_id',
 }

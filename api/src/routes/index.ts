@@ -14,6 +14,7 @@ import services from './services'
 import profile from './profile'
 import calendar from './calendar'
 import schedule from './schedule'
+import grades from './grades'
 
 export default {
   associations,
@@ -31,5 +32,6 @@ export default {
   services,
   profile,
   calendar,
-  schedule
+  schedule,
+  grades,
 }
