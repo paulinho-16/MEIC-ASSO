@@ -5,17 +5,13 @@ import { Request, Response } from "express";
 
 async function getAllMessages(req: Request, res: Response) {
   let {perPage, page} = req.body;
-
-  if(!perPage && !page) return res.status(200).json(await Message.find());
-  if(!perPage || !page) return res.status(400).json("You need to specify both perPage and page arguments.")
+  if(perPage === undefined || page === undefined) return res.status(400).json("You need to specify both perPage and page arguments.")
   
   perPage = Number(perPage);
   page = Number(page);
-  
-  console.log(perPage, page, perPage.isNaN, page.isNaN)
-  if(!perPage.isNaN || !page.isNaN) return res.status(400).json("Both perPage and page arguments need to be numbers.")
+  if(isNaN(perPage) || isNaN(page)) return res.status(400).json("Both perPage and page arguments need to be numbers.")
 
-  return res.status(200).json(await Message.find().skip(Number(perPage) * Number(page)).limit(Number(perPage)));
+  return res.status(200).json(await Message.find().skip(perPage * page).limit(perPage));
 }
 
 async function getMessage(req: Request, res: Response) {

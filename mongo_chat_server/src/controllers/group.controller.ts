@@ -6,7 +6,7 @@ async function getAllGroups(req: Request, res: Response) {
   return res.status(200).json(await Group.find());
 }
 
-async function getGroup(req: Request, res: Response) {
+async function getGroupById(req: Request, res: Response) {
   const {id} = req.params;
   Group.findById(id)
   .then((group) => {
@@ -17,6 +17,11 @@ async function getGroup(req: Request, res: Response) {
   })
 }
 
+async function getGroupsByUser(req: Request, res: Response) {
+  const {up} = req.params;
+  return res.status(200).json((await Group.find({ userNumbers: up})));
+}
+
 async function createGroup(req: Request, res: Response) {
   const group = await Group.create(req.body);
   await group.populate("users");
@@ -25,6 +30,7 @@ async function createGroup(req: Request, res: Response) {
 
 export default {
   getAllGroups,
-  getGroup,
+  getGroupById,
+  getGroupsByUser,
   createGroup
 };
