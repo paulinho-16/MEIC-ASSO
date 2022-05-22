@@ -28,6 +28,7 @@ Supports pagination through "limit" and "offset" query parameters.
 - Query:
 - - limit: Int?
 - - offset: Int?
+- - classId: Int? -> filter groups by class. 
 
 #### Responses
 
@@ -43,7 +44,8 @@ Returns a list of groups if they match filters.
         "title": "String",
         "description": "String",
         "mlimit": "Int",
-        "autoaccept": "Bool"
+        "autoaccept": "Bool",
+        "classId": "Int"
     }
 ]
 ```
@@ -72,7 +74,8 @@ Returns a single group that matches the groupId specified.
     "title": "String",
     "description": "String",
     "mlimit": "Int",
-    "autoaccept": "Bool"
+    "autoaccept": "Bool",
+    "classId": "Int"
 }
 ```
 
@@ -95,7 +98,8 @@ Create a group.
         "title": "String",
         "description": "String",
         "mlimit": "Int",
-        "autoaccept": "Bool"
+        "autoaccept": "Bool",
+        "classId": "Int"
     }
 ]
 ```

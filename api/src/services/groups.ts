@@ -61,7 +61,20 @@ async function getGroups(req: Request) {
     return -1;
   }
 
-  var query = "SELECT * from groups";
+  var query = "SELECT * from groups"
+
+
+  // If filter by group.
+  if (req.query.classId !== undefined) {
+
+    var classId = parseInt(req.query.classId.toString())
+
+    query = query + " WHERE classId = " + classId
+  }
+
+
+  query = query + " ORDER BY groups.id DESC"
+
 
   // In the case of pagination
   if (req.query.offset !== undefined && req.query.limit !== undefined) {
@@ -69,7 +82,7 @@ async function getGroups(req: Request) {
     var limitInt = parseInt(req.query.limit.toString())
     var offsetInt = parseInt(req.query.offset.toString())
 
-    query = "SELECT * from groups ORDER BY groups.id DESC LIMIT " + limitInt + " OFFSET " + offsetInt + " ;";
+    query = query + " LIMIT " + limitInt + " OFFSET " + offsetInt
   }
 
   try {

@@ -7,6 +7,8 @@ const router = express.Router()
 
 router.use(express.json())
 
+
+
 // Groups endpoints.
 
 router.get('/', controller.getGroups)
