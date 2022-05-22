@@ -74,7 +74,7 @@ async function getStudentSchedule(req: Request, res: Response) {
                   const classEndTime = addMinutesToTime(classStartTime, minutesToAdd)
 
                   schedule.push({
-                    dayOfTheWeek: daysOfTheWeek[j],
+                    dayOfTheWeek: daysOfTheWeek[j - 1],
                     startTime: classStartTime,
                     endTime: classEndTime,
                     curricularUnitName: $(td).text().split(' ')[0],
