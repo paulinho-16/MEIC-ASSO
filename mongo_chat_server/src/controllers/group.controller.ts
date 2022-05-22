@@ -13,7 +13,7 @@ async function getGroupById(req: Request, res: Response) {
     return res.status(200).json(group);
   })
   .catch(() => {
-    return res.status(400).json(`Group with id '${id}' not found`);
+    return res.status(400).json(`Group with id '${id}' not found!`);
   })
 }
 
