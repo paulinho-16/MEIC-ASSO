@@ -1,9 +1,5 @@
 import { Schema, model } from "mongoose";
-
-type IMessage = {
-  message: string;
-  from: { type: Schema.Types.ObjectId; ref: "User" };
-};
+import { IMessage } from "@/@types/message";
 
 const messageSchema = new Schema<IMessage>({
   message: { type: String, required: true },
