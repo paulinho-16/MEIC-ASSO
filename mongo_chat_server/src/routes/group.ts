@@ -3,7 +3,9 @@ import group from "@/controllers/group.controller";
 
 const router = express.Router();
 
-/* GET home page. */
-router.get("/", group.getExample);
+router.get("/", group.getAllGroups);
+router.get("/:id", group.getGroup);
+
+router.post('/', group.createGroup);
 
 export default router;
