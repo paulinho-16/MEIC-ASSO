@@ -2,7 +2,8 @@ export type Exam = {
     acronym: string
     url?: string
     day?: string
-    time?: string
+    begin?: string
+    duration?: string
     rooms?: string
   }
 
