@@ -6,7 +6,7 @@ const router = express.Router()
 
 router.get('/:id', controller.get)
 
-/**
+/* *
  * @swagger
  * /exams-calendar/{courseID}
  *  get:
@@ -43,4 +43,5 @@ router.get('/:id', controller.get)
  *                                                  duration: string
  *                                                  rooms: string
  */
+
 export default router
