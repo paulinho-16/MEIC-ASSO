@@ -26,13 +26,16 @@ async function getStudentSchedule(req: Request, res: Response) {
   const mock = true
   const api = axios.create({ responseEncoding: 'binary' })
   const studentFestId = req.query.studentFestId
-  const academicYear = req.query.academicYear
+
+  // TODO:
+  // Implement the same method as in the grades scraping,
+  // to avoid the pv_fest_id parameter
 
   const studentSchedulePageUrl = mock
     ? 'https://google.com'
-    : `${constants.studentSchedulePageBaseUrl}?pv_fest_id=${studentFestId}&pv_ano_lectivo=${academicYear}`
+    : `${constants.studentSchedulePageBaseUrl}?pv_fest_id=${studentFestId}`
 
-  //TODO: Admin authentication to access student schedule page
+  // TODO: Add authentication to access student schedule page
 
   api
     .get(studentSchedulePageUrl)
