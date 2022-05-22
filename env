@@ -1,9 +1,0 @@
-JWT_PASS_RESET_KEY="g6nhHbBKetu1IpQj3icPs3lH7mgo7tv5iRBOzrGq9n94Q1OaUY"
-JWT_GENERATOR_KEY="#%&b6FrJDjnBn6ZyiexmW%Aus^!dM2gs^nVtJ5WYhXW9KEFw"
-MAIL_USER="uni4all.api@gmail.com"
-MAIL_PASS="F&SJthHu57S$B^RsN^Mf@QV8n"
-POSTGRES_USER="postgres"
-POSTGRES_PASS="postgres"
-POSTGRES_SCHEMA="postgres"
-POSTGRES_HOST="postgres"
-POSTGRES_PORT=5432
