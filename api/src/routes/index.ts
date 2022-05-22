@@ -12,6 +12,8 @@ import user from './user'
 import status from './status'
 import services from './services'
 import profile from './profile'
+import schedule from './schedule'
+import grades from './grades'
 
 export default {
   associations,
@@ -28,4 +30,6 @@ export default {
   status,
   services,
   profile,
+  schedule,
+  grades,
 }
