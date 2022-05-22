@@ -25,6 +25,35 @@ services:
             - postgres
             - redis
 
+  mongo_chat_server:
+    build:
+      context: ./mongo_chat_server
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./mongo_chat_server/src:/usr/src/app/mongo_chat_server/src
+      - /usr/src/app/mongo_chat_server/node_modules
+    container_name: mongo_chat_server
+    ports:
+      - 8083:3000
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password12345678
+      - MONGODB_URI=mongodb://mongo_chat:27017/
+    depends_on:
+      - mongo_chat
+
+  mongo_chat:
+    container_name: mongo_chat
+    restart: always
+    image: mongo:latest
+    volumes:
+      - ./mongo_chat_server/mongo:/data/db
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password12345678
+
     chat-server:
         build:
             context: ./chat/server

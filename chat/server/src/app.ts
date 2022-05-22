@@ -5,10 +5,10 @@ import { Server } from 'socket.io';
 import http from 'http';
 import cors from 'cors';
 import setRequests from '@/socket';
-import UserManager from '@/userManager';
 
 const app = express();
 app.use(cors());
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -17,9 +17,7 @@ const io = new Server(server, {
   },
 });
 
-const userManager = new UserManager();
-
-setRequests(io, userManager);
+setRequests(io);
 
 server.listen(3000, () => {
   console.log('listening on *:3000');
