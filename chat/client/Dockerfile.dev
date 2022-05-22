@@ -8,6 +8,4 @@ RUN yarn install
 
 COPY ./ ./
 
-COPY tailwind.config.js ./
-
 CMD ["yarn", "start"]

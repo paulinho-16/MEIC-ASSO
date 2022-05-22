@@ -1,24 +1,5 @@
 import { User } from '@/@types/user'
-import { Pool } from 'pg'
-
-const pool = new Pool({
-  host: 'postgres',
-  user: 'postgres',
-  database: 'postgres',
-  password: 'postgres',
-  port: 5432,
-})
-
-const connectToDB = async () => {
-  try {
-    await pool.connect()
-  } catch (err) {
-    setTimeout(connectToDB, 2000)
-    console.log('Error connecting to db. Retrying in 1s')
-  }
-}
-
-connectToDB()
+import postgresClient from '@/util/connect-postgres'
 
 async function insertUser(user: User) {
   const query = {
@@ -26,7 +7,7 @@ async function insertUser(user: User) {
     values: [user.email, user.password],
   }
 
-  const result = await pool.query(query)
+  const result = await postgresClient.query(query)
   if (result.rows.length == 0) return -1
   return result.rows[0]
 }
@@ -37,7 +18,7 @@ async function getUserById(id: number) {
     values: [id],
   }
 
-  const result = await pool.query(query)
+  const result = await postgresClient.query(query)
   if (result.rows.length == 0) return false
   return result.rows[0]
 }
@@ -48,7 +29,7 @@ async function getUserByEmail(email: string) {
     values: [email],
   }
 
-  const result = await pool.query(query)
+  const result = await postgresClient.query(query)
   if (result.rows.length == 0) return false
   return result.rows[0]
 }
@@ -59,7 +40,7 @@ async function existsUserById(id: number) {
     values: [id],
   }
 
-  const result = await pool.query(query)
+  const result = await postgresClient.query(query)
   if (result.rows.length == 0) return false
   return true
 }
@@ -70,7 +51,7 @@ async function existsUserByEmail(email: string) {
     values: [email],
   }
 
-  const result = await pool.query(query)
+  const result = await postgresClient.query(query)
   if (result.rows.length == 0) return false
   return true
 }
@@ -81,7 +62,7 @@ async function deleteUserById(id: number) {
     values: [id],
   }
 
-  await pool.query(query)
+  await postgresClient.query(query)
 }
 
 async function updatePassword(id: number, password: string) {
@@ -90,7 +71,35 @@ async function updatePassword(id: number, password: string) {
     values: [password, id],
   }
 
-  await pool.query(query)
+  await postgresClient.query(query)
+}
+
+function getPasswordErrors(password: string): string | null {
+  const errors = []
+
+  // At least 6 characters
+  const characters = password.length
+  if (characters === 0) errors.push('no characters')
+  else if (characters < 6)
+    errors.push(`only ${password.length} character${characters == 1 ? '' : 's'}`)
+
+  // One numeric digit
+  if (!password.match(/^.*\d.*$/)) errors.push('no digits')
+
+  // One uppercase character
+  if (!password.match(/^.*(?=.*[A-Z]).*$/)) errors.push('no uppercase letters')
+
+  // One lowercase character
+  if (!password.match(/^.*(?=.*[a-z]).*$/)) errors.push('no lowercase letters')
+
+  // No errors
+  if (errors.length === 0) return null
+
+  // Build a message with all the errors of the password
+  let errorMessage = errors.pop()
+  if (errors.length !== 0) errorMessage = errors.join(', ') + ' and ' + errorMessage
+
+  return `it needs at least 6 characters, one numeric digit, one uppercase and one lowercase letter, but it has ${errorMessage}`
 }
 
 export default {
@@ -100,5 +109,6 @@ export default {
   existsUserByEmail,
   insertUser,
   deleteUserById,
-  updatePassword
+  updatePassword,
+  getPasswordErrors,
 }
