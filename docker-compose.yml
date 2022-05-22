@@ -54,8 +54,8 @@ services:
       context: ./postgres
       dockerfile: Dockerfile
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASS}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     volumes:
       - ./postgres/data:/home/postgres/data
     ports:
