@@ -4,6 +4,6 @@ import controller from '@/controller/exams-calendar.controller'
 
 const router = express.Router()
 
-router.get('/:id', controller.getExamsCalendar)
+router.get('/:id', controller.get)
 
 export default router
