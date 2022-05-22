@@ -29,6 +29,7 @@ groupSchema.virtual("users", {
 
 const autoPopulateLead = function (next: any) {
   this.populate("users");
+  this.populate("messages");
   next();
 };
 

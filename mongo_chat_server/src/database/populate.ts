@@ -3,8 +3,10 @@ import Group from "@/models/Group";
 
 import UserData from "@/data/users.json";
 import GroupData from "@/data/groups.json";
+import Message from "@/models/Message";
 
 export async function populate() {
+  await Message.deleteMany({});
   await User.deleteMany({});
   await User.insertMany(UserData);
 
