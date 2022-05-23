@@ -61,7 +61,7 @@ async function getServices(req: Request, res: Response) {
           })
         )
         .then(() => {
-          res.send(services)
+          res.send(services[0])
         })
     })
     .catch(function (e) {
