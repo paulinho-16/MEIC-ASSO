@@ -110,12 +110,59 @@ async function deleteGroup(req: Request, res: Response) {
 
     const data = await groups.deleteGroup(parseInt(req.params.id.toString()))
 
+    
+
+}
+
+async function editGroup(req: Request, res: Response){
+
+    if(!req.params.id) {
+        return res.status(400).send({
+            message: "No group id was specified."
+        });
+    }
+
+    if(isNaN(parseInt(req.params.id.toString()))){
+        res.status(400).send('id must be an integer.')
+        return
+    }
+
+    //TODO: check if user owns the group
+
+    const query = req.body
+
+    if(query.typeName == undefined || query.title == undefined || query.description == undefined || query.mLimit == undefined || query.autoAccept == undefined) {
+      res.status(400).send('This request must have \'typeName\', \'title\', \'description\', \'mLimit\' and \'autoAccept\'.')
+      return
+    }
+  
+    if(query.typeName == '' || query.title == '' || query.description == '') {
+      res.status(400).send('\'typeName\', \'title\' and \'description\' can\'t be empty strings.')
+      return
+    }
+  
+    if(isNaN(parseInt(query.mLimit.toString()))){
+      res.status(400).send('mLimit must be an integer.')
+      return
+    }
+  
+    const group: Group = {
+        typeName: query.typeName.toString(),
+        title: query.title.toString(),
+        description: query.description.toString(),
+        mLimit: parseInt(query.mLimit.toString()),
+        autoAccept: Boolean(query.autoAccept.toString())
+    }
+
+    const data = await groups.editGroup(parseInt(req.params.id.toString()),group);
+
     if(data){
-        res.status(200).send('The group was successfuly deleted.')
+        res.status(200).send('The group was successfuly edited.')
       }
       else{
         res.status(500).send('Something went wrong. Try again!')
     }
+
 
 }
 
@@ -261,6 +308,7 @@ export default {
     createGroup,
     deleteGroup,
     getMyGroups,
+    editGroup,
 
     getGroupMembers,
     getGroupMember,
