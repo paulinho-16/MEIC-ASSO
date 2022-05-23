@@ -48,6 +48,37 @@ const router = express.Router()
  *                               type: string
  *                             rooms:
  *                               type: string
+ *               example:
+ *                 course: "M.EIC"
+ *                 seasons:
+ *                   - name: "Normal - Época Normal (2ºS)"
+ *                     exams:
+ *                       - acronym: "SSI"
+ *                         url: "https://sigarra.up.pt/feup/pt/exa_geral.exame_view?p_exa_id=54340"
+ *                         day: '2022-06-20'
+ *                         begin: '14:30'
+ *                         duration: '02:00'
+ *                         rooms: "B220"
+ *                       - acronym: "MFS"
+ *                         url: "https://sigarra.up.pt/feup/pt/exa_geral.exame_view?p_exa_id=54395"
+ *                         day: '2022-06-20'
+ *                         begin: '14:30'
+ *                         duration: '02:00'
+ *                         rooms: "B301"
+ *                   - name: "Recurso - Época Recurso (2ºS)"
+ *                     exams:
+ *                       - acronym: "SSI"
+ *                         url: "https://sigarra.up.pt/feup/pt/exa_geral.exame_view?p_exa_id=54352"
+ *                         day: '2022-07-04'
+ *                         begin: '14:30'
+ *                         duration: '02:00'
+ *                         rooms: "B225"
+ *                       - acronym: "MFS"
+ *                         url: "https://sigarra.up.pt/feup/pt/exa_geral.exame_view?p_exa_id=54396"
+ *                         day: '2022-07-04'
+ *                         begin: '14:30'
+ *                         duration: '02:00'
+ *                         rooms: "B205"
  *       500:
  *         description: Unexpected error
 */
