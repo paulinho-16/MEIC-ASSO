@@ -20,26 +20,23 @@ const router = express.Router()
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               studentGrades:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     major: string
- *                     grades:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           uc: string
- *                           year: number
- *                           code: string
- *                           result: number
- *                           credits: number
- *                           acronym: string
- *                           semester: number
+ *             type: array
+ *             items:
+ *               type: object
+ *               properties:
+ *                 major: string
+ *                 grades:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       uc: string
+ *                       year: number
+ *                       code: string
+ *                       result: number
+ *                       credits: number
+ *                       acronym: string
+ *                       semester: number
  *           examples:
  *             Student Grades:
  *               - major: Mestrado em Engenharia Informática e Computação
