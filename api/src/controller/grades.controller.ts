@@ -33,7 +33,7 @@ async function get(req: Request, res: Response) {
       }
     })
     .then(() => {
-      res.send({ 'Student Grades': studentGrades })
+      res.send(studentGrades)
     })
     .catch(function (e) {
       console.log(e)
