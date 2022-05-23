@@ -6,40 +6,26 @@ const router = express.Router()
 
 /**
  * @swagger
- * /grades/{studentNumber}:
+ * /news:
  * get:
- *   summary: Fetch grades for student with studentNumber
+ *   summary: Fetch news about FEUP and its environment
  *   parameters:
- *     - in: path
- *       name: studentNumber
- *       required: true
- *       description: Student ID
  *   responses:
  *     '200':
  *       description: The grades for every course the student has been enrolled in
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               studentGrades:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     major: string
- *                     grades:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           uc: string
- *                           year: number
- *                           code: string
- *                           result: number
- *                           credits: number
- *                           acronym: string
- *                           semester: number
+ *             type: array
+ *             items:
+ *               type: object
+ *               properties:
+ *                url: string
+ *                title: string
+ *                excerpt: string
+ *                header: string
+ *                details: string
+ *                content: string
  *           examples:
  *            - url: https://sigarra.up.pt/feup/pt/noticias_geral.ver_noticia?p_nr=133750
  *              title: "Provas de Doutoramento: ..."
