@@ -19,6 +19,7 @@ router.post('/', controller.createGroup)
 
 router.delete('/:id', controller.deleteGroup)
 
+router.get('/myGroups/:userId', controller.getMyGroups);
 
 
 

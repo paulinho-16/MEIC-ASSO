@@ -121,6 +121,30 @@ async function getGroup(groupId: Number) {
 
 }
 
+async function getMyGroups(userId: Number) {
+
+  console.log("Get User groups");
+
+  if(!connectDatabase()){ 
+    return -1;
+  }
+
+  const query = {
+    text: 'SELECT * FROM Groups NATURAL JOIN Group_Student  WHERE studentId = $1',
+    values: [userId],
+  }
+
+  try {
+    let res = await client.query(query)
+    return res.rows
+  }
+  catch (err) {
+    console.log(err);
+    return false
+  }
+
+}
+
 
 
 async function createGroup(group: Group){
@@ -382,6 +406,7 @@ export default {
   getGroup,
   createGroup,
   deleteGroup,
+  getMyGroups,
 
   getGroupMembers,
   getGroupStudentRelation,
