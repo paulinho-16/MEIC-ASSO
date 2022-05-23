@@ -4,8 +4,6 @@ import controller from '@/controller/exams-calendar.controller'
 
 const router = express.Router()
 
-router.get('/:id', controller.get)
-
 /* *
  * @swagger
  * /exams-calendar/{courseID}
@@ -43,5 +41,7 @@ router.get('/:id', controller.get)
  *                                                  duration: string
  *                                                  rooms: string
  */
+
+router.get('/:id', controller.get)
 
 export default router
