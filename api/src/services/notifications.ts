@@ -25,7 +25,7 @@ async function getDeviceToken(userID:string){
 
     try {
         let res = await client.query(query)
-        return res.rows[0]["devicetoken"]
+        return res.rows[0].device_token
     }
     catch (err) {
         console.log(err);
@@ -40,9 +40,9 @@ async function addDeviceToken(deviceToken:string, userID:string): Promise<boolea
 
     const query = {
       text: "INSERT INTO User_Device(userId, deviceToken) VALUES($1, $2)",
-      values: [userID,deviceToken],
+      values: [deviceToken, userID],
     }
-
+  
     try{
       let res = await client.query(query)
       return true
@@ -55,14 +55,14 @@ async function addDeviceToken(deviceToken:string, userID:string): Promise<boolea
 
 // Create new topic
 async function createTopic(name:string, topicTokenId:string) : Promise<boolean>{
-
+    
     console.log("Create Topic");
 
     const query = {
       text: 'INSERT INTO Topic(name, tokenId) VALUES($1, $2)',
       values: [name, topicTokenId],
     }
-
+  
     try{
       let res = await client.query(query)
       return true
@@ -75,7 +75,7 @@ async function createTopic(name:string, topicTokenId:string) : Promise<boolean>{
 
 // Delete existing topic
 async function deleteTopic(topicTokenId:String) : Promise<boolean>{
-
+    
     console.log("Delete Topic");
 
     const query = {

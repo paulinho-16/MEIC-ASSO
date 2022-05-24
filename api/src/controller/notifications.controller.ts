@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import {v4 as uuidv4} from 'uuid';
 import fetch from 'node-fetch';
 import fb from '@/services/notifications'
-import {Headers} from "node-fetch";
+
 
 async function addDeviceToken(req: Request, res: Response) {
     const deviceToken = req.params.deviceToken
@@ -75,32 +75,24 @@ async function getAllNotifications(req: Request, res: Response) {
 }
 
 async function sendNotification(title:string, content:string, device_token:string){
-    console.log(title,content,device_token)
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", "key=AAAArP_sy-s:APA91bFbcwvy_mjJtt94nZZ9rd7CDWNI2wykQ_t9hYQejRVj7IkN2VyRor1ZGM-p8jx5VoU_Uuwgk22fsWhMaixcUIw3JaNpmgdzxtJXxnACIxc8TFzhiAXiimlLjq-TwDngrman-G3f");
-    myHeaders.append("Content-Type", "application/json");
-
-    let raw = JSON.stringify({
-        "to": device_token,
-        "notification": {
-            "body": content,
-            "title": title
-        },
-        "data": {
-            "body": content,
-            "title": title,
+    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+        method: 'POST',
+        body: JSON.stringify({
+            "to" : device_token,
+            "notification" : {
+                "body" : content,
+                "title": title
+            },
+            "data" : {
+                "body" : content,
+                "title": title
+            },
+        }),
+        headers: {
+            ContentType: 'application/json',
+            Authorization: 'key = AAAArP_sy-s:APA91bFbcwvy_mjJtt94nZZ9rd7CDWNI2wykQ_t9hYQejRVj7IkN2VyRor1ZGM-p8jx5VoU_Uuwgk22fsWhMaixcUIw3JaNpmgdzxtJXxnACIxc8TFzhiAXiimlLjq-TwDngrman-G3f'
         }
     });
-
-    fetch("https://fcm.googleapis.com/fcm/send", {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
-    })
-        .then(response => response.text())
-        .then(result => console.log(result))
-        .catch(error => console.log('error', error));
 }
 
 export default {

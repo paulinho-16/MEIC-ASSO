@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS Notifications;
 DROP TABLE IF EXISTS Topic;
 DROP TABLE IF EXISTS User_Device;
+DROP TABLE IF EXISTS Notifications;
 
 
 -- Table: Topic
@@ -12,9 +12,8 @@ CREATE TABLE Topic(
 
 -- Table: User_Device
 CREATE TABLE User_Device(
-    id              SERIAL PRIMARY KEY,
     userId          varchar(100) NOT NULL,
-    deviceToken     text NOT NULL
+    deviceToken     varchar(100) NOT NULL
 );
 
 -- Table: Notifications
@@ -23,7 +22,9 @@ CREATE TABLE Notifications (
     content         TEXT NOT NULL,
     title           TEXT NOT NULL,
     topicTokenId    varchar(100) NOT NULL,
-    userID          INTEGER NOT NULL
+    userID          INTEGER NOT NULL,
+    foreign key (topicTokenId) references Topic(tokenId),
+    foreign key (userID) references User_Device(id)
 );
 
 
