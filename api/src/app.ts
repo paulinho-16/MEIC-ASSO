@@ -10,7 +10,6 @@ import cookieParser from 'cookie-parser'
 const app = express()
 const port = process.env.PORT || 3000
 
-
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
@@ -75,6 +74,7 @@ app.use('/hello', routes.hello)
 app.use('/feedback', routes.feedback)
 app.use('/jobs', routes.jobs)
 app.use('/meals', routes.meals)
+app.use('/notifications', routes.notifications)
 app.use('/news', routes.news)
 app.use('/status', routes.status)
 app.use('/services', routes.services)
