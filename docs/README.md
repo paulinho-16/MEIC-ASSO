@@ -203,7 +203,7 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 ### Components
 
 - **T1G4** Scraping
-- Authentication
+- **T2G1** Authentication
 - **T1G3** Chat
 - **T1G2** Calendar and Jobs
 - **T1G1** Payments
