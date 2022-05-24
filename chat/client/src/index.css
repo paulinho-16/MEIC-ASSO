@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.c-dot {
+	height: 750px;
+	width: 750px;
+	border-radius: 50%;
+
+  position: absolute;
+  /* animation in circles */
+  animation: orbit 30s infinite;
+  animation-timing-function: linear; 
+}
+
+/* c-dot evens */
+.c-dot:nth-child(odd) {
+  animation-delay: 0.5s;
+}
+
+@keyframes orbit {
+    0% { transform: rotate(0deg) translateX(150px) rotate(0deg) scale(0.5); }
+    50%   { transform: rotate(180deg) translateX(150px) scale(1.5); }
+    100% { transform: rotate(360deg) translateX(150px) rotate(0deg) scale(0.5); }
+}

@@ -7,13 +7,9 @@ import {
   TeacherReview,
 } from '@/@types/reviews'
 
-// async function get(req: Request, res: Response) {
-//   const data = fb.getFeedback(2)
-//   res.send('Feedback route')
-// }
 
 async function postMealReview(req: Request, res: Response) {
-  const query = req.query
+  const query = req.body
 
   if(query.description == undefined || query.author == undefined || query.restaurant == undefined || query.dish == undefined || query.rating == undefined) {
     res.status(400).send('This request must have \'description\', \'author\', \'restaurant\', \'dish\' and \'rating\'.')
@@ -53,8 +49,37 @@ async function postMealReview(req: Request, res: Response) {
 }
 
 async function postTeacherReview(req: Request, res: Response) {
-  const data = fb.postTeacherReview()
-  res.send('postTeacherReview route not implemented.')
+  
+  //const data = fb.postTeacherReview()
+
+  const review:TeacherReview = req.body
+
+
+  if(review.description == undefined || review.author == undefined || review.class == undefined || review.teacher == undefined) {
+    res.status(400).send('This request must have a json with \'description\', \'author\', \'class\' and \'teacher\'.')
+    return
+  }
+
+  if(review.author == '' || review.class == '' || review.teacher == '') {
+    res.status(400).send('\'author\', \'class\', \'teacher\' can\'t be empty strings.')
+    return
+  }
+
+  const reviewToPost: TeacherReview = {
+    description: review.description.toString(),
+    author: review.author.toString(),
+    date: new Date(),
+    class: review.class.toString(),
+    teacher: review.teacher.toString()
+  }
+
+  const data = await fb.postTeacherReview(reviewToPost)
+  if (data) {
+    res.send("Success")
+  }
+  else {
+    res.status(500).send("Something went wrong. Try again!")
+  }
 }
 
 async function getMealReview(req: Request, res: Response) {
@@ -93,8 +118,27 @@ async function getMealReview(req: Request, res: Response) {
 }
 
 async function getTeacherReview(req: Request, res: Response) {
-  const data = fb.getTeacherReview()
-  res.send('getTeacherReview route not implemented')
+  const query = req.query
+
+  if(query.description == undefined || query.author == undefined || query.date == undefined || query.class == undefined || query.teacher == undefined) {
+    res.status(400).send('This request must have \'description\', \'author\', \'date\', \'class\' and \'teacher\'. If you don\'t want to include some of them in your search leave them blank.')
+    return
+  }
+
+  const review: TeacherReview = {
+    description: query.description.toString() == '' ? null : query.description.toString(),
+    author: query.author.toString() == '' ? null : query.author.toString(),
+    date: query.date.toString() == '' ? null : new Date(query.date.toString()),
+    class: query.class.toString() == '' ? null : query.class.toString(),
+    teacher: query.teacher.toString() == '' ? null : query.teacher.toString(),
+  }
+  const data = await fb.getTeacherReview(review)
+  if(data){
+    res.json(data)
+  }
+  else{
+    res.status(500).send('Something went wrong. Try again!')
+  }
 }
 
 export default {
