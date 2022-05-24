@@ -19,7 +19,7 @@ async function getDeviceToken(userID:string){
     console.log("Get token device");
 
     let query = {
-        text: "SELECT * from User_Device WHERE id = $1",
+        text: "SELECT * from User_Device WHERE userId = $1",
         values: [userID],
     }
 
@@ -39,7 +39,7 @@ async function addDeviceToken(deviceToken:string, userID:string): Promise<boolea
     console.log("Add Device token to User");
 
     const query = {
-      text: "UPDATE User_Device SET device_token = $1  WHERE id = $2",
+      text: "INSERT INTO User_Device(userId, deviceToken) VALUES($1, $2)",
       values: [deviceToken, userID],
     }
   
