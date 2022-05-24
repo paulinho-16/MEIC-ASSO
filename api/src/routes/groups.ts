@@ -21,6 +21,7 @@ router.delete('/:id', controller.deleteGroup)
 
 router.get('/myGroups/:userId', controller.getMyGroups);
 
+router.patch('/:id',controller.editGroup);
 
 
 // Members endpoints.

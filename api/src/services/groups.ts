@@ -170,6 +170,32 @@ async function createGroup(group: Group){
     }
 }
 
+async function editGroup(groupId: Number, group: Group){
+
+  console.log("Edit group");
+  
+  if(!connectDatabase()){
+    return -1;
+  }
+
+  const query = {
+    text: 'UPDATE groups SET typeName=$1, title=$2, "description"=$3,mlimit=$4,autoAccept=$5 WHERE groupId = $6',
+    values : [group.typeName, group.title, group.description, group.mLimit, group.autoAccept, groupId],
+  }
+  
+  try{
+    let res = await client.query(query)
+    return true
+  }
+  catch(err){
+    console.log(err);
+    return false
+  }
+  
+  
+
+}
+
 
 async function deleteGroup(groupId: Number){
 
@@ -407,6 +433,7 @@ export default {
   createGroup,
   deleteGroup,
   getMyGroups,
+  editGroup,
 
   getGroupMembers,
   getGroupStudentRelation,
