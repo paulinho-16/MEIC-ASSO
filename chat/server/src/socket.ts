@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import UserManager from "@/userManager";
 
 const setRequests = (io:any, userManager:UserManager) => {
@@ -39,3 +40,27 @@ const setRequests = (io:any, userManager:UserManager) => {
 }
 
 export default setRequests
+=======
+const setRequests = (io:any) => {
+  io.on('connection', (socket:any) => {
+    console.log('a user connected')
+
+    socket.on('disconnect', (username: string) => {
+      console.log('user disconnected')
+      io.emit('notification', `${username} has left the chat`)
+    })
+
+    socket.on('chat message', (msg:string, from:string, room:string, timestamp: string) => {
+      console.log('chat message', msg, from, room, timestamp)
+      io.to(room).emit(`${room} message`, from, msg, timestamp)
+    });
+
+    socket.on('join room', (username:string, room:string) => {
+      console.log(`${username} joined ${room}`)
+      socket.join(room);
+    })
+  })
+}
+
+export default setRequests
+>>>>>>> 705b0e4bc1db26a2e7fc9a8357956fb3c3dcaaa3
