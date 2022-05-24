@@ -1,3 +1,4 @@
+
 export type Group = {
     id?: number
     typename: string
@@ -6,3 +7,4 @@ export type Group = {
     mlimit: number
     autoaccept: boolean
 }
+

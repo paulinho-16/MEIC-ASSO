@@ -19,7 +19,7 @@ app.listen(port, () => {
   console.log(`Application running in port ${port}.`)
 })
 
-const swaggerOptions = {
+const swaggerOptions: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
@@ -42,6 +42,25 @@ const swaggerOptions = {
         description: 'Development server',
       },
     ],
+    components: {
+      securitySchemes: {
+        jwt: {
+          type: "http",
+          scheme: "bearer",
+          in: "cookie",
+          bearerFormat: "JWT"
+        },
+        cookieAuth: {
+          type: "jwt",
+          in: "cookie",
+          name: "jwt"
+        }
+      }
+    },
+    security: [{
+      jwt: [],
+      cookieAuth: []
+    }]
   },
   apis: ['./src/routes/*.ts'],
 };
@@ -63,5 +82,6 @@ app.use('/profile', routes.profile)
 app.use('/groups', routes.groups)
 app.use('/user', routes.user)
 app.use('/curricular-unit', routes.curricularUnit)
+app.use('/exams-calendar', routes.examsCalendar)
 app.use('/schedule', routes.schedule)
 app.use('/grades', routes.grades)

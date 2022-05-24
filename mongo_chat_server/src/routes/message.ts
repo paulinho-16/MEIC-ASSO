@@ -3,7 +3,9 @@ import message from "@/controllers/message.controller";
 
 const router = express.Router();
 
-/* GET home page. */
-router.get("/", message.getExample);
+router.get("/", message.getAllMessages);
+router.get("/:id", message.getMessage);
+
+router.post("/", message.createMessage);
 
 export default router;
