@@ -8,6 +8,7 @@ async function connect() {
       user: process.env.MONGO_INITDB_ROOT_USERNAME,
       pass: process.env.MONGO_INITDB_ROOT_PASSWORD,
     });
+    mongoose.set('debug', true);
     console.log("MongoDB Connected");
     console.log("Populating database");
     populate().then(() => console.log("Database populated"));
