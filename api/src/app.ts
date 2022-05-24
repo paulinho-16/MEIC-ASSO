@@ -18,7 +18,7 @@ app.listen(port, () => {
   console.log(`Application running in port ${port}.`)
 })
 
-const swaggerOptions = {
+const swaggerOptions: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
@@ -41,6 +41,25 @@ const swaggerOptions = {
         description: 'Development server',
       },
     ],
+    components: {
+      securitySchemes: {
+        jwt: {
+          type: "http",
+          scheme: "bearer",
+          in: "cookie",
+          bearerFormat: "JWT"
+        },
+        cookieAuth: {
+          type: "jwt",
+          in: "cookie",
+          name: "jwt"
+        }
+      }
+    },
+    security: [{
+      jwt: [],
+      cookieAuth: []
+    }]
   },
   apis: ['./src/routes/*.ts'],
 };

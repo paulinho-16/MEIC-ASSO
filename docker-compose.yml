@@ -16,6 +16,7 @@ services:
       DB_PASSWORD: ${POSTGRES_PASS}
       DB_HOST: ${POSTGRES_HOST}
       DB_PORT: ${POSTGRES_PORT}
+      DATABASE_URL: ${DATABASE_URL}
     volumes:
       - ./api/src:/usr/src/app/api/src
     container_name: ts-node-docker
