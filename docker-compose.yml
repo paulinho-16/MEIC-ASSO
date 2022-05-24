@@ -7,15 +7,52 @@ services:
       dockerfile: Dockerfile
     restart: always
     environment:
-      - SECRET_KEY="#%&b6Fr*JDjnBn6ZyiexmW%Aus^!dM2gs^nVtJ5W*YhXW9KEFw"
-      - SESSION_TOKEN_LIFETIME=259200
+      JWT_GENERATOR_KEY: ${JWT_GENERATOR_KEY}
+      JWT_PASS_RESET_KEY: ${JWT_PASS_RESET_KEY}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASS: ${MAIL_PASS}
+      DB_SCHEMA: ${POSTGRES_SCHEMA}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASS}
+      DB_HOST: ${POSTGRES_HOST}
+      DB_PORT: ${POSTGRES_PORT}
     volumes:
       - ./api/src:/usr/src/app/api/src
     container_name: ts-node-docker
     ports:
       - 8080:3000
-    depends_on: 
+    depends_on:
       - postgres
+      - redis
+
+  mongo_chat_server:
+    build:
+      context: ./mongo_chat_server
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./mongo_chat_server/src:/usr/src/app/mongo_chat_server/src
+      - /usr/src/app/mongo_chat_server/node_modules
+    container_name: mongo_chat_server
+    ports:
+      - 8083:3000
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password12345678
+      - MONGODB_URI=mongodb://mongo_chat:27017/
+    depends_on:
+      - mongo_chat
+
+  mongo_chat:
+    container_name: mongo_chat
+    restart: always
+    image: mongo:latest
+    volumes:
+      - ./mongo_chat_server/mongo:/data/db
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password12345678
 
   chat-server:
     build:
@@ -26,6 +63,10 @@ services:
     container_name: chat-server
     ports:
       - 8082:3000
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password12345678
+      - MONGODB_URI=mongodb://mongo_chat:27017/
 
   chat-client:
     build:
@@ -46,16 +87,27 @@ services:
       context: ./postgres
       dockerfile: Dockerfile
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASS}
     volumes:
       - ./postgres/data:/home/postgres/data
     ports:
       - "5432:5432"
-      
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis:/data
+
   adminer:
     container_name: adminer
     image: adminer
     restart: always
     ports:
-      - 8081:8080 
+      - 8081:8080
+
+volumes:
+  redis:
