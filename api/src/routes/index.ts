@@ -7,7 +7,6 @@ import hello from './hello'
 import jobs from './jobs'
 import library from './library'
 import meals from './meals'
-import notifications from './notifications'
 import news from './news'
 import user from './user'
 import status from './status'
@@ -26,7 +25,6 @@ export default {
   jobs,
   library,
   meals,
-  notifications,
   news,
   groups,
   user,
