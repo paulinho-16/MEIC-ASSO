@@ -290,6 +290,25 @@ It is expected that you start this section with system-wide patterns, but you sh
 
 **Consequences**: _Explain the pros and cons of instantiating the pattern, eventually in comparison with other alternatives._
 
+### Sigarra's Authentication
+
+**Context**: 
+Some of the functionalitites that Uni4all provides, such as the access to the schedule or classes, require the User to be authenticated in Sigarra. However, Sigarra does not provide any means to authenticate via an API or OAuth.
+
+For security reasons, we decided that our server should not receive Sigarra's credentials at any point. This way, if there is a crash on our Server, it won't compromise Sigarra's credentials. 
+
+The requests for pages that require authentication will be sent on the client-side directly to Sigarra. Sigarra will reply with the HTML of the requested page, which should be forwarded to the endpoint of our server that performs the scrapping of the respective HTML and returns the processed information.
+> Further details on how to proceed if you need to perform scraping of a page that requires Sigarra's authentication are available in the *Contributing* section under the subtitle [Scraping of Sigarra's protected pages](#Scraping-of-Sigarras-protected-pages) .
+
+**Mapping**:
+> N/A: This solution does not map to a pattern
+
+**Consequences**: 
+**Pros**: 
+- Security: By adopting this solution, the credentials will only be sent to our server. Therefore, a crash or attack to our server will not reveal sensitive information that could indirectly affect Sigarra.
+
+**Cons**: 
+- Latency: the number of requests/responses leads to an increase in latency.
 
 ## Operation
 
@@ -316,4 +335,24 @@ The following endpoints are work in progress:
 
 ## Contributing
 
-_Instructions: Information about setting up the development environment, running the system in development, running the tests. Also, should include documentation on all the API endpoints (including internal ones) and how to use them. The API documention should be usable, accurate and up-to-date._
+_Instructions: Information about setting up the development environment, running the system in development, running the tests. Also, should include documentation on all the API endpoints (including internal ones) and how to use them. The API documention should be usable, accurate and up-to-date.
+
+### Scraping of Sigarra's protected pages
+
+**Target Audience**: 
+Developers/Teams that need to perform scraping of a page that needs the User to be authenticated *e.g.* scraping the schedule
+
+**Request's Flow**:
+- The authentication in Sigarra is made on the client-side by directly making the authentication POST request to sigarra's URL with the password and username as parameters of the request body or using a session token - *so you don't need to worry about this step*;
+- When the user wants to access a service that requires authentication, it makes a request to the endpoint of our API that is responsible for returning as a response the URL that contains the requested information;
+    > *e.g.* If the user wants to access his profile then he must access the URL `https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=<up_identifier>` 
+- At the client-side, a request will be sent to the URL that we provided. That request will return the HTML of the page, which must be sent to the endpoint of our API that performs the scraping of the HTML and returns the processed data;
+    > *e.g.* The HTML that is returned by the request made to the URL of Sigarra that contains the schedule is received in the endpoint that is responsible for scraping that information. The schedule data must be returned as response to the request
+
+**Endpoints**:
+At least two endpoints are required if you must do the scraping of a page that required authentication:
+1. Returns the URL of Sigarra that contains the information that you need to scrape;
+2. Receives the HTML of the page that contains the data, performs the scraping and returns the processed information.
+
+**Additional Notes**:
+- The access to most of the User's confidential data requires a special user id (`pv_fest_id`). Therefore, the teams may need to get this id before performing the steps described above. This can be done by requesting the front-end to provide the HTML of the profile page of the User:`https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=<up_identifier>`. The `pv_fest_id` is available in the link to the Academic pathway. Other ways to get this id are probably available. After getting this id, the server may proceed normally with the steps descriped above by adding this query parameter.

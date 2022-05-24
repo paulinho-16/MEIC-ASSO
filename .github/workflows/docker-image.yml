@@ -12,6 +12,17 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     name: 'Deploy to server'
+    env:
+      MAIL_USER: ${{ secrets.MAIL_USER }}
+      MAIL_PASS: ${{ secrets.MAIL_PASS }}
+      JWT_GENERATOR_KEY: ${{ secrets.JWT_GENERATOR_KEY }}
+      JWT_PASS_RESET_KEY: ${{ secrets.JWT_PASS_RESET_KEY }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASS: ${{ secrets.POSTGRES_PASS }}
+      POSTGRES_SCHEMA: ${{ secrets.POSTGRES_SCHEMA }}
+      POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+      POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
 
     - uses: actions/checkout@v3
