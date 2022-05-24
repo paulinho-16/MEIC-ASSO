@@ -17,6 +17,7 @@ services:
       DB_HOST: ${POSTGRES_HOST}
       DB_PORT: ${POSTGRES_PORT}
       DATABASE_URL: ${DATABASE_URL}
+      UNI4ALL_URL: https://uni4all.servehttp.com
     volumes:
       - ./api/src:/usr/src/app/api/src
     container_name: ts-node-docker

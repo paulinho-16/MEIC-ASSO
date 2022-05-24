@@ -22,6 +22,7 @@ jobs:
       POSTGRES_SCHEMA: ${{ secrets.POSTGRES_SCHEMA }}
       POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
       POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
 
     - uses: actions/checkout@v3

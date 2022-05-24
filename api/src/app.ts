@@ -38,7 +38,7 @@ const swaggerOptions: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
+        url: process.env.UNI4ALL_URL,
         description: 'Development server',
       },
     ],
