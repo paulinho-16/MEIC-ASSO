@@ -1,10 +1,5 @@
 import { Schema, model } from "mongoose";
-
-type IGroup = {
-  name: string;
-  userNumbers: string[];
-  messages: [{ type: Schema.Types.ObjectId; ref: "Message" }];
-};
+import { IGroup } from "@/@types/group";
 
 const groupSchema = new Schema<IGroup>(
   {
@@ -34,10 +29,11 @@ groupSchema.virtual("users", {
 
 const autoPopulateLead = function (next: any) {
   this.populate("users");
+  this.populate("messages");
   next();
 };
 
-groupSchema.pre("findOne", autoPopulateLead).pre("find", autoPopulateLead);
+groupSchema.pre("findOne", autoPopulateLead).pre("find", autoPopulateLead).pre("findById", autoPopulateLead);
 
 const Group = model<IGroup>("Group", groupSchema);
 export default Group;
