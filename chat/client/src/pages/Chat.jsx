@@ -21,7 +21,7 @@ const Chat = () => {
 	}, [setSocket])
 
 	useEffect(() => {
-		if (socket) {	
+		if (socket) {
 			socket.emit('username', username)
 		}
 	}, [socket, username])

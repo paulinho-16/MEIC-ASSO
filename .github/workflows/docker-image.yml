@@ -4,33 +4,35 @@ on:
   push:
     branches:
       - main
-      - github-action
   pull_request:
     branches: [ main ]
 
-jobs:
+jobs:     
   publish:
     runs-on: ubuntu-latest
     name: 'Deploy to server'
+    env:
+      MAIL_USER: ${{ secrets.MAIL_USER }}
+      MAIL_PASS: ${{ secrets.MAIL_PASS }}
+      JWT_GENERATOR_KEY: ${{ secrets.JWT_GENERATOR_KEY }}
+      JWT_PASS_RESET_KEY: ${{ secrets.JWT_PASS_RESET_KEY }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASS: ${{ secrets.POSTGRES_PASS }}
+      POSTGRES_SCHEMA: ${{ secrets.POSTGRES_SCHEMA }}
+      POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+      POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
     steps:
-
     - uses: actions/checkout@v3
+    - uses: docker/login-action@v2
+      with:
+        username: 'uni4all'
+        password: ${{ secrets.MAIL_PASS }}
     - uses: arwynfr/actions-docker-context@v2
       with:
         docker_host: 'ssh://34.78.167.227'
         context_name: 'uni4all-remote'
         ssh_cert: ${{ secrets.SSH_CERT }}
         ssh_key: ${{ secrets.SSH_KEY }}
-      env:
-        MAIL_USER: ${{ secrets.MAIL_USER }}
-        MAIL_PASS: ${{ secrets.MAIL_PASS }}
-        JWT_GENERATOR_KEY: ${{ secrets.JWT_GENERATOR_KEY }}
-        JWT_PASS_RESET_KEY: ${{ secrets.JWT_PASS_RESET_KEY }}
-        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-        POSTGRES_PASS: ${{ secrets.POSTGRES_PASS }}
-        POSTGRES_SCHEMA: ${{ secrets.POSTGRES_SCHEMA }}
-        POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
-        POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
-
+    
     - run: docker context use uni4all-remote
-    - run: COMPOSE_DOCKER_CLI_BUILD=0 docker-compose up -d --build
+    - run: COMPOSE_DOCKER_CLI_BUILD=0 docker-compose up -d --build --remove-orphans

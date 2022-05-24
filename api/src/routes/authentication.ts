@@ -10,12 +10,9 @@ const router = express.Router()
  * /authentication:
  *   get:
  *     summary: Test the authentication
- *     parameters:
- *       - in: header
- *         name: jwt
- *         required: true
- *         type: string
- *         description: The JWT token
+ *     security:
+ *     - jwt: []
+ *     - cookieAuth: []
  *     responses:
  *       200:
  *         description: The request was made with a valid token
@@ -140,6 +137,10 @@ router.post('/register', controller.register)
  *                 id:
  *                   type: integer
  *                   example: 1
+ *         headers:
+ *           Set-Cookie:
+ *             schema:
+ *               type: string
  *       400:
  *         description: Login failed
  *         content:
