@@ -5,7 +5,6 @@ import controller from '../controller/notifications.controller'
 const router = express.Router()
 
 router.post("/user/:deviceToken",controller.addDeviceToken)
-router.delete("/user/:deviceToken",controller.removeDeviceToken)
 
 // Route to create a notification topic
 router.post('/topic/:topic', controller.createTopic)

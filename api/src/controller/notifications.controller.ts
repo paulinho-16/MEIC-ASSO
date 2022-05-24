@@ -14,14 +14,6 @@ async function addDeviceToken(req: Request, res: Response) {
     res.send( {"status":"ok"})
 }
 
-async function removeDeviceToken(req: Request, res: Response) {
-    const deviceToken = req.params.deviceToken
-    const {userID} = req.body
-
-    await fb.removeDeviceToken(deviceToken, userID)
-
-    res.send( {"status":"ok"})
-}
 
 async function createTopic(req: Request, res: Response) {
     const name = req.params.topic
@@ -59,7 +51,8 @@ async function createNotification(req: Request, res: Response) {
 
   if(await fb.createNotification(userID, topic_identification_token, title, content)){
       answer = {"status":"ok"}
-      await sendNotification(title, content, await fb.getDevicesTokens(userID))
+      //const device_token = await fb.getDeviceToken(userID)
+      await sendNotification(title, content, "device_token")
   }else {
       answer = {"status":"error","error":"error creating notification,check the userId and topic_identification_token"}
   }
@@ -68,7 +61,7 @@ async function createNotification(req: Request, res: Response) {
 }
 
 async function getAllNotifications(req: Request, res: Response) {
-  // BataBase request to retrive the user id
+  // DataBase request to retrive the user id
   const userId = req.params.user
   if(userId == null){
     res.send({"status":'error',"error":"user does not exist"})
@@ -81,11 +74,11 @@ async function getAllNotifications(req: Request, res: Response) {
     res.send({"status":'ok',"notifications":notifications})
 }
 
-async function sendNotification(title:string, content:string,devices_tokens:string){
+async function sendNotification(title:string, content:string, device_token:string){
     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
         method: 'POST',
         body: JSON.stringify({
-            "to" : "device_token",
+            "to" : device_token,
             "notification" : {
                 "body" : content,
                 "title": title
@@ -104,7 +97,6 @@ async function sendNotification(title:string, content:string,devices_tokens:stri
 
 export default {
     addDeviceToken,
-    removeDeviceToken,
 
     createTopic,
     deleteTopic,

@@ -13,33 +13,87 @@ client.connect()
   .catch((err) => console.error('connection error', err.stack))
 
 
-//devolve os tokens associados ao userID
-async function getDevicesTokens(userID:string){
-    return "ewqqwe"
+// Return device token associated to the user
+async function getDeviceToken(userID:string){
+
+    console.log("Get token device");
+
+    let query = {
+        text: "SELECT * from User_Device WHERE id = $1",
+        values: [userID],
+    }
+
+    try {
+        let res = await client.query(query)
+        return res.rows
+    }
+    catch (err) {
+        console.log(err);
+        return false
+    }
 }
 
-//associa o device token ao user id
-async function addDeviceToken(deviceToken:string,userID:string): Promise<boolean>{
-    return true
+// Add device token associated to the user
+async function addDeviceToken(deviceToken:string, userID:string): Promise<boolean>{
+
+    console.log("Add Device token to User");
+
+    const query = {
+      text: "UPDATE User_Device SET device_token = $1  WHERE id = $2",
+      values: [deviceToken, userID],
+    }
+  
+    try{
+      let res = await client.query(query)
+      return true
+    }
+    catch(err){
+      console.log(err);
+      return false
+    }
 }
 
-//desassocia o device token do user id
-async function removeDeviceToken(deviceToken:string,userID:string) : Promise<boolean>{
-    return true
+// Create new topic
+async function createTopic(name:string, identification_token:string) : Promise<boolean>{
+    
+    console.log("Create Topic");
+
+    const query = {
+      text: 'INSERT INTO Topic(name, identification_token) VALUES($1, $2)',
+      values: [name, identification_token],
+    }
+  
+    try{
+      let res = await client.query(query)
+      return true
+    }
+    catch(err){
+      console.log(err);
+      return false
+    }
 }
 
-//verifica se nome já existe, se não cria o topico
-async function createTopic(name:string,identification_token:string) : Promise<boolean>{
-    return true
+// Delete existing topic
+async function deleteTopic(topicId:String) : Promise<boolean>{
+    
+    console.log("Delete Topic");
+
+    const query = {
+        text: 'DELETE FROM Topic WHERE id = $1',
+        values: [topicId],
+    }
+
+    try{
+        let res = await client.query(query)
+        return true
+    }
+    catch(err){
+        console.log(err);
+        return false
+    }
 }
 
-
-//verifica se identification_token existe, se sim elimina esse topico
-async function deleteTopic(identification_token:string) : Promise<boolean>{
-    return true
-}
-
-//verifica se existe um topico com o identification_token e cria uma notificação
+// Create new notification
 async function createNotification(userID:string,identification_token:string,title:string,content:string) : Promise<boolean>{
     const query = {
         text: 'INSERT INTO Notifications(userID, description, author) VALUES($1, $2, $3)',
@@ -57,9 +111,10 @@ async function createNotification(userID:string,identification_token:string,titl
 
 }
 
+// Return all notifications sent to the user
 async function getAllNotifications(userID:string) {
     const query = {
-        text: 'SELECT * FROM Notifications WHERE userID=$1',
+        text: 'SELECT * FROM Notifications WHERE userID = $1',
         values: [userID]
     }
 
@@ -73,9 +128,8 @@ async function getAllNotifications(userID:string) {
 }
 
 export default {
-    getDevicesTokens,
+    getDeviceToken,
     addDeviceToken,
-    removeDeviceToken,
 
     createTopic,
     deleteTopic,
