@@ -12,7 +12,7 @@ CREATE TABLE Topic(
 
 -- Table: User_Device
 CREATE TABLE User_Device(
-    id              SERIAL PRIMARY KEY,
+    userId          varchar(100) NOT NULL UNIQUE,
     deviceToken     varchar(100) NOT NULL
 );
 
