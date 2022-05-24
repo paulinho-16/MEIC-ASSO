@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS Notifications;
 CREATE TABLE Topic(
     id                      SERIAL PRIMARY KEY,
     name                    varchar(100) NOT NULL,
-    tokenId                 varchar(100) NOT NULL
+    tokenId                 varchar(100) NOT NULL UNIQUE
 );
 
 -- Table: User_Device
@@ -21,18 +21,18 @@ CREATE TABLE Notifications (
     id              SERIAL PRIMARY KEY,
     content         TEXT NOT NULL,
     title           TEXT NOT NULL,
-    topicTokenId    INTEGER NOT NULL,
+    topicTokenId    varchar(100) NOT NULL,
     userID          INTEGER NOT NULL,
     foreign key (topicTokenId) references Topic(tokenId),
     foreign key (userID) references User_Device(id)
 );
 
 
-INSERT INTO Topic (id, "name") VALUES (1, 'Guns');
-INSERT INTO Topic (id, "name") VALUES (2, 'Tanks');
-INSERT INTO Topic (id, "name") VALUES (3, 'Grenades');
-INSERT INTO Topic (id, "name") VALUES (4, 'Planes');
-INSERT INTO Topic (id, "name") VALUES (5, 'Arrows');
+INSERT INTO Topic (id, "name", topicTokenId) VALUES (1, 'Guns', 'c372a3ba-db47-11ec-9d64-0242ac120002');
+INSERT INTO Topic (id, "name", topicTokenId) VALUES (2, 'Tanks', 'c372a3ba-db47-11ec-9d64-0242ac120002');
+INSERT INTO Topic (id, "name", topicTokenId) VALUES (3, 'Grenades', 'c372a3ba-db47-11ec-9d64-0242ac120002');
+INSERT INTO Topic (id, "name", topicTokenId) VALUES (4, 'Planes', 'c372a3ba-db47-11ec-9d64-0242ac120002');
+INSERT INTO Topic (id, "name", topicTokenId) VALUES (5, 'Arrows', 'c372a3ba-db47-11ec-9d64-0242ac120002');
 
 INSERT INTO User_Device (id, deviceToken) VALUES (1, 'c372a3ba-db47-11ec-9d64-0242ac120002');
 INSERT INTO User_Device (id, deviceToken) VALUES (2, 'c372a630-db47-11ec-9d64-0242ac120002');
