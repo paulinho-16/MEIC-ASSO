@@ -17,11 +17,11 @@ async function addDeviceToken(req: Request, res: Response) {
 
 async function createTopic(req: Request, res: Response) {
     const name = req.params.topic
-    const identification_token = uuidv4();
+    const topicTokenId = uuidv4();
     let answer
 
-    if (await fb.createTopic(name, identification_token)){
-        answer = {"status":"ok","identification_token":identification_token}
+    if (await fb.createTopic(name, topicTokenId)){
+        answer = {"status":"ok","topicTokenId":topicTokenId}
     }else{
         answer = {"status":"error","error":"topic already exists"}
     }
@@ -30,11 +30,11 @@ async function createTopic(req: Request, res: Response) {
 }
 
 async function deleteTopic(req: Request, res: Response) {
-    const identification_token = req.params.topic
+    const topicTokenId = req.params.topic
 
     let answer
 
-    if (await fb.deleteTopic(identification_token)){
+    if (await fb.deleteTopic(topicTokenId)){
         answer = {"status":"ok"}
     }else {
         answer = {"status":"error","error":"topic missing"}
@@ -45,14 +45,14 @@ async function deleteTopic(req: Request, res: Response) {
 
 async function createNotification(req: Request, res: Response) {
   const userID = req.params.user;
-  const {topic_identification_token,title,content} = req.body
+  const {topicTokenId, title, content} = req.body
 
   let answer
 
-  if(await fb.createNotification(userID, topic_identification_token, title, content)){
+  if(await fb.createNotification(userID, topicTokenId, title, content)){
       answer = {"status":"ok"}
-      //const device_token = await fb.getDeviceToken(userID)
-      await sendNotification(title, content, "device_token")
+      const device_token = await fb.getDeviceToken(userID)
+      await sendNotification(title, content, device_token)
   }else {
       answer = {"status":"error","error":"error creating notification,check the userId and topic_identification_token"}
   }

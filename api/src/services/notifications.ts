@@ -25,7 +25,7 @@ async function getDeviceToken(userID:string){
 
     try {
         let res = await client.query(query)
-        return res.rows
+        return res.rows[0].device_token
     }
     catch (err) {
         console.log(err);
@@ -54,13 +54,13 @@ async function addDeviceToken(deviceToken:string, userID:string): Promise<boolea
 }
 
 // Create new topic
-async function createTopic(name:string, identification_token:string) : Promise<boolean>{
+async function createTopic(name:string, topicTokenId:string) : Promise<boolean>{
     
     console.log("Create Topic");
 
     const query = {
-      text: 'INSERT INTO Topic(name, identification_token) VALUES($1, $2)',
-      values: [name, identification_token],
+      text: 'INSERT INTO Topic(name, tokenId) VALUES($1, $2)',
+      values: [name, topicTokenId],
     }
   
     try{
@@ -74,13 +74,13 @@ async function createTopic(name:string, identification_token:string) : Promise<b
 }
 
 // Delete existing topic
-async function deleteTopic(topicId:String) : Promise<boolean>{
+async function deleteTopic(topicTokenId:String) : Promise<boolean>{
     
     console.log("Delete Topic");
 
     const query = {
-        text: 'DELETE FROM Topic WHERE id = $1',
-        values: [topicId],
+        text: 'DELETE FROM Topic WHERE tokenId = $1',
+        values: [topicTokenId],
     }
 
     try{
@@ -94,10 +94,10 @@ async function deleteTopic(topicId:String) : Promise<boolean>{
 }
 
 // Create new notification
-async function createNotification(userID:string,identification_token:string,title:string,content:string) : Promise<boolean>{
+async function createNotification(userID:string, topicTokenId:string,title:string,content:string) : Promise<boolean>{
     const query = {
-        text: 'INSERT INTO Notifications(userID, description, author) VALUES($1, $2, $3)',
-        values: [userID, 'My notification description', 'James Bond'],
+        text: 'INSERT INTO Notifications(userID, content, title, topicTokenId) VALUES($1, $2, $3, $4)',
+        values: [userID, content, title, topicTokenId],
     }
 
     try{

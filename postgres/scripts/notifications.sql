@@ -6,7 +6,8 @@ DROP TABLE IF EXISTS Notifications;
 -- Table: Topic
 CREATE TABLE Topic(
     id                      SERIAL PRIMARY KEY,
-    name                    varchar(100) NOT NULL
+    name                    varchar(100) NOT NULL,
+    tokenId                 varchar(100) NOT NULL
 );
 
 -- Table: User_Device
@@ -18,11 +19,11 @@ CREATE TABLE User_Device(
 -- Table: Notifications
 CREATE TABLE Notifications (
     id              SERIAL PRIMARY KEY,
-    description     varchar(100) NOT NULL,
-    author          varchar(100) NOT NULL,
-    topicID         INTEGER NOT NULL,
+    content         TEXT NOT NULL,
+    title           TEXT NOT NULL,
+    topicTokenId    INTEGER NOT NULL,
     userID          INTEGER NOT NULL,
-    foreign key (topicID) references Topic(id),
+    foreign key (topicTokenId) references Topic(tokenId),
     foreign key (userID) references User_Device(id)
 );
 
@@ -39,13 +40,13 @@ INSERT INTO User_Device (id, deviceToken) VALUES (3, 'c372a77a-db47-11ec-9d64-02
 INSERT INTO User_Device (id, deviceToken) VALUES (4, 'c372a8ba-db47-11ec-9d64-0242ac120002');
 INSERT INTO User_Device (id, deviceToken) VALUES (5, 'c372a9dc-db47-11ec-9d64-0242ac120002');
 
-INSERT INTO Notifications (id, "description", author, topicID, userID)
+INSERT INTO Notifications (id, content, title, topicTokenId, userID)
 Values (1, 'My description 1', 'James Bond 1', 1, 1);
-INSERT INTO Notifications (id, "description", author, topicID, userID)
+INSERT INTO Notifications (id, content, title, topicTokenId, userID)
 Values (2, 'My description 2', 'James Bond 2', 2, 2);
-INSERT INTO Notifications (id, "description", author, topicID, userID)
+INSERT INTO Notifications (id, content, title, topicTokenId, userID)
 Values (3, 'My description 3', 'James Bond 3', 3, 3);
-INSERT INTO Notifications (id, "description", author, topicID, userID)
+INSERT INTO Notifications (id, content, title, topicTokenId, userID)
 Values (4, 'My description 4', 'James Bond 4', 4, 4);
-INSERT INTO Notifications (id, "description", author, topicID, userID)
+INSERT INTO Notifications (id, content, title, topicTokenId, userID)
 Values (5, 'My description 5', 'James Bond 5', 5, 5);
