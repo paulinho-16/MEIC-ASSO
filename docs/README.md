@@ -290,6 +290,30 @@ It is expected that you start this section with system-wide patterns, but you sh
 
 **Consequences**: _Explain the pros and cons of instantiating the pattern, eventually in comparison with other alternatives._
 
+### Access Token
+
+#### Context 
+
+Our application makes use of a Microservices architecture, this means there are several services that need to be accessed. In order to provide a single interface for the client, an access token will be used to authenticate the user. Based on information from [this blog](https://microservices.io/patterns/security/access-token.html).
+
+#### Mapping
+![](https://i.imgur.com/c3rHVIS.png)
+Based on this diagram, the Flutter apps would be the client, which would send an Access Token to API endpoints that require authentication, our Authentication service would intercept that request to make sure the user is authenticated.
+
+#### Consequences
+
+##### Pros
+
+- Higher scalability and efficiency (access tokens are not stored on the server)
+- Flexibility and performance (offers authentication for several applications or services)
+- Robust security (only a secret key can validate the token)
+
+##### Cons
+
+- Compromised secret key (if key is not processed correctly the secret key could be exposed)
+- Data overhead (access token is usually bigger than normal session token)
+- Shorter lifespan (access tokens like ours have a short lifespan which could lead to a worse UX)
+
 ### Sigarra's Authentication
 
 **Context**: 
