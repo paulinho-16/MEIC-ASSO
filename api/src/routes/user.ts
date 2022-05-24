@@ -10,6 +10,8 @@ const router = express.Router()
  * /user/{id}:
  *   delete:
  *     description: Delete user
+ *     tags:
+ *       - User
  *     parameters:
  *       - in: path
  *         name: id
@@ -80,6 +82,8 @@ router.delete('/:id', auth.verifyAuthorization, controller.deleteUser)
  * /user/update-password/{id}:
  *   put:
  *     description: Change Password
+ *     tags:
+ *       - User
  *     parameters:
  *       - in: path
  *         name: id
@@ -153,6 +157,8 @@ router.delete('/:id', auth.verifyAuthorization, controller.deleteUser)
  * /user/forgot-password:
  *   put:
  *     description: Send email to the user for password change
+ *     tags:
+ *       - User
  *     security:
  *     - jwt: []
  *     - cookieAuth: []
@@ -218,6 +224,8 @@ router.post('/forgot-password', controller.forgotPassword)
  * /user/reset-password:
  *   put:
  *     description: Use token to change an account's password without the old one
+ *     tags:
+ *       - User
  *     security:
  *     - jwt: []
  *     - cookieAuth: []
