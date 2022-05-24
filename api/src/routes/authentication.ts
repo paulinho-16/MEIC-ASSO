@@ -172,7 +172,6 @@ router.post('/login', controller.login)
  *     requestBody:
  *       description: Doesn't have one
  *       required: False
- *       content: None
  *     responses:
  *       200:
  *         description: The user logged out successfully created
