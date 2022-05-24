@@ -112,6 +112,7 @@ async function getGroup(groupId: Number) {
 
   try {
     let res = await client.query(query)
+    console.log(res)
     return res.rows
   }
   catch (err) {
@@ -157,7 +158,7 @@ async function createGroup(group: Group){
   
     const query = {
       text: 'INSERT INTO Groups(typeName, title, "description", mlimit, autoAccept) VALUES($1, $2, $3, $4, $5)',
-      values: [group.typeName, group.title, group.description, group.mLimit, group.autoAccept],
+      values: [group.typename, group.title, group.description, group.mlimit, group.autoaccept],
     }
   
     try{
@@ -179,8 +180,8 @@ async function editGroup(groupId: Number, group: Group){
   }
 
   const query = {
-    text: 'UPDATE groups SET typeName=$1, title=$2, "description"=$3,mlimit=$4,autoAccept=$5 WHERE groupId = $6',
-    values : [group.typeName, group.title, group.description, group.mLimit, group.autoAccept, groupId],
+    text: 'UPDATE groups SET typeName=$1, title=$2, "description"=$3,mlimit=$4,autoAccept=$5 WHERE id = $6',
+    values : [group.typename, group.title, group.description, group.mlimit, group.autoaccept, groupId],
   }
   
   try{

@@ -61,27 +61,27 @@ async function createGroup(req: Request, res: Response) {
 
     const query = req.body
 
-    if(query.typeName == undefined || query.title == undefined || query.description == undefined || query.mLimit == undefined || query.autoAccept == undefined) {
-      res.status(400).send('This request must have \'typeName\', \'title\', \'description\', \'mLimit\' and \'autoAccept\'.')
+    if(query.typename == undefined || query.title == undefined || query.description == undefined || query.mlimit == undefined || query.autoaccept == undefined) {
+      res.status(400).send('This request must have \'typename\', \'title\', \'description\', \'mlimit\' and \'autoaccept\'.')
       return
     }
   
-    if(query.typeName == '' || query.title == '' || query.description == '') {
-      res.status(400).send('\'typeName\', \'title\' and \'description\' can\'t be empty strings.')
+    if(query.typename == '' || query.title == '' || query.description == '') {
+      res.status(400).send('\'typename\', \'title\' and \'description\' can\'t be empty strings.')
       return
     }
   
-    if(isNaN(parseInt(query.mLimit.toString()))){
-      res.status(400).send('mLimit must be an integer.')
+    if(isNaN(parseInt(query.mlimit.toString()))){
+      res.status(400).send('mlimit must be an integer.')
       return
     }
   
     const group: Group = {
-        typeName: query.typeName.toString(),
+        typename: query.typename.toString(),
         title: query.title.toString(),
         description: query.description.toString(),
-        mLimit: parseInt(query.mLimit.toString()),
-        autoAccept: Boolean(query.autoAccept.toString())
+        mlimit: parseInt(query.mlimit.toString()),
+        autoaccept: Boolean(query.autoaccept.toString())
     }
 
     const data = await groups.createGroup(group)
@@ -110,7 +110,12 @@ async function deleteGroup(req: Request, res: Response) {
 
     const data = await groups.deleteGroup(parseInt(req.params.id.toString()))
 
-    
+    if(data){
+      res.status(201).send('Success')
+    }
+    else{
+      res.status(500).send('Something went wrong. Try again!')
+    }
 
 }
 
@@ -131,27 +136,27 @@ async function editGroup(req: Request, res: Response){
 
     const query = req.body
 
-    if(query.typeName == undefined || query.title == undefined || query.description == undefined || query.mLimit == undefined || query.autoAccept == undefined) {
-      res.status(400).send('This request must have \'typeName\', \'title\', \'description\', \'mLimit\' and \'autoAccept\'.')
+    if(query.typename == undefined || query.title == undefined || query.description == undefined || query.mlimit == undefined || query.autoaccept == undefined) {
+      res.status(400).send('This request must have \'typename\', \'title\', \'description\', \'mlimit\' and \'autoaccept\'.')
       return
     }
   
-    if(query.typeName == '' || query.title == '' || query.description == '') {
-      res.status(400).send('\'typeName\', \'title\' and \'description\' can\'t be empty strings.')
+    if(query.typename == '' || query.title == '' || query.description == '') {
+      res.status(400).send('\'typename\', \'title\' and \'description\' can\'t be empty strings.')
       return
     }
   
-    if(isNaN(parseInt(query.mLimit.toString()))){
-      res.status(400).send('mLimit must be an integer.')
+    if(isNaN(parseInt(query.mlimit.toString()))){
+      res.status(400).send('mlimit must be an integer.')
       return
     }
   
     const group: Group = {
-        typeName: query.typeName.toString(),
+        typename: query.typename.toString(),
         title: query.title.toString(),
         description: query.description.toString(),
-        mLimit: parseInt(query.mLimit.toString()),
-        autoAccept: Boolean(query.autoAccept.toString())
+        mlimit: parseInt(query.mlimit.toString()),
+        autoaccept: Boolean(query.autoaccept.toString())
     }
 
     const data = await groups.editGroup(parseInt(req.params.id.toString()),group);

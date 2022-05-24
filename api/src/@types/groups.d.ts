@@ -1,8 +1,8 @@
 export type Group = {
     id?: number
-    typeName: string
+    typename: string
     title: string
     description: string
-    mLimit: number
-    autoAccept: boolean
+    mlimit: number
+    autoaccept: boolean
 }
