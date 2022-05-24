@@ -15,6 +15,7 @@ import profile from './profile'
 import examsCalendar from './exams-calendar'
 import schedule from './schedule'
 import grades from './grades'
+import capacity from './capacity'
 
 export default {
   associations,
@@ -34,4 +35,5 @@ export default {
   examsCalendar,
   schedule,
   grades,
+  capacity,
 }
