@@ -13,10 +13,15 @@ const router = express.Router()
  *     summary: Get the calendar events
  *     parameters:
  *       - in: header
- *         name: jwt
- *         required: true
+ *         name: startDate
+ *         required: false
  *         type: string
- *         description: The JWT token
+ *         description: retrieve events after startDate. String in format YYYY-MM-DD. Defaults to today
+ *       - in: header
+ *         name: endDate
+ *         required: false
+ *         type: string
+ *         description: retrieve events before endDate. String in format YYYY-MM-DD. Defaults to null
  *     responses:
  *       201:
  *         description: The request made was successful
@@ -26,8 +31,8 @@ const router = express.Router()
  *               type: object
  *               properties:
  *                 message:
- *                   type: string
- *                   example: "1"
+ *                   type: array
+ *                   example: []
  *       500:
  *         description: Unexpected error
  *         content:
@@ -65,15 +70,16 @@ router.get('/', auth.verifySessionToken, controller.getCalendarEvents)
  *                 example: "Room B101"
  *               date:
  *                 type: string
- *                 example: "22/05/2022"
+ *                 example: "2022-05-22"
  *               startTime:
  *                 type: string
- *                 example: "13:00"
+ *                 example: "13:00:00"
  *               endTime:
  *                 type: string
- *                 example: "15:00"
+ *                 example: "15:00:00"
  *               recurrence:
  *                 type: string
+ *                 example: TBD
  *     responses:
  *       201:
  *         description: Successfully added event to calendar
@@ -97,6 +103,14 @@ router.get('/', auth.verifySessionToken, controller.getCalendarEvents)
  *                   example: "Invalid syntax!"
  *       500:
  *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Something went wrong. Try again!"
  */
 router.post('/create', auth.verifySessionToken, controller.addCalendarEvent)
 
