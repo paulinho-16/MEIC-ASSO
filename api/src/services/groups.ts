@@ -231,12 +231,12 @@ async function getGroupAdmins(groupId: Number)
   }
 
   const query = {
-    text: 'SELECT * \
-           FROM Student\
-           INNER JOIN Group_Student\
-           ON Student.id = Group_Student.studentId\
-           AND isAdmin = true\
-           AND Group_Student.groupId = $1',
+    text: `SELECT * 
+           FROM Student
+           INNER JOIN Group_Student
+           ON Student.id = Group_Student.studentId
+           AND isAdmin = true
+           AND Group_Student.groupId = $1`,
     values: [groupId],
   }
 
@@ -251,7 +251,7 @@ async function getGroupAdmins(groupId: Number)
 }
 
 
-async function addGroupAdmin(studentId: Number, groupId: Number){
+async function addGroupAdmin(groupId: Number, studentId: Number){
 
   console.log("Add group admin");
 
@@ -260,10 +260,10 @@ async function addGroupAdmin(studentId: Number, groupId: Number){
   }
 
   const query = {
-    text: 'ALTER TABLE Group_Student\
-           SET isAdmin = true\
-           WHERE studentID = $1\
-           AND groupId = $2',
+    text: `UPDATE Group_Student 
+          SET isAdmin = true 
+          WHERE studentId = $1 
+          AND groupId = $2`,
     values: [studentId, groupId],
   }
 
@@ -277,7 +277,7 @@ async function addGroupAdmin(studentId: Number, groupId: Number){
   }
 }
 
-async function deleteGroupAdmin(studentId: Number, groupId: Number){
+async function deleteGroupAdmin(groupId: Number, studentId: Number){
 
   console.log("Delete group admin");
 
@@ -286,10 +286,10 @@ async function deleteGroupAdmin(studentId: Number, groupId: Number){
   }
 
   const query = {
-    text: 'ALTER TABLE Group_Student\
-           SET isAdmin = false\
-           WHERE studentID = $1\
-           AND groupId = $2',
+    text: `UPDATE Group_Student
+           SET isAdmin = false
+           WHERE studentId = $1
+           AND groupId = $2`,
     values: [studentId, groupId],
   }
 
