@@ -45,8 +45,8 @@ async function getStudentSchedule(req: Request, res: Response) {
       const $ = cheerio.load(studentSchedulePageHTML.toString('latin1'))
 
       const currentWeekBlock = $(`div#involucro div#envolvente div#conteudo div#conteudoinner h3`).text()
-      const blockStartDay = currentWeekBlock.split(" a ")[0].split(" de ")[1]
-      const blockEndDay = currentWeekBlock.split(" a ")[1]
+      const blockStartDate = currentWeekBlock.split(" a ")[0].split(" de ")[1]
+      const blockEndDate = currentWeekBlock.split(" a ")[1]
 
       const scheduleTable = $(`table.horario`)
 
@@ -92,7 +92,7 @@ async function getStudentSchedule(req: Request, res: Response) {
             })
         })
 
-      res.send({ scheduleTable: schedule, weekBlock: { blockStartDay, blockEndDay } })
+      res.send({ scheduleTable: schedule, weekBlock: { blockStartDate, blockEndDate } })
     })
     .catch(function (e) {
       console.log(e)
