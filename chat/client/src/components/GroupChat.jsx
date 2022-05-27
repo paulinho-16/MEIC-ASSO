@@ -1,11 +1,10 @@
 import {useEffect, useState} from "react";
 import {Button, Form, Modal, Row} from "react-bootstrap";
-import useUsername from "../hooks/username";
+import useUp from "../hooks/up";
 import Message from "./Message";
 
 export default function GroupChat({data, socket}) {
-  const { username } = useUsername();
-
+  const {up} = useUp();
   const [show, setShow] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -21,14 +20,14 @@ export default function GroupChat({data, socket}) {
     event.preventDefault()
     const content = message.trim()
     if (content) {
-      socket.emit('chat message', content, username, data.name, new Date().toLocaleString())
+      socket.emit('chat message', content, up, data.name, new Date().toLocaleString())
       setMessage('')
     }
   }
 
   useEffect(() => {
     if (socket) {
-      socket.emit("join room", username, data.name);
+      socket.emit("join room", up, data.name);
     }
   }, [socket]);
 
