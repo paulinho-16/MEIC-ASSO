@@ -17,14 +17,21 @@ type Job = {
 const rootURL = 'https://sigarra.up.pt/feup/pt/'
 
 async function getHTML(url: string) {
-  const response = await axios.request({
-    method: 'GET',
-    url: url,
-    responseType: 'arraybuffer',
-    responseEncoding: 'binary',
-  })
+  try{
+    const response = await axios.request({
+      method: 'GET',
+      url: url,
+      responseType: 'arraybuffer',
+      responseEncoding: 'binary',
+    })
+    return iconv.decode(response.data, 'iso-8859-15')
+  }
+  catch (e){
+    return null
+  }
+  
 
-  return iconv.decode(response.data, 'iso-8859-15')
+  
 }
 
 async function scrapeIndividualJob(url: string) {
@@ -57,6 +64,13 @@ async function get(_req: Request, res: Response) {
   const html = await getHTML(
     `${rootURL}noticias_geral.lista_noticias?p_grupo_noticias=19`
   )
+
+  if(!html){
+    res.status(500).send({error: "Cannot fetch SIGARRA jobs page!"})
+    return
+  }
+
+
   const $ = cheerio.load(html)
   const targetUl = $('#conteudoinner ul')
   $(targetUl)
@@ -86,8 +100,8 @@ async function get(_req: Request, res: Response) {
     job.startDate = result[4]
     job.endDate = result[5]
   }
-
-  res.send(jobs)
+  
+  res.status(200).send(jobs)
 }
 
 export default {

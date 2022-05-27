@@ -59,6 +59,91 @@ function parseJSONTimetable (sigarra_timetable: JSON){
   //}
 } 
 
+async function parseJsonTimetable(userdId: string){
+
+  const timetable = '{"scheduleTable":[{"dayOfTheWeek":"Wednesday","startTime":"09:00","endTime":"10:30","curricularUnitName":"CPM","classType":"TP","class":"1MEIC01","professors":"APM","room":"B229"},{"dayOfTheWeek":"Saturday","startTime":"09:00","endTime":"12:00","curricularUnitName":"ASSO","classType":"TP","class":"1MEIC01","professors":"AMA","room":"B303"},{"dayOfTheWeek":"Wednesday","startTime":"14:00","endTime":"17:00","curricularUnitName":"BDNR","classType":"TP","class":"1MEIC01","professors":"SSN","room":"B203"},{"dayOfTheWeek":"Saturday","startTime":"14:00","endTime":"16:00","curricularUnitName":"LGP","classType":"T","class":"COMP_2933","professors":"GMG","room":"B001"},{"dayOfTheWeek":"Tuesday","startTime":"14:30","endTime":"17:30","curricularUnitName":"GEE","classType":"TP","class":"1MEIC01","professors":"JCR+JPC+LP+MCF","room":"B024"},{"dayOfTheWeek":"Wednesday","startTime":"15:30","endTime":"17:00","curricularUnitName":"CPM","classType":"TP","class":"1MEIC01","professors":"APM","room":"B343"}]}'
+  
+  let timetableObject = JSON.parse(timetable)
+  let scheduleTable = timetableObject.scheduleTable
+
+  for (let index = 0; index < scheduleTable.length; index++) {
+    const classBlock = scheduleTable[index];
+    const new_event: Event = {
+      summary: classBlock.curricularUnitName,
+      description: classBlock.dayOfTheWeek + " " + classBlock.classType + " " + classBlock.class + " " + classBlock.professors,
+      location: classBlock.room,
+      date: new Date("2022-05-21"),
+      startTime: new Date("2022-05-21" + ' ' + classBlock.startTime + ":00"),
+      endTime: new Date("2022-05-21" + ' ' + classBlock.endTime + ":00"),
+      recurrence: "weekly",
+      isUni: true
+    }
+
+    let event_id = await events.eventExists(new_event.startTime, new_event.endTime, new_event.summary, new_event.description)
+
+    if (event_id > 0){
+      if (!await events.eventRelationExists(userdId, event_id)){
+        await events.createEventRelation(event_id, userdId);
+      }
+      continue
+    }
+
+    const retval = await events.createEvent(new_event);
+
+    if(retval != false){
+      const eventId = retval
+      await events.createEventRelation(eventId, userdId);
+    }
+
+  } 
+
+}
+
+async function parseJsonExams(userdId: string){
+  
+  const exams = '{"course": "MIEIC", "seasons": [{"name": "normal", "exams": [{"acronym": "MK", "url": "asdadaw", "day": "21-06-2022", "begin": "14:30", "duration": "2 hours", "rooms": "B104 B107"}]}]}'
+  let examsObject = JSON.parse(exams)
+  let seasons = examsObject.seasons
+
+  for (let x = 0; x < seasons.length; x++) {
+    const season = seasons[x];  
+    let exams = season.exams
+
+    for (let y = 0; y < exams.length; y++) {
+      const exam = exams[y];
+
+      const new_event: Event = {
+        summary: exams.course + ' ' + exam.acronym + ' ' + season.name,
+        description: exam.url,
+        location: exam.rooms,
+        date: new Date(exam.day),                                                // verify day format
+        startTime: new Date(exam.day + ' ' + exam.begin + ":00"),
+        endTime: new Date(exam.day + ' ' + exam.begin + exam.duration + ":00"), // verify duration format
+        recurrence: "single",
+        isUni: true
+      }
+
+      let event_id = await events.eventExists(new_event.startTime, new_event.endTime, new_event.summary, new_event.description)
+
+      if (event_id > 0){
+        if (!await events.eventRelationExists(userdId, event_id)){
+          await events.createEventRelation(event_id, userdId);
+        }
+        continue
+      }
+  
+      const retval = await events.createEvent(new_event);
+  
+      if(retval != false){
+        const eventId = retval
+        await events.createEventRelation(eventId, userdId);
+      }
+
+    }
+    
+  }
+}
+
 
 
 

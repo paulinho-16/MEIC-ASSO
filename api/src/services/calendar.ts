@@ -33,6 +33,54 @@ async function connectDatabase(){
   }
 }
 
+async function eventExists(startTime: Date, endTime: Date, summary: string, description: string) {
+
+  if(!connectDatabase()){
+    return false;
+  }
+  let query = {
+    text: 'SELECT id FROM Events WHERE startTime = $1 AND endTime = $2 AND summary = $3 AND description = $4',
+    values: [startTime, endTime, summary, description],
+  }
+
+  try{
+    let res = await client.query(query)
+    if (res.rows.length > 0)
+      return res.rows[0].id
+
+    return false
+  }
+  catch(err){
+    console.log(err);
+    return false
+  }
+
+}
+
+async function eventRelationExists(userdId: string, eventId: string) {
+
+  if(!connectDatabase()){
+    return false;
+  }
+  let query = {
+    text: 'SELECT eventId FROM EventUsers WHERE userId = $1 AND eventId = $2',
+    values: [userdId, eventId],
+  }
+
+  try{
+    let res = await client.query(query)
+    if (res.rows.length > 0)
+      return true
+
+    return false
+  }
+  catch(err){
+    console.log(err);
+    return false
+  }
+
+}
+
 async function getCalendarEvents(userId : string, startDate : string, endDate : string){
     let query;
     if(!connectDatabase()){
@@ -107,5 +155,7 @@ async function createEventRelation(eventId: string, userId: string){
 export default{
   createEvent,
   getCalendarEvents,
-  createEventRelation
+  createEventRelation,
+  eventExists,
+  eventRelationExists
 }
