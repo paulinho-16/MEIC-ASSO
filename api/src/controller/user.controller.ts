@@ -1,90 +1,14 @@
 import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 import userService from '@/services/user'
+import redisClient from '@/util/connect-redis'
+import { sendEmail } from '@/util/send-email'
+import constants from '@/config/constants'
 
-import { User } from '@/@types/user'
-
-function getPasswordErrors(password: string): string | null {
-  const errors = []
-
-  // At least 6 characters
-  const characters = password.length
-  if (characters === 0)
-    errors.push("no characters")
-  else if (characters < 6)
-    errors.push(`only ${password.length} character${characters == 1 ? "" : "s"}`)
-
-  // One numeric digit
-  if (!password.match(/^.*\d.*$/))
-    errors.push("no digits")
-
-  // One uppercase character
-  if (!password.match(/^.*(?=.*[A-Z]).*$/))
-    errors.push("no uppercase letters")
-
-  // One lowercase character
-  if (!password.match(/^.*(?=.*[a-z]).*$/))
-    errors.push("no lowercase letters")
-
-  // No errors
-  if (errors.length === 0)
-    return null
-
-  // Build a message with all the errors of the password
-  let errorMessage = errors.pop()
-  if (errors.length !== 0)
-    errorMessage = errors.join(", ") + " and " + errorMessage
-
-  return `it needs at least 6 characters, one numeric digit, one uppercase and one lowercase letter, but it has ${errorMessage}`
-}
-
-async function register(req: Request, res: Response) {
-  // Get user credentials
-  const { email, password } = req.body
-
-  // Check if all inputs were filled
-  if (!(email && password))
-    return res.status(400).json({ message: 'Email and password are required' })
-
-  // Check if email is valid
-  const regexp = new RegExp(
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  )
-  if (!regexp.test(email))
-    return res.status(400).json({ message: `The email '${email}' is not valid` })
-
-  // Check if user already exists
-  try {
-    const oldUser = await userService.existsUserByEmail(email)
-    if (oldUser) return res.status(409).json({ message: 'This user already exists. Please Login' })
-  } catch (err) {
-    return res.status(400).json({ message: `Get user failed with error: ${err}` })
-  }
-
-  // Check if password has errors
-  const passwordErrors = getPasswordErrors(password);
-  if (passwordErrors !== null)
-    return res.status(400).json({ message: `The password is not strong enough: ${passwordErrors}` })
-
-  // Encrypt user password
-  const encryptedPassword = await bcrypt.hash(password, 10)
-
-  const user: User = {
-    email,
-    password: encryptedPassword,
-  }
-
-  // Insert user
-  let id = -1
-  try {
-    id = await userService.insertUser(user)
-    if (id == -1) return res.status(400).json({ message: `Insert user failed` })
-  } catch (err) {
-    return res.status(400).json({ message: `Insert user failed with error: ${err}` })
-  }
-
-  return res.status(201).json({ message: 'Registered with success' })
-}
+// ----------------------------------------------------------------------------
+// Endpoints
+// ----------------------------------------------------------------------------
 
 async function deleteUser(req: Request, res: Response) {
   // Get password
@@ -110,6 +34,9 @@ async function deleteUser(req: Request, res: Response) {
   // Delete User
   try {
     await userService.deleteUserById(req.body.id)
+    // Delete session
+    await redisClient.del(JSON.stringify(req.body.id));
+    // Delete cookie
     res.cookie('jwt', '', { maxAge: 0 })
     return res.status(201).json({ message: 'Account deleted with success' })
   } catch (err) {
@@ -130,16 +57,16 @@ async function updatePassword(req: Request, res: Response) {
   try {
     user = await userService.getUserById(req.body.id)
   } catch (err) {
-    return res.status(400).json({ message: `Get user failed with error: ${err}` })
+    return res.status(500).json({ message: `Get user failed with error: ${err}` })
   }
-  if (!user) return res.status(400).json({ message: 'The user does not exist' })
+  if (!user) return res.status(401).json({ message: 'The user does not exist' })
 
   // Validate password
   if (!(await bcrypt.compare(oldPassword, user.password)))
     return res.status(400).json({ message: 'Invalid current password' })
 
   // Check if password has errors
-  const passwordErrors = getPasswordErrors(newPassword);
+  const passwordErrors = userService.getPasswordErrors(newPassword);
   if (passwordErrors !== null)
     return res.status(400).json({ message: `The new password is not strong enough: ${passwordErrors}` })
 
@@ -150,12 +77,71 @@ async function updatePassword(req: Request, res: Response) {
     await userService.updatePassword(req.body.id, encryptedPassword)
     return res.status(200).json({ message: 'Update password with success' })
   } catch (err) {
-    return res.status(400).json({ message: 'Update password failed' })
+    return res.status(500).json({ message: 'Update password failed' })
   }
 }
 
+async function forgotPassword(req: Request, res: Response){
+  // Get user email
+  const { email } = req.body
+
+  // Check if email was filled
+  if (!email)
+    return res.status(400).json({ message: 'Email is required' })
+
+  // Validate if user exists
+  let user
+  try {
+    user = await userService.getUserByEmail(email)
+  } catch (err) {
+    return res.status(500).json({ message: `Get user failed with error: ${err}` })
+  }
+  if (!user) return res.status(401).json({ message: 'The user does not exist' })
+
+  const resetToken = jwt.sign({ id: user.id }, process.env.JWT_PASS_RESET_KEY, { expiresIn: constants.passResetTokenLifetime })
+
+  const emailResult = await sendEmail(user.email, "Password reset", messageText(resetToken));
+
+  const status = emailResult.status ? 200 : 500
+  return res.status(status).json({ message: emailResult.message })
+}
+
+async function resetPassword(req: Request, res: Response){
+  // Get password
+  const { password } = req.body;
+
+  if(!password) {
+    return res.status(400).json({ message: 'New password is required' })
+  }
+
+  // Check if password has errors
+  const passwordErrors = userService.getPasswordErrors(password);
+  if (passwordErrors !== null)
+    return res.status(400).json({ message: `The password is not strong enough: ${passwordErrors}` })
+
+  // Encrypt user password
+  const encryptedPassword = await bcrypt.hash(password, 10)
+
+  // TODO: should invalidate token
+  try {
+    await userService.updatePassword(req.body.id, encryptedPassword)
+    return res.status(200).json({'message': 'Update password with success'})
+  } catch(err){
+    return res.status(500).json({'message': 'Update password failed'})
+  }
+}
+
+function messageText(resetToken: string){
+  return `<p>To recover your password use the following token: ${resetToken}
+  in the POST <a href='https://uni4all.servehttp.com/user/reset-password'>user/reset-password</a>
+  endpoint</p>.
+  <p>This token expires in ${constants.passResetTokenLifetime/60} minutes.
+  Be sure to access your account and update it within this period.</p>`
+}
+
 export default {
-  register,
+  forgotPassword,
+  resetPassword,
   deleteUser,
   updatePassword,
 }
