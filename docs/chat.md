@@ -51,6 +51,7 @@ Gets all possible messages.
 - `chat message`: a general message
   - sender (string): the sender
   - msg (string): the message
+  
 ## Architecture and Choices
 
 ```mermaid

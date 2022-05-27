@@ -9,7 +9,6 @@ async function getAllGroups(req: Request, res: Response) {
 async function _getGroupById(id: string) {
   try {
     const group = await Group.findById(id);
-    console.log(group);
     return {status: 200, data: group};
   }
   catch {
@@ -19,19 +18,23 @@ async function _getGroupById(id: string) {
 
 async function getGroupById(req: Request, res: Response) {
   const {id} = req.params;
+  if(id === undefined) return res.status(400).json("You need to specify the id argument.");
   const response = await _getGroupById(id);
   return res.status(response.status).json(response.data);
 }
 
 async function getGroupsByUser(req: Request, res: Response) {
   const {up} = req.params;
+  if(up === undefined) return res.status(400).json("You need to specify the up argument.");
   return res.status(200).json((await Group.find({ userNumbers: up})));
 }
 
 async function createGroup(req: Request, res: Response) {
-  const group = await Group.create(req.body);
-  await group.populate("users");
-  return res.status(200).json(group);
+  const {name, userNumbers} = req.body;
+  if(name  === undefined || userNumbers === undefined) return res.status(400).json("You need to specify all arguments: name and userNumbers.");
+  const newGroup = await Group.create({name, userNumbers});
+  await newGroup.populate("users");
+  return res.status(200).json(newGroup);
 }
 
 async function getGroupMessages(req: Request, res: Response) {

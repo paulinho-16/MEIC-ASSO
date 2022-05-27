@@ -16,6 +16,7 @@ async function getAllMessages(req: Request, res: Response) {
 
 async function getMessage(req: Request, res: Response) {
   const {id} = req.params;
+  if(id === undefined) return res.status(400).json("You need to specify the id argument.");
   Message.findById(id)
   .then((msg) => {
     return res.status(200).json(msg);
@@ -27,7 +28,7 @@ async function getMessage(req: Request, res: Response) {
 
 async function createMessage(req: Request, res: Response) {
   const {message, from, group} = req.body;
-
+  if(group === undefined || message === undefined || from === undefined) return res.status(400).json("You need to specify all arguments: group, message and from.");
   const user = await User.findOne({number: from});
   if(!user) return res.status(400).json(`User '${from}' not found! Please submit a valid user number (upxxxxxxxxx).`)
   
