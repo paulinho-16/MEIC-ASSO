@@ -8,6 +8,4 @@ RUN yarn install
 
 COPY ./ /usr/src/app/chat/client/
 
-COPY tailwind.config.js /usr/src/app/chat/client/
-
 CMD ["yarn", "start"]

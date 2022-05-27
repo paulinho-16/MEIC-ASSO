@@ -33,7 +33,7 @@ The login of a user is the creation of a HttpOnly cookie, with a lifetime define
 
 This is the logout route, it requires no parameters, but there must be a logged in user, in which case the cookies related to the login will be deleted, otherwise the same error codes as in the authentication testing route will appear in the response.
 
-### POST `/user/`
+### POST `/authentication/register`
 
 This is the register route, it requires two parameters for the account creation:
 - `email`
