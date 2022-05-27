@@ -1,17 +1,22 @@
-import Group from "@/models/Group";
-import Message from "@/models/Message";
-import User from "@/models/User";
-import { Request, Response } from "express";
+import Group from '@/models/Group'
+import Message from '@/models/Message'
+import User from '@/models/User'
+import { Request, Response } from 'express'
 
 async function getAllMessages(req: Request, res: Response) {
-  let {perPage, page} = req.body;
-  if(perPage === undefined || page === undefined) return res.status(400).json("You need to specify both perPage and page arguments.")
-  
-  perPage = Number(perPage);
-  page = Number(page);
-  if(isNaN(perPage) || isNaN(page)) return res.status(400).json("Both perPage and page arguments need to be numbers.")
+	let { perPage, page } = req.body
+	if (perPage === undefined || page === undefined)
+		return res.status(400).json('You need to specify both perPage and page arguments.')
 
-  return res.status(200).json(await Message.find().skip(perPage * page).limit(perPage));
+	perPage = Number(perPage)
+	page = Number(page)
+	if (isNaN(perPage) || isNaN(page)) return res.status(400).json('Both perPage and page arguments need to be numbers.')
+
+	return res.status(200).json(
+		await Message.find()
+			.skip(perPage * page)
+			.limit(perPage)
+	)
 }
 
 async function getMessage(req: Request, res: Response) {
@@ -48,7 +53,7 @@ async function createMessage(req: Request, res: Response) {
 }
 
 export default {
-  getAllMessages,
-  getMessage,
-  createMessage
-};
+	getAllMessages,
+	getMessage,
+	createMessage,
+}
