@@ -3,7 +3,7 @@ import {Button, Form, Modal, Row} from "react-bootstrap";
 import useUsername from "../hooks/username";
 import Message from "./Message";
 
-export default function GroupChat({name, socket}) {
+export default function GroupChat({data, socket}) {
   const { username } = useUsername();
 
   const [show, setShow] = useState(false);
@@ -21,20 +21,19 @@ export default function GroupChat({name, socket}) {
     event.preventDefault()
     const content = message.trim()
     if (content) {
-      console.log(name)
-      socket.emit('chat message', content, username, name, new Date().toLocaleString())
+      socket.emit('chat message', content, username, data.name, new Date().toLocaleString())
       setMessage('')
     }
   }
 
   useEffect(() => {
     if (socket) {
-      socket.emit("join room", username, name);
+      socket.emit("join room", username, data.name);
     }
   }, [socket]);
 
   if (socket) {
-    socket.on(`${name} message`, (from, message, timestamp) => {
+    socket.on(`${data.name} message`, (from, message, timestamp) => {
       setMessages([...messages, { from, message, timestamp }])
     })
   }
@@ -42,12 +41,12 @@ export default function GroupChat({name, socket}) {
   return (
     <Row>
       <Button variant="primary" className='w-auto' onClick={handleShow}>
-        {name}'s Chat
+        {data.name}'s Chat
       </Button>
 
       <Modal show={show} size='lg' onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>{name}'s Chat</Modal.Title>
+          <Modal.Title>{data.name}'s Chat</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className='px-6 grow overflow-y-auto'>
