@@ -8,13 +8,13 @@ async function getAllGroups(req: Request, res: Response) {
 
 async function getGroupById(req: Request, res: Response) {
   const {id} = req.params;
-  Group.findById(id)
+  await Group.findById(id)
   .then((group) => {
-    return res.status(200).json(group);
-  })
-  .catch(() => {
-    return res.status(400).json(`Group with id '${id}' not found!`);
-  })
+			return res.status(200).json(group)
+		})
+		.catch(() => {
+			return res.status(404).json(`Group with id '${id}' not found!`)
+		})
 }
 
 async function getGroupsByUser(req: Request, res: Response) {
