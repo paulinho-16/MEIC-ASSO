@@ -7,13 +7,17 @@ async function getAllGroups(req: Request, res: Response) {
 }
 
 async function _getGroupById(id: string) {
-  try {
-    const group = await Group.findById(id);
-    return {status: 200, data: group};
-  }
-  catch {
-    return {status: 400, data: `Group with id '${id}' not found!`};
-  }
+  return await Group.findById(id)
+		.then((group: any) => {
+			if (!group) {
+				return { status: 404, error: `Group with id '${id}' not found.` }
+			} else {
+				return { status: 200, data: group }
+			}
+		})
+		.catch(() => {
+			return { status: 404, data: `Group with id '${id}' not found.` }
+		})
 }
 
 async function getGroupById(req: Request, res: Response) {
