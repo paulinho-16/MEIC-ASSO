@@ -12,6 +12,7 @@ Uni4all chat backend implementation.
 - chat directly to another user
 - notifications for user connections and disconnections
 - update user username
+
 ## API Endpoints
 For more detailed documentation, refer to the swagger hub documentation.
 ### `GET` /chat/location
@@ -30,11 +31,114 @@ Gets all possible messages.
 - Returns a [Parameter Forest](https://microservice-api-patterns.org/patterns/structure/representationElements/ParameterForest) with a list of groups, and a list of messages per group;
 - Given the sheer amount of possible messages, includes [Pagination](https://microservice-api-patterns.org/patterns/structure/compositeRepresentations/Pagination):
 	- If the page is not requested it returns the first page.
+
+## Mongo Chat Server Endpoints
+To access the mongo chat server, use the following URL:
+```
+http://mongo_chat_server:3000/
+```
+
+### Groups
+
+### `GET` /group/
+Gets all groups.
+- Returns a [Parameter Forest](https://microservice-api-patterns.org/patterns/structure/representationElements/ParameterForest) with a list of groups;
+- Pagination is not supported.
+
+### `GET` /group/:id/
+Gets a group given a id.
+- Needs the id of the group to get.
+
+### `GET` /group/messages
+Gets all messages for a given group with pagination.
+- Returns a [Parameter Forest](https://microservice-api-patterns.org/patterns/structure/representationElements/ParameterForest) with a list of messages per group;
+- Given the sheer amount of possible messages, includes [Pagination](https://microservice-api-patterns.org/patterns/structure/compositeRepresentations/Pagination).
+- Receives the following arguments:
+  - `groupID`: the group to get the messages for;
+  - `page`: the page to get (starts at 0);
+  - `perPage`: the amount of messages per page.
+```
+{
+  "groupID": String required,
+  "page": Number required,
+  "perPage": Number required
+}
+```
+
+### `GET` /group/user/:up
+Gets all groups for a given user.
+- Returns a [Parameter Forest](https://microservice-api-patterns.org/patterns/structure/representationElements/ParameterForest) with a list of groups;
+- Needs the username of the user to get the groups for.	
+
+### `POST` /group/
+Creates a new group.
+- Receives the following arguments:
+  - `name`: the name of the group;
+  - `users`: the users that are part of the group.
+```
+{
+  "name": String required,
+  "users": [String] required
+}
+```
+
+### Messages
+
+### `GET` /message/
+Gets all messages with pagination.
+- Returns a [Parameter Forest](https://microservice-api-patterns.org/patterns/structure/representationElements/ParameterForest) with a list of messages;
+- Given the sheer amount of possible messages, includes [Pagination](https://microservice-api-patterns.org/patterns/structure/compositeRepresentations/Pagination).
+- Receives the following arguments:
+  - `page`: the page to get (starts at 0);
+  - `perPage`: the amount of messages per page.
+```
+{
+  "page": Number required,
+  "perPage": Number required
+}
+```
+
+### `GET` /message/:id
+Gets a message given an id.
+- Needs the id of the message to get.
+
+### `POST` /message/
+Creates a new message.
+- Receives the following arguments:
+  - `group`: the group the message is for;
+  - `from`: the user that sent the message;
+  - `message`: the message itself.
+```
+{
+  "group": String required,
+  "from": String required,
+  "message": String required
+}
+```
+
+### Users
+
+### `POST` /user/:up
+Updates user.
+- Needs the username of the user to update.
+- Receives the following arguments:
+  - `username`: the new username;
+  - `name`: the new name;
+  - `online`: the new online status.
+```
+{
+  "username": String,
+  "name": String,
+  "online": Boolean
+}
+```
+
+
 ## Socket Endpoints
 ### Receiving
 
 - `connection`: (implicit) on a new connection
-- `disonnect`: (implicit) on a disconnection
+- `disconnect`: (implicit) on a disconnection
 - `username`: to update a username
   - msg (string): the new username
 - `chat message`: to send a chat message
@@ -51,6 +155,7 @@ Gets all possible messages.
 - `chat message`: a general message
   - sender (string): the sender
   - msg (string): the message
+
 ## Architecture and Choices
 
 ```mermaid

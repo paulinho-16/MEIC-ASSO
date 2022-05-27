@@ -20,37 +20,36 @@ async function getAllMessages(req: Request, res: Response) {
 }
 
 async function getMessage(req: Request, res: Response) {
-	const { id } = req.params
-	Message.findById(id)
-		.then((msg) => {
-			return res.status(200).json(msg)
-		})
-		.catch(() => {
-			return res.status(404).json(`Message with id '${id}' not found`)
-		})
+  const {id} = req.params;
+  if(id === undefined) return res.status(400).json("You need to specify the id argument.");
+  Message.findById(id)
+  .then((msg) => {
+    return res.status(200).json(msg);
+  })
+  .catch(() => {
+    return res.status(400).json(`Message with id '${id}' not found`);
+  })
 }
 
 async function createMessage(req: Request, res: Response) {
-	const { message, from, group } = req.body
+  const {message, from, group} = req.body;
+  if(group === undefined || message === undefined || from === undefined) return res.status(400).json("You need to specify all arguments: group, message and from.");
+  const user = await User.findOne({number: from});
+  if(!user) return res.status(400).json(`User '${from}' not found! Please submit a valid user number (upxxxxxxxxx).`)
+  
+  let groupObject;
+  try {
+    groupObject = await Group.findById(group);
+  }
+  catch {
+    return res.status(400).json(`Group with id '${group}' not found! Please submit a valid group id.`)
+  }  
 
-	const user = await User.findOne({ number: from })
-	if (!user) return res.status(400).json(`User '${from}' not found! Please submit a valid user number (upxxxxxxxxx).`)
+  const newMessage = await Message.create({message, from: user._id});
+  await newMessage.populate("from");
 
-	if (group === undefined) {
-		return res.status(400).json('Group is not defined')
-	}
-
-	Group.findById(group)
-		.then(async (groupObject) => {
-			const newMessage = await Message.create({ message, from: user._id })
-			await newMessage.populate('from')
-
-			await groupObject.update({ $push: { messages: newMessage } })
-			return res.status(200).json('Message created with success!')
-		})
-		.catch(() => {
-			return res.status(404).json(`Group with id '${group}' not found! Please submit a valid group id.`)
-		})
+  await groupObject.update({$push: {messages: newMessage}})
+  return res.status(200).json("Message created with success!");
 }
 
 export default {
