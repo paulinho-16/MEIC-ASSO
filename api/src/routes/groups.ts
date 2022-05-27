@@ -15,21 +15,20 @@ router.get('/', controller.getGroups)
 
 router.get('/:id', controller.getGroup)
 
+router.get('/myGroups/:userId', controller.getMyGroups);
+
 router.post('/', controller.createGroup)
+
+router.patch('/:id',controller.editGroup);
 
 router.delete('/:id', controller.deleteGroup)
 
-<<<<<<< HEAD
+
 // Group admin endpoints
 
 router.get('/:id/admins', controller.getGroupAdmins)
 router.post('/:id/admins/:userId', controller.addGroupAdmin)
 router.delete('/:id/admins/:userId', controller.deleteGroupAdmin)
-=======
-router.get('/myGroups/:userId', controller.getMyGroups);
->>>>>>> b1e485f11f4c888b78e410d1caac5b8cb50f9ff7
-
-router.patch('/:id',controller.editGroup);
 
 
 // Members endpoints.
