@@ -1,32 +1,31 @@
 import { Request, Response } from 'express'
+import axios from 'axios'
 
-function location(req: Request, res: Response) {
-  return res.status(200).json({ url: "http://uni4all.servehttp.com:8082/"}) // TODO concrete location, not this
+type Message = {
+  message: string
+  from: string
 }
 
-async function _groupMessage(group: number, page: number) {
+type Group = {
+  messages: Message[]
+  data: any
+}
+
+function location(req: Request, res: Response) {
+  return res.status(200).json({ url: 'http://uni4all.servehttp.com:8082/' }) // TODO concrete location, not this
+}
+
+async function _groupMessage(group: string) {
   // use this method when you know that all parameters are correct
-  // TODO requests the chat database
-  const messages = [
-    {
-      id: "1",
-      group: group,
-      user: "1",
-      content: "Hello",
-      date: "2020-01-01T00:00:00.000Z",
-    },
-        {
-      id: "2",
-      group: group,
-      user: "1",
-      content: "Hellooo",
-      date: "2020-01-02T00:00:00.000Z",
-    },
-  ]
+  // requests the mongo chat
+  const groupObject: Group = await axios.get(`http://mongo_chat_server:3000/group/${group}`) // TODO concrete location
+  console.log(groupObject)
+  const messages: Message[] = groupObject.data.messages
+
   return messages
 }
 
-function groupMessage(req: Request, res: Response) {
+async function groupMessage(req: Request, res: Response) {
   // TODO document
 
   const errors = []
@@ -35,20 +34,16 @@ function groupMessage(req: Request, res: Response) {
   //   a group
   //   a page (for pagination)
 
-  const groupString = req.params.group
+  const group = req.params.group
   let { page } = req.body
 
   // dealing with group
   //  group is not null
   //  group is an ID
-  // TODO check with database the ID format, assuming it's a string
-  let group = 0
-  if (groupString === null) {
-    errors.push("group must be present")
-  } else if (isNaN(parseInt(groupString))) {
-    errors.push("group is not an ID")
-  } else {
-    group = parseInt(groupString)
+  if (!group) {
+    errors.push('group is not defined')
+  } else if (typeof group !== 'string') {
+    errors.push('group is not a string')
   }
 
   // dealing with page
@@ -56,10 +51,10 @@ function groupMessage(req: Request, res: Response) {
   //  if page is null it defaults to 0
   if (!page) {
     page = 0
-  } else if (typeof page !== "number") {
-    errors.push("page must be a number")
+  } else if (typeof page !== 'number') {
+    errors.push('page must be a number')
   } else if (page < 0) {
-    errors.push("page must be a non negative number")
+    errors.push('page must be a non negative number')
   }
 
   // if there are errors, return them
@@ -68,26 +63,51 @@ function groupMessage(req: Request, res: Response) {
     return res.status(400).json({ errors })
   }
 
-  const messages = _groupMessage(group, page)
+  // try {
+  //   const messages = await _groupMessage(group)
+  //   return res.status(200).json({ messages })
+  // } catch (error) {
+  //   return res.status(500).json({ error })
+  // }
 
-  return res.status(200).json({ messages })
+  await _groupMessage(group)
+    .then(messages => {
+      return res.status(200).json({ messages })
+    })
+    .catch(error => {
+      // if the error status code is 404
+      //  return a 404
+      console.log(error)
+      if (error.response.status === 404) {
+        return res.status(404).json({ error: 'group not found' })
+      } else {
+        return res.status(500).json({ error })
+      }
+    })
 }
 
 async function message(req: Request, res: Response) {
   const errors = []
-  
+
   // we receive
   //   a page (for pagination)
 
   let { page } = req.body
+  const userId = req.params.userId
 
   // dealing with page
   //  page is a positive integer
   //  if page is null it defaults to 0
   if (!page) {
     page = 0
-  } else if (typeof page !== "number") {
-    errors.push("page must be a number")
+  } else if (typeof page !== 'number') {
+    errors.push('page must be a number')
+  }
+
+  // dealing with userId
+  //  userId is not null
+  if (!userId) {
+    errors.push('userId is not defined')
   }
 
   // if there are errors, return them
@@ -97,15 +117,16 @@ async function message(req: Request, res: Response) {
   }
 
   // TODO get the groups of this user
-  const groups = [1, 2, 3]
+  const response = await axios.get(`http://mongo_chat_server:3000/group/${userId}`) // TODO concrete location
+  const groups = response.data
 
   // for each group get the messages
-  const messages = new Map<number, Object>();
+  const messages = new Map<string, any>()
 
-  await Promise.all(groups.map(async (group) => {
-    messages.set(group, await _groupMessage(group, page))
-  }))
-  
+  groups.forEach((group: { data: { _id: string; messages: any } }) => {
+    messages.set(group.data._id, group.data.messages)
+  })
+
   // TODO this JSON prettier
   return res.status(200).json({ messages: [...messages] })
 }
@@ -113,5 +134,5 @@ async function message(req: Request, res: Response) {
 export default {
   location,
   groupMessage,
-  message
+  message,
 }
