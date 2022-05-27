@@ -96,8 +96,6 @@ services:
     ports:
       - "5432:5432"
 
-<<<<<<< HEAD
-=======
   redis:
     image: redis:alpine
     container_name: redis
@@ -106,7 +104,6 @@ services:
     volumes:
       - ./redis:/data
 
->>>>>>> b1e485f11f4c888b78e410d1caac5b8cb50f9ff7
   adminer:
     container_name: adminer
     image: adminer
