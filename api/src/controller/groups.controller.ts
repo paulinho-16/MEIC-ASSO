@@ -235,10 +235,12 @@ async function addGroupAdmin(req: Request, res: Response) {
         return
       }
 
+    await groups.createGroupMember(parseInt(req.params.id.toString()), parseInt(req.params.userId.toString()));
+
     const data = await groups.addGroupAdmin(parseInt(req.params.id.toString()), parseInt(req.params.userId.toString()))
 
     if(data){
-      res.status(201).send('Success')
+      res.status(201).send("User successfully added!")
     }
     else{
       res.status(500).send('Something went wrong. Try again!')
