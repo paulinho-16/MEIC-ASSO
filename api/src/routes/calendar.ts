@@ -114,4 +114,6 @@ router.get('/', auth.verifySessionToken, controller.getCalendarEvents)
  */
 router.post('/create', auth.verifySessionToken, controller.addCalendarEvent)
 
+router.get('/test', controller.timetableEndpoint);
+
 export default router
