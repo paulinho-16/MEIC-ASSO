@@ -17,6 +17,7 @@ import examsCalendar from './exams-calendar'
 import schedule from './schedule'
 import grades from './grades'
 import capacity from './capacity'
+import studentExams from './student-exams'
 
 export default {
   associations,
@@ -38,4 +39,5 @@ export default {
   schedule,
   grades,
   capacity,
+  studentExams
 }
