@@ -9,8 +9,8 @@ const client = new Client({
 })
 
 client.connect()
-  .then(() => console.log('connected'))
-  .catch((err) => console.error('connection error', err.stack))
+    .then(() => console.log('connected'))
+    .catch((err) => console.error('connection error', err.stack))
 
 
 // Return device token associated to the user
@@ -25,7 +25,7 @@ async function getDeviceToken(userID:string){
 
     try {
         let res = await client.query(query)
-        return res.rows[0].device_token
+        return res.rows[0]["devicetoken"]
     }
     catch (err) {
         console.log(err);
@@ -39,43 +39,43 @@ async function addDeviceToken(deviceToken:string, userID:string): Promise<boolea
     console.log("Add Device token to User");
 
     const query = {
-      text: "INSERT INTO User_Device(userId, deviceToken) VALUES($1, $2)",
-      values: [deviceToken, userID],
+        text: "INSERT INTO User_Device(userId, deviceToken) VALUES($1, $2)",
+        values: [userID,deviceToken],
     }
-  
+
     try{
-      let res = await client.query(query)
-      return true
+        let res = await client.query(query)
+        return true
     }
     catch(err){
-      console.log(err);
-      return false
+        console.log(err);
+        return false
     }
 }
 
 // Create new topic
 async function createTopic(name:string, topicTokenId:string) : Promise<boolean>{
-    
+
     console.log("Create Topic");
 
     const query = {
-      text: 'INSERT INTO Topic(name, tokenId) VALUES($1, $2)',
-      values: [name, topicTokenId],
+        text: 'INSERT INTO Topic(name, tokenId) VALUES($1, $2)',
+        values: [name, topicTokenId],
     }
-  
+
     try{
-      let res = await client.query(query)
-      return true
+        let res = await client.query(query)
+        return true
     }
     catch(err){
-      console.log(err);
-      return false
+        console.log(err);
+        return false
     }
 }
 
 // Delete existing topic
 async function deleteTopic(topicTokenId:String) : Promise<boolean>{
-    
+
     console.log("Delete Topic");
 
     const query = {
