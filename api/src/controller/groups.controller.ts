@@ -119,6 +119,32 @@ async function deleteGroup(req: Request, res: Response) {
 
 }
 
+async function getMyGroups(req: Request, res: Response){
+    
+    if(!req.params.userId){
+        return res.status(400).send({
+            message: "No user id was specified."
+        });
+    }
+
+    if(isNaN(parseInt(req.params.userId.toString()))){
+        res.status(400).send('User id must be an integer.')
+        return
+    }
+
+    //possible check to verify if the session user matches the id of the request
+
+    const data = await groups.getMyGroups(parseInt(req.params.userId.toString()))
+
+    if(data){
+        res.json(data)
+      }
+      else{
+        res.status(500).send('Something went wrong. Try again!')
+    }
+
+}
+
 async function editGroup(req: Request, res: Response){
 
     if(!req.params.id) {
@@ -171,25 +197,85 @@ async function editGroup(req: Request, res: Response){
 
 }
 
-async function getMyGroups(req: Request, res: Response){
-    
-    if(!req.params.userId){
+// Group admin endpoints
+async function getGroupAdmins(req: Request, res: Response) {
+
+    if(!req.params.id) {
+        return res.status(400).send({
+            message: "No group id was specified."
+        });
+    }
+
+    if(isNaN(parseInt(req.params.id.toString()))){
+        res.status(400).send('id must be an integer.')
+        return
+    }
+
+    const data = await groups.getGroupAdmins(parseInt(req.params.id.toString()), req)
+
+
+    if(data){
+        res.json(data)
+      }
+      else{
+        res.status(500).send('Something went wrong. Try again!')
+    }
+
+}
+
+
+async function addGroupAdmin(req: Request, res: Response) {
+  
+    if(isNaN(parseInt(req.params.id.toString()))){
+      res.status(400).send('group id must be an integer.')
+      return
+    }
+
+    if(isNaN(parseInt(req.params.userId.toString()))){
+        res.status(400).send('user id must be an integer.')
+        return
+      }
+
+    await groups.createGroupMember(parseInt(req.params.id.toString()), parseInt(req.params.userId.toString()));
+
+    const data = await groups.addGroupAdmin(parseInt(req.params.id.toString()), parseInt(req.params.userId.toString()))
+
+    if(data){
+      res.status(201).send("User successfully added!")
+    }
+    else{
+      res.status(500).send('Something went wrong. Try again!')
+    }
+}
+
+async function deleteGroupAdmin(req: Request, res: Response) { 
+
+    if(!req.params.id) {
+        return res.status(400).send({
+            message: "No group id was specified."
+        });
+    }
+
+    if(isNaN(parseInt(req.params.id.toString()))){
+        res.status(400).send('id must be an integer.')
+        return
+    }
+
+    if(!req.params.userId) {
         return res.status(400).send({
             message: "No user id was specified."
         });
     }
 
     if(isNaN(parseInt(req.params.userId.toString()))){
-        res.status(400).send('User id must be an integer.')
+        res.status(400).send('userId must be an integer.')
         return
     }
 
-    //possible check to verify if the session user matches the id of the request
-
-    const data = await groups.getMyGroups(parseInt(req.params.userId.toString()))
+    const data = await groups.deleteGroupAdmin(parseInt(req.params.id.toString()), parseInt(req.params.userId.toString()))
 
     if(data){
-        res.json(data)
+        res.status(200).send('The group admin was successfuly removed.')
       }
       else{
         res.status(500).send('Something went wrong. Try again!')
@@ -314,6 +400,10 @@ export default {
     deleteGroup,
     getMyGroups,
     editGroup,
+
+    getGroupAdmins,
+    addGroupAdmin,
+    deleteGroupAdmin,
 
     getGroupMembers,
     getGroupMember,
