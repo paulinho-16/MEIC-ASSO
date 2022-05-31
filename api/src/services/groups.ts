@@ -68,7 +68,7 @@ async function getGroups(req: Request) {
   if (req.query.classId !== undefined) {
 
     var classId = parseInt(req.query.classId.toString())
-
+    
     query = query + " WHERE classId = " + classId
   }
 
@@ -221,6 +221,105 @@ async function deleteGroup(groupId: Number){
   }
 }
 
+// Group Admin Endpoints
+async function getGroupAdmins(groupId: Number, req: Request)
+{
+  console.log("Get group admins");
+
+  if(!connectDatabase()){ 
+    return -1;
+  }
+
+  var query = {
+    text: `SELECT * 
+           FROM Student
+           INNER JOIN Group_Student
+           ON Student.id = Group_Student.studentId
+           AND isAdmin = true
+           AND Group_Student.groupId = $1`,
+    values: [groupId],
+  }
+
+  // In the case of pagination
+  if (req.query.offset !== undefined && req.query.limit !== undefined) {
+
+    var limitInt = parseInt(req.query.limit.toString())
+    var offsetInt = parseInt(req.query.offset.toString())
+
+    query = {
+      text: `SELECT * 
+            FROM Student
+            INNER JOIN Group_Student
+            ON Student.id = Group_Student.studentId
+            AND isAdmin = true
+            AND Group_Student.groupId = $1
+            ORDER BY Group_Student.id DESC LIMIT $2 OFFSET $3;`,
+      values: [groupId, limitInt, offsetInt],
+    }
+
+  }
+
+  try {
+    let res = await client.query(query)
+    return res.rows
+  }
+  catch (err) {
+    console.log(err);
+    return false
+  }
+
+}
+
+
+async function addGroupAdmin(groupId: Number, studentId: Number){
+
+  if(!connectDatabase()){
+    return -1;
+  }
+
+  const query = {
+    text: `UPDATE Group_Student 
+          SET isAdmin = true 
+          WHERE studentId = $1 
+          AND groupId = $2`,
+    values: [studentId, groupId],
+  }
+
+  try{
+    let res = await client.query(query)
+    return res.rows
+  }
+  catch(err){
+    console.log(err);
+    return false
+  }
+}
+
+async function deleteGroupAdmin(groupId: Number, studentId: Number){
+
+  console.log("Delete group admin");
+
+  if(!connectDatabase()){
+    return -1;
+  }
+
+  const query = {
+    text: `UPDATE Group_Student
+           SET isAdmin = false
+           WHERE studentId = $1
+           AND groupId = $2`,
+    values: [studentId, groupId],
+  }
+
+  try{
+    let res = await client.query(query)
+    return true
+  }
+  catch(err){
+    console.log(err);
+    return false
+  }
+}
 
 
 
@@ -290,8 +389,6 @@ async function getGroupStudentRelation(groupId: Number, userId: Number) {
   }
   
 }
-
-
 
 
 
@@ -435,6 +532,10 @@ export default {
   deleteGroup,
   getMyGroups,
   editGroup,
+
+  getGroupAdmins,
+  addGroupAdmin,
+  deleteGroupAdmin,
 
   getGroupMembers,
   getGroupStudentRelation,
