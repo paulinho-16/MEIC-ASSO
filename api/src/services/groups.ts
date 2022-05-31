@@ -68,7 +68,7 @@ async function getGroups(req: Request) {
   if (req.query.classId !== undefined) {
 
     var classId = parseInt(req.query.classId.toString())
-
+    
     query = query + " WHERE classId = " + classId
   }
 
@@ -222,7 +222,7 @@ async function deleteGroup(groupId: Number){
 }
 
 // Group Admin Endpoints
-async function getGroupAdmins(groupId: Number)
+async function getGroupAdmins(groupId: Number, req: Request)
 {
   console.log("Get group admins");
 
@@ -230,7 +230,7 @@ async function getGroupAdmins(groupId: Number)
     return -1;
   }
 
-  const query = {
+  var query = {
     text: `SELECT * 
            FROM Student
            INNER JOIN Group_Student
@@ -238,6 +238,25 @@ async function getGroupAdmins(groupId: Number)
            AND isAdmin = true
            AND Group_Student.groupId = $1`,
     values: [groupId],
+  }
+
+  // In the case of pagination
+  if (req.query.offset !== undefined && req.query.limit !== undefined) {
+
+    var limitInt = parseInt(req.query.limit.toString())
+    var offsetInt = parseInt(req.query.offset.toString())
+
+    query = {
+      text: `SELECT * 
+            FROM Student
+            INNER JOIN Group_Student
+            ON Student.id = Group_Student.studentId
+            AND isAdmin = true
+            AND Group_Student.groupId = $1
+            ORDER BY Group_Student.id DESC LIMIT $2 OFFSET $3;`,
+      values: [groupId, limitInt, offsetInt],
+    }
+
   }
 
   try {
@@ -248,6 +267,7 @@ async function getGroupAdmins(groupId: Number)
     console.log(err);
     return false
   }
+
 }
 
 

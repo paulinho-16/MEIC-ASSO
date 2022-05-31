@@ -211,7 +211,8 @@ async function getGroupAdmins(req: Request, res: Response) {
         return
     }
 
-    const data = await groups.getGroupAdmins(parseInt(req.params.id.toString()))
+    const data = await groups.getGroupAdmins(parseInt(req.params.id.toString()), req)
+
 
     if(data){
         res.json(data)
