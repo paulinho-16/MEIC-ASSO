@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 const setRequests = (io: any) => {
   io.on('connection', (socket: any) => {
@@ -35,7 +35,19 @@ const setRequests = (io: any) => {
     })
 
     socket.on('chat message', (msg: string, from: string, room: string, timestamp: string) => {
-      console.log('chat message', msg, from, room, timestamp)
+      console.log('chat message', msg, from, room, timestamp);
+        axios.post('http://mongo_chat_server:3000/message/', { group: room, message: msg, from: from})
+          .then(
+              (res: any) => {
+                  console.log("hello")
+                console.log(res.data);
+              }
+          )
+          .catch(
+              (err: any) => {
+                console.error(err);
+              }
+          );
       io.to(room).emit(`${room} message`, from, msg, timestamp)
     });
 

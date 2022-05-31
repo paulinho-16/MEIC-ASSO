@@ -135,26 +135,52 @@ Updates user.
 
 
 ## Socket Endpoints
-### Receiving
 
-- `connection`: (implicit) on a new connection
-- `disconnect`: (implicit) on a disconnection
-- `username`: to update a username
-  - msg (string): the new username
-- `chat message`: to send a chat message
-  - msg (string): the message
-  - to (string): the recipient
+# Chat implementation
 
-### Sending
+- In `/server` expect an implementation of a chat server.
+- In `/client` expect an implementation of a frontend that tests and demonstrates the chat features.
 
-- `notification`: a notification
-  - msg (string): the message
-- `private message`: a private message
-  - sender (string): the sender
-  - msg (string): the message
-- `chat message`: a general message
-  - sender (string): the sender
-  - msg (string): the message
+There are different kinds of events:
+* **connection**:  receives the socket created between the client and the server and happens when the socket is created between client and server;
+```json
+{
+    socket: String
+}
+```
+
+* **online**: receives the up (identifier of the user) that is getting online and happens when a user goes online in the app;
+```json
+{
+  up: String
+}
+```
+* **disconnect**: receives the up (identifier of the user) that is disconnecting and happens when a user goes offline;
+```json
+{
+  up: String
+}
+```
+*  **chat message**: receives the message to be sent to the chat, the up(identifier) from the user sending, the chat room (identifier) for where it is being sent, and the timestamp when it was sent. This happens whenever a user sends a message to a chat room;
+```json
+{
+  message: String
+  up: String,
+  room: String,
+  timestamp: String
+}
+```
+
+
+* **join room**: receives the up(identifier) from the user joining, and the chat room (identifier) it is joining. This happens when a user joins a new chat room.
+```json
+{
+  up: String
+}
+```
+
+This implementation has event-driven architecture where the client emits events and triggers the communication with the server.
+
 
 ## Architecture and Choices
 
