@@ -62,7 +62,7 @@ const swaggerOptions: swaggerJsdoc.Options = {
       cookieAuth: []
     }]
   },
-  apis: ['./src/routes/*.ts'],
+  apis: ['./dist/routes/*.js'],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
