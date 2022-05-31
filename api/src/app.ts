@@ -38,7 +38,7 @@ const swaggerOptions: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
+        url: process.env.UNI4ALL_URL,
         description: 'Development server',
       },
     ],
@@ -82,6 +82,9 @@ app.use('/profile', routes.profile)
 app.use('/groups', routes.groups)
 app.use('/user', routes.user)
 app.use('/curricular-unit', routes.curricularUnit)
+app.use('/calendar', routes.calendar)
 app.use('/exams-calendar', routes.examsCalendar)
 app.use('/schedule', routes.schedule)
 app.use('/grades', routes.grades)
+app.use('/capacity', routes.capacity)
+app.use('/student-exams', routes.studentExams)

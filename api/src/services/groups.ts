@@ -112,6 +112,31 @@ async function getGroup(groupId: Number) {
 
   try {
     let res = await client.query(query)
+    console.log(res)
+    return res.rows
+  }
+  catch (err) {
+    console.log(err);
+    return false
+  }
+
+}
+
+async function getMyGroups(userId: Number) {
+
+  console.log("Get User groups");
+
+  if(!connectDatabase()){ 
+    return -1;
+  }
+
+  const query = {
+    text: 'SELECT * FROM Groups NATURAL JOIN Group_Student  WHERE studentId = $1',
+    values: [userId],
+  }
+
+  try {
+    let res = await client.query(query)
     return res.rows
   }
   catch (err) {
@@ -133,7 +158,7 @@ async function createGroup(group: Group){
   
     const query = {
       text: 'INSERT INTO Groups(typeName, title, "description", mlimit, autoAccept) VALUES($1, $2, $3, $4, $5)',
-      values: [group.typeName, group.title, group.description, group.mLimit, group.autoAccept],
+      values: [group.typename, group.title, group.description, group.mlimit, group.autoaccept],
     }
   
     try{
@@ -144,6 +169,32 @@ async function createGroup(group: Group){
       console.log(err);
       return false
     }
+}
+
+async function editGroup(groupId: Number, group: Group){
+
+  console.log("Edit group");
+  
+  if(!connectDatabase()){
+    return -1;
+  }
+
+  const query = {
+    text: 'UPDATE groups SET typeName=$1, title=$2, "description"=$3,mlimit=$4,autoAccept=$5 WHERE id = $6',
+    values : [group.typename, group.title, group.description, group.mlimit, group.autoaccept, groupId],
+  }
+  
+  try{
+    let res = await client.query(query)
+    return true
+  }
+  catch(err){
+    console.log(err);
+    return false
+  }
+  
+  
+
 }
 
 
@@ -382,6 +433,8 @@ export default {
   getGroup,
   createGroup,
   deleteGroup,
+  getMyGroups,
+  editGroup,
 
   getGroupMembers,
   getGroupStudentRelation,
