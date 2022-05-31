@@ -68,7 +68,7 @@ async function getGroups(req: Request) {
   if (req.query.classId !== undefined) {
 
     var classId = parseInt(req.query.classId.toString())
-
+    
     query = query + " WHERE classId = " + classId
   }
 

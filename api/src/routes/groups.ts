@@ -7,7 +7,9 @@ const router = express.Router()
 router.use(express.json())
 
 
-// Groups endpoints.
+
+
+// GROUP ENDPOINTS.
 
 
 /**
@@ -247,7 +249,7 @@ router.patch('/:id',controller.editGroup);
 
 
 
-// Members endpoints.
+// MEMBERS ENDPOINTS.
 
 
 /**
@@ -385,11 +387,108 @@ router.post('/:id/members/:userId', controller.createGroupMember)
 router.delete('/:id/members/:userId', controller.deleteGroupMember)
 
 
-// Group admin endpoints
 
+
+
+
+
+
+
+
+
+
+// ADMIN ENDPOINTS
+
+
+/**
+ * @swagger
+ * /groups/{id}/admins:
+ *   get:
+ *     summary: Get a list of group's admins. 
+ *     parameters:
+ *       - in: path
+ *         name: groupId
+ *         required: true
+ *         type: int
+ *         description: Group for which to return its members.
+ *     responses:
+ *       200:
+ *         description: List of admins of specified group. 
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                  type: object
+ *                  properties:
+ *                      id: int
+ *                      groupid: int
+ *                      studentid: int
+ *                      isadmin: bool
+ *                      isaccepted: bool
+ *       400:
+ *         description: Request body is not valid.
+ *       500:
+ *         description: Unexpected error.
+*/
 router.get('/:id/admins', controller.getGroupAdmins)
+
+
+/**
+ * @swagger
+ * /groups/{id}/members/{userId}:
+ *   post:
+ *     summary: Join a group. 
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         type: int
+ *         description: Id of the group for which admin to add.
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         type: int
+ *         description: Id of the admin to add.
+ *     responses:
+ *       204:
+ *         description: Add admin was successful.
+ *       400:
+ *         description: Parameters are not valid.
+ *       500:
+ *         description: Unexpected error.
+*/
 router.post('/:id/admins/:userId', controller.addGroupAdmin)
+
+
+/**
+ * @swagger
+ * /groups/{id}/admins/{userId}:
+ *   delete:
+ *     summary: Remove and admin from a group. 
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         type: int
+ *         description: Id of the group for which admin to delete.
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         type: int
+ *         description: Id of the admin to delete.
+ *     responses:
+ *       204:
+ *         description: Remove admin was successful.
+ *       400:
+ *         description: Parameters are not valid.
+ *       500:
+ *         description: Unexpected error.
+*/
 router.delete('/:id/admins/:userId', controller.deleteGroupAdmin)
+
+
+
 
 
 export default router
