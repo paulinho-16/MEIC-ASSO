@@ -385,4 +385,11 @@ router.post('/:id/members/:userId', controller.createGroupMember)
 router.delete('/:id/members/:userId', controller.deleteGroupMember)
 
 
+// Group admin endpoints
+
+router.get('/:id/admins', controller.getGroupAdmins)
+router.post('/:id/admins/:userId', controller.addGroupAdmin)
+router.delete('/:id/admins/:userId', controller.deleteGroupAdmin)
+
+
 export default router
