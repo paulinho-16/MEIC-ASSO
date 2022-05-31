@@ -253,8 +253,6 @@ async function getGroupAdmins(groupId: Number)
 
 async function addGroupAdmin(groupId: Number, studentId: Number){
 
-  console.log("Add group admin");
-
   if(!connectDatabase()){
     return -1;
   }
@@ -269,7 +267,7 @@ async function addGroupAdmin(groupId: Number, studentId: Number){
 
   try{
     let res = await client.query(query)
-    return true
+    return res.rows
   }
   catch(err){
     console.log(err);
@@ -371,8 +369,6 @@ async function getGroupStudentRelation(groupId: Number, userId: Number) {
   }
   
 }
-
-
 
 
 
