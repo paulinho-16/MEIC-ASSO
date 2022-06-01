@@ -1,4 +1,5 @@
 import express from 'express'
+import auth from '@/middleware/auth'
 
 import controller from '../controller/groups.controller'
 
@@ -132,7 +133,7 @@ router.get('/:id', controller.getGroup)
  *         description: Unexpected error.
  *      
 */
-router.post('/', controller.createGroup)
+router.post('/',auth.verifySessionToken,controller.createGroup)
 
 
 /**
@@ -188,7 +189,7 @@ router.delete('/:id', controller.deleteGroup)
  *       500:
  *         description: Unexpected error.
 */
-router.get('/myGroups/:userId', controller.getMyGroups);
+router.get('/myGroups/:id', auth.verifyAuthorization ,controller.getMyGroups);
 
 
 /**

@@ -121,20 +121,20 @@ async function deleteGroup(req: Request, res: Response) {
 
 async function getMyGroups(req: Request, res: Response){
     
-    if(!req.params.userId){
+    if(!req.params.id){
         return res.status(400).send({
             message: "No user id was specified."
         });
     }
 
-    if(isNaN(parseInt(req.params.userId.toString()))){
+    if(isNaN(parseInt(req.params.id.toString()))){
         res.status(400).send('User id must be an integer.')
         return
     }
 
     //possible check to verify if the session user matches the id of the request
 
-    const data = await groups.getMyGroups(parseInt(req.params.userId.toString()))
+    const data = await groups.getMyGroups(parseInt(req.params.id.toString()))
 
     if(data){
         res.json(data)

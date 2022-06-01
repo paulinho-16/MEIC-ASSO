@@ -122,7 +122,7 @@ async function getGroup(groupId: Number) {
 
 }
 
-async function getMyGroups(userId: Number) {
+async function getMyGroups(id: Number) {
 
   console.log("Get User groups");
 
@@ -132,7 +132,7 @@ async function getMyGroups(userId: Number) {
 
   const query = {
     text: 'SELECT * FROM Groups NATURAL JOIN Group_Student  WHERE studentId = $1',
-    values: [userId],
+    values: [id],
   }
 
   try {
@@ -232,7 +232,7 @@ async function getGroupAdmins(groupId: Number, req: Request)
 
   var query = {
     text: `SELECT * 
-           FROM Student
+           FROM UniUser
            INNER JOIN Group_Student
            ON Student.id = Group_Student.studentId
            AND isAdmin = true
@@ -248,7 +248,7 @@ async function getGroupAdmins(groupId: Number, req: Request)
 
     query = {
       text: `SELECT * 
-            FROM Student
+            FROM UniUser
             INNER JOIN Group_Student
             ON Student.id = Group_Student.studentId
             AND isAdmin = true
@@ -349,7 +349,7 @@ async function getGroupMembers(groupId: Number, req: Request) {
     var offsetInt = parseInt(req.query.offset.toString())
 
     query = {
-      text: 'SELECT * FROM Group_Student WHERE groupId = $1 ORDER BY Group_Student.id DESC LIMIT $2 OFFSET $3 ;',
+      text: 'SELECT groupId, email,studentId, isAdmin, isAccepted FROM Group_Student, UniUser WHERE groupId = $1 AND Group_Student.studentId = UniUser.id ORDER BY Group_Student.id DESC LIMIT $2 OFFSET $3 ;',
       values: [groupId, limitInt, offsetInt],
     }
 
@@ -505,7 +505,7 @@ async function getStudent(userId: Number) {
   }
 
   const query = {
-    text: 'SELECT * FROM Student WHERE id = $1',
+    text: 'SELECT * FROM UniUser WHERE id = $1',
     values: [userId],
   }
 
