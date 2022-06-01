@@ -1,3 +1,6 @@
+DROP TABLE IF EXISTS Groups;
+DROP TABLE IF EXISTS Group_Student;
+
 create table Groups (
     id SERIAL PRIMARY KEY,
     typeName varchar(100),
@@ -25,8 +28,8 @@ create table Group_Student (
     isAdmin boolean,
     isAccepted boolean,
 
-    foreign key (groupId) references Groups(id),
-    foreign key (studentId) references Student(id)
+    foreign key (groupId) references Groups(id)
+    --foreign key (studentId) references Student(id)
 );
 
 
@@ -39,16 +42,25 @@ VALUES ('trabalho','feup-leic3-FSI','grupo de trabalho para a unidade curricular
 INSERT INTO Groups (typeName, title, "description" , mlimit, autoAccept, classId)
 VALUES ('estudo','PRI Projeto','grupo de trabalho para a unidade curricular de MEIC do 1 ano do meic', 3, false, 2);
     
-INSERT INTO Student 
-VALUES (1, '23123', 'john', 'doe');
+    
+--INSERT INTO Student 
+--VALUES (1, '23123', 'john', 'doe');
 
-INSERT INTO Student 
-VALUES (2, '23123', 'jane', 'doe');
+--INSERT INTO Student 
+--VALUES (2, '23123', 'jane', 'doe');
 
-INSERT INTO Student 
-VALUES (3, '23123', 'Laura', 'doe');
+--INSERT INTO Student 
+--VALUES (3, '23123', 'Laura', 'doe');
 
 INSERT INTO Group_Student (groupId, studentId)
 VALUES (2, 1);
+
+INSERT INTO Group_Student (groupId, studentId)
+VALUES (2, 2);
+
+
+
+
+
 
 
