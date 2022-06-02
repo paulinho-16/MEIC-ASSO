@@ -138,12 +138,17 @@ router.post('/',auth.verifySessionToken,controller.createGroup)
 
 /**
  * @swagger
- * /groups/{id}:
+ * /groups/{id}/{groupId}:
  *   delete:
  *     summary: Delete a group.
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
+ *         type: int
+ *         description: Id of the user who requested the deletion.
+ *       - in: path
+ *         name: groupId
  *         required: true
  *         type: int
  *         description: Id of the group to delete.
@@ -194,15 +199,20 @@ router.get('/myGroups/:id', auth.verifyAuthorization ,controller.getMyGroups)
 
 /**
  * @swagger
- * /groups:
+ * /groups/{id}/{groupId}:
  *   patch:
  *     summary: Edit information on an existing group.
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         type: int
- *         description: Id of the group to edit.
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        type: int
+ *        description: Id of the user who wants to edit the group.
+ *      - in: path
+ *        name: groupId
+ *        required: true
+ *        type: int
+ *        description: Id of the group to edit.
  *     requestBody:
  *       description: Group information.
  *       required: true
@@ -255,7 +265,7 @@ router.patch('/:id/:groupId',auth.verifyAuthorization,controller.editGroup)
 
 /**
  * @swagger
- * /groups/{groupId}/members:
+ * /groups/{id}/{groupId}/members:
  *   get:
  *     summary: Get a list of group's members. 
  *     parameters:
@@ -264,6 +274,11 @@ router.patch('/:id/:groupId',auth.verifyAuthorization,controller.editGroup)
  *         required: true
  *         type: int
  *         description: Group for which to return its members.
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         type: int
+ *         description: User who issued the request.
  *       - in: query
  *         name: offset
  *         required: false
@@ -299,10 +314,15 @@ router.get('/:id/:groupId/members', auth.verifyAuthorization, controller.getGrou
 
 /**
  * @swagger
- * /groups/{groupId}/members/{memberId}:
+ * /groups/{id}/{groupId}/members/{memberId}:
  *   get:
  *     summary: Get information of a single group. 
  *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         type: int
+ *         description: Id of user who issued the request.
  *       - in: path
  *         name: groupId
  *         required: true
@@ -336,10 +356,15 @@ router.get('/:id/:groupId/members/:userId',  auth.verifyAuthorization, controlle
 
 /**
  * @swagger
- * /groups/{groupId}/members/{memberId}:
+ * /groups/{id}/{groupId}/members/{memberId}:
  *   post:
  *     summary: Join a group. 
  *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         type: int
+ *         description: Id of user who issued the request.
  *       - in: path
  *         name: groupId
  *         required: true
@@ -363,10 +388,15 @@ router.post('/:id/:groupId/members/:userId',  auth.verifyAuthorization, controll
 
 /**
  * @swagger
- * /groups/{groupId}/members/{memberId}:
+ * /groups/{id}/{groupId}/members/{memberId}:
  *   delete:
  *     summary: Unjoin a group. 
  *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         type: int
+ *         description: Id of user who issued the request.
  *       - in: path
  *         name: groupId
  *         required: true
@@ -403,10 +433,15 @@ router.delete('/:id/:groupId/members/:userId', auth.verifyAuthorization, control
 
 /**
  * @swagger
- * /groups/{id}/admins:
+ * /groups/{id}/{groupId}/admins:
  *   get:
  *     summary: Get a list of group's admins. 
  *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         type: int
+ *         description: Id of user who issued the request.
  *       - in: path
  *         name: groupId
  *         required: true
@@ -437,12 +472,17 @@ router.get(':id/:groupId/admins', auth.verifyAuthorization, controller.getGroupA
 
 /**
  * @swagger
- * /groups/{id}/members/{userId}:
+ * /groups/{id}/{groupId}/members/{userId}:
  *   post:
  *     summary: Join a group. 
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
+ *         type: int
+ *         description: Id of user who issued the request.
+ *       - in: path
+ *         name: groupId
  *         required: true
  *         type: int
  *         description: Id of the group for which admin to add.
@@ -464,12 +504,17 @@ router.post(':id/:groupId/admins/:userId', auth.verifyAuthorization,controller.a
 
 /**
  * @swagger
- * /groups/{id}/admins/{userId}:
+ * /groups/{id}/{groupId}/admins/{userId}:
  *   delete:
  *     summary: Remove and admin from a group. 
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
+ *         type: int
+ *         description: Id of user who issued the request.
+ *       - in: path
+ *         name: groupId
  *         required: true
  *         type: int
  *         description: Id of the group for which admin to delete.
