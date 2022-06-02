@@ -112,7 +112,7 @@ async function getGroup(groupId: Number) {
 
   try {
     let res = await client.query(query)
-    console.log(res)
+    
     return res.rows
   }
   catch (err) {
@@ -131,7 +131,7 @@ async function getMyGroups(id: Number) {
   }
 
   const query = {
-    text: 'SELECT * FROM Groups NATURAL JOIN Group_Student  WHERE studentId = $1',
+    text: 'SELECT * FROM Groups, Group_Student  WHERE studentId = $1 AND Groups.id = Group_Student.groupId',
     values: [id],
   }
 
@@ -155,20 +155,33 @@ async function createGroup(group: Group){
     if(!connectDatabase()){
       return -1;
     }
-  
+    
+
+
     const query = {
-      text: 'INSERT INTO Groups(typeName, title, "description", mlimit, autoAccept) VALUES($1, $2, $3, $4, $5)',
+      text: 'INSERT INTO Groups(typeName, title, "description", mlimit, autoAccept) VALUES($1, $2, $3, $4, $5) RETURNING id;',
       values: [group.typename, group.title, group.description, group.mlimit, group.autoaccept],
     }
-  
+
+
     try{
-      let res = await client.query(query)
-      return true
+
+      let result = await client.query(query)
+
+      
+    
+      return result
     }
     catch(err){
       console.log(err);
-      return false
+      return err
     }
+
+
+
+    
+  
+    
 }
 
 async function editGroup(groupId: Number, group: Group){
@@ -398,6 +411,7 @@ async function createGroupMember(groupId: Number, userId: Number) {
     return -1;
   }
 
+  console.log("Add group member");
 
   // Check if student is already member.
   const isStudentAlreadyMember = await getGroupStudentRelation(groupId, userId)
