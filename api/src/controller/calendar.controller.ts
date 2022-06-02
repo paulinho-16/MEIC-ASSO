@@ -4,7 +4,8 @@ import {
 } from '@/@types/events'
 
 import events from '@/services/calendar'
-
+import { calendar_v3, google } from "googleapis";
+import { makeOAuth2Client } from "../middleware/shared";
 
 const marketing = {
   'acronym': 'MK',
@@ -119,8 +120,86 @@ async function addCalendarEvent(req: Request, res: Response) {
   }
 }
 
+async function getGCToken(req: Request, res: Response) {
+  const code = req.query["code"] as string;
+  const oauth2Client = makeOAuth2Client();
+
+  if (code){
+    const refreshToken = await getRefreshToken(code);
+    res.status(200).send(refreshToken);
+  } 
+  else{
+    const url = getAuthUrl();
+    res.status(200).send(url);
+  }
+
+  async function getAuthUrl() {
+    const url = oauth2Client.generateAuthUrl({
+      // 'online' (default) or 'offline' (gets refresh_token)
+      access_type: "offline",
+
+      // scopes are documented here: https://developers.google.com/identity/protocols/oauth2/scopes#calendar
+      scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/calendar.events"],
+    });
+
+    console.log(`Go to this URL to acquire a refresh token:\n\n${url}\n`);
+  }
+
+  async function getRefreshToken(code: string) {
+    const token = await oauth2Client.getToken(code);
+    console.log(token);
+  }
+}
+
+async function exportToGC(req: Request, res: Response){
+  const token = req.query["token"] as string;
+  const calendarClient = await makeCalendarClient(token);
+  createCalendarOnGC(calendarClient);
+  
+}
+
+async function makeCalendarClient(refreshToken : string) {
+  const oauth2Client = makeOAuth2Client();
+  oauth2Client.setCredentials({
+    refresh_token: refreshToken
+  });
+  const calendarClient = google.calendar({
+    version: "v3",
+    auth: oauth2Client,
+  });
+  return calendarClient;
+}
+
+async function addEventsToGC(uniCalendarId: string){
+
+}
+
+async function createCalendarOnGC(calendarClient : calendar_v3.Calendar) {
+
+  const { data: calendars, status } = await calendarClient.calendarList.list();
+  let uniCalendarId;
+
+  if (status === 200) {
+    calendars.items.forEach(calendar => {
+      if(calendar.summary === "Uni4All Calendar"){
+        uniCalendarId = calendar.id;
+      }
+    });
+    if(uniCalendarId == null){
+      const res = await calendarClient.calendars.insert({
+        requestBody: {
+             "summary": "Uni4All Calendar",
+        },
+      });
+      uniCalendarId = res.data.id;
+    }
+  }
+  return uniCalendarId;
+}
+
 
 export default {
     getCalendarEvents,
-    addCalendarEvent
+    addCalendarEvent,
+    getGCToken
 }
