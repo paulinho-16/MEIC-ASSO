@@ -12,27 +12,60 @@ const router = express.Router()
  *   get:
  *     summary: Get the calendar events
  *     parameters:
- *       - in: header
+ *       - in: query
  *         name: startDate
  *         required: false
  *         type: string
  *         description: retrieve events after startDate. String in format YYYY-MM-DD. Defaults to today
- *       - in: header
+ *       - in: query
  *         name: endDate
  *         required: false
  *         type: string
  *         description: retrieve events before endDate. String in format YYYY-MM-DD. Defaults to null
+ *       - in: query
+ *         name: wishlist
+ *         required: false
+ *         type: array
+ *         description: retrieve only the specified types of events. Array of strings. Supported types of events are TIMETABLE (from the SIGARRA schedule), CUSTOM (created by the user) and EXAM (from the user's SIGARRA exam calendar). Defaults to all types
+ *       - in: query
+ *         name: studentCode
+ *         required: false
+ *         type: string
+ *         description: SIGARRA code of the user (used for retrieving the exams events). Required for retrieving EXAM type events. Example: 2018XXXXX (without up)
  *     responses:
  *       200:
  *         description: The request made was successful
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: array
- *                   example: []
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   summary:
+ *                     type: string
+ *                     example: "CPM"
+ *                   description:
+ *                     type: string
+ *                     example: "Tuesday TP 1MEIC01 APM"
+ *                   location:
+ *                     type: string
+ *                     example: "B229"
+ *                   date:
+ *                     type: string
+ *                     example: "2022-05-17T00:00:00.000Z"
+ *                   starttime:
+ *                     type: string
+ *                     example: "2022-05-17T09:00:00.000Z"
+ *                   endtime:
+ *                     type: string
+ *                     example: "2022-05-17T10:30:00.000Z"
+ *                   recurrence:
+ *                     type: string
+ *                     example: "weekly"
+ *                   type:
+ *                     type: string
+ *                     example: "TIMETABLE"
  *       500:
  *         description: Unexpected error
  *         content:

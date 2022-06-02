@@ -204,6 +204,7 @@ async function getCalendarEvents(req: Request, res: Response) {
   const wishlist = validateWishList(req.query.wishlist)
   await updateDataFromSigarra(wishlist, req.body.id, req.query.studentCode as string)
   const [startDate, endDate] = getStartEndDates(req.query)
+
   const retval = await events.getCalendarEvents(req.body.id, startDate, endDate, wishlist)
   sendGetResponse(res, retval)
 }
