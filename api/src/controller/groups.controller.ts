@@ -84,9 +84,22 @@ async function createGroup(req: Request, res: Response) {
         autoaccept: Boolean(query.autoaccept.toString())
     }
 
-    const data = await groups.createGroup(group)
+    
 
+    const data = await groups.createGroup(group)
+    
+    let groupId;
+    let result;
     if(data){
+        groupId = data["rows"][0]["id"]
+        
+        result = await groups.createGroupMember(groupId,req.body.id)
+        
+        
+    }
+
+    
+    if(result){
       res.status(201).send('Success')
     }
     else{
@@ -97,18 +110,18 @@ async function createGroup(req: Request, res: Response) {
 
 async function deleteGroup(req: Request, res: Response) { 
 
-    if(!req.params.id) {
+    if(!req.params.groupId) {
         return res.status(400).send({
             message: "No group id was specified."
         });
     }
 
-    if(isNaN(parseInt(req.params.id.toString()))){
+    if(isNaN(parseInt(req.params.groupId.toString()))){
         res.status(400).send('id must be an integer.')
         return
     }
 
-    const data = await groups.deleteGroup(parseInt(req.params.id.toString()))
+    const data = await groups.deleteGroup(parseInt(req.params.groupId.toString()))
 
     if(data){
       res.status(201).send('Success')
@@ -147,18 +160,18 @@ async function getMyGroups(req: Request, res: Response){
 
 async function editGroup(req: Request, res: Response){
 
-    if(!req.params.id) {
+    if(!req.params.groupId) {
         return res.status(400).send({
             message: "No group id was specified."
         });
     }
 
-    if(isNaN(parseInt(req.params.id.toString()))){
+    if(isNaN(parseInt(req.params.groupId.toString()))){
         res.status(400).send('id must be an integer.')
         return
     }
 
-    //TODO: check if user owns the group
+    //TODO: Possible admin checks
 
     const query = req.body
 
@@ -185,7 +198,7 @@ async function editGroup(req: Request, res: Response){
         autoaccept: Boolean(query.autoaccept.toString())
     }
 
-    const data = await groups.editGroup(parseInt(req.params.id.toString()),group);
+    const data = await groups.editGroup(parseInt(req.params.groupId.toString()),group);
 
     if(data){
         res.status(200).send('The group was successfuly edited.')
@@ -200,18 +213,18 @@ async function editGroup(req: Request, res: Response){
 // Group admin endpoints
 async function getGroupAdmins(req: Request, res: Response) {
 
-    if(!req.params.id) {
+    if(!req.params.groupId) {
         return res.status(400).send({
             message: "No group id was specified."
         });
     }
 
-    if(isNaN(parseInt(req.params.id.toString()))){
+    if(isNaN(parseInt(req.params.groupId.toString()))){
         res.status(400).send('id must be an integer.')
         return
     }
 
-    const data = await groups.getGroupAdmins(parseInt(req.params.id.toString()), req)
+    const data = await groups.getGroupAdmins(parseInt(req.params.groupId.toString()), req)
 
 
     if(data){
@@ -226,7 +239,7 @@ async function getGroupAdmins(req: Request, res: Response) {
 
 async function addGroupAdmin(req: Request, res: Response) {
   
-    if(isNaN(parseInt(req.params.id.toString()))){
+    if(isNaN(parseInt(req.params.groupId.toString()))){
       res.status(400).send('group id must be an integer.')
       return
     }
@@ -236,7 +249,7 @@ async function addGroupAdmin(req: Request, res: Response) {
         return
       }
 
-    await groups.createGroupMember(parseInt(req.params.id.toString()), parseInt(req.params.userId.toString()));
+    await groups.createGroupMember(parseInt(req.params.groupId.toString()), parseInt(req.params.userId.toString()));
 
     const data = await groups.addGroupAdmin(parseInt(req.params.id.toString()), parseInt(req.params.userId.toString()))
 
@@ -250,13 +263,13 @@ async function addGroupAdmin(req: Request, res: Response) {
 
 async function deleteGroupAdmin(req: Request, res: Response) { 
 
-    if(!req.params.id) {
+    if(!req.params.groupId) {
         return res.status(400).send({
             message: "No group id was specified."
         });
     }
 
-    if(isNaN(parseInt(req.params.id.toString()))){
+    if(isNaN(parseInt(req.params.groupId.toString()))){
         res.status(400).send('id must be an integer.')
         return
     }
@@ -272,7 +285,7 @@ async function deleteGroupAdmin(req: Request, res: Response) {
         return
     }
 
-    const data = await groups.deleteGroupAdmin(parseInt(req.params.id.toString()), parseInt(req.params.userId.toString()))
+    const data = await groups.deleteGroupAdmin(parseInt(req.params.groupId.toString()), parseInt(req.params.userId.toString()))
 
     if(data){
         res.status(200).send('The group admin was successfuly removed.')
@@ -291,16 +304,16 @@ async function deleteGroupAdmin(req: Request, res: Response) {
 
 async function getGroupMembers(req: Request, res: Response) {  
 
-    if (req.params.id == undefined) {
+    if (req.params.groupId == undefined) {
         res.status(400).send('You need to pass an group Id.')
     }
 
-    if(isNaN(parseInt(req.params.id.toString()))){
+    if(isNaN(parseInt(req.params.groupId.toString()))){
         res.status(400).send('Group Id must be an integer.')
         return
     }
 
-    const data = await groups.getGroupMembers(parseInt(req.params.id.toString()), req)
+    const data = await groups.getGroupMembers(parseInt(req.params.groupId.toString()), req)
 
     if(data){
         res.json(data)
@@ -312,16 +325,16 @@ async function getGroupMembers(req: Request, res: Response) {
 
 async function getGroupMember(req: Request, res: Response) {  
 
-    if (req.params.id == undefined) {
+    if (req.params.groupId == undefined) {
         res.status(400).send('You need to pass an group Id.')
     }
 
-    if(isNaN(parseInt(req.params.id.toString()))){
+    if(isNaN(parseInt(req.params.groupId.toString()))){
         res.status(400).send('Group Id must be an integer.')
         return
     }
 
-    const data = await groups.getGroupStudentRelation(parseInt(req.params.id.toString()), parseInt(req.params.userId.toString()))
+    const data = await groups.getGroupStudentRelation(parseInt(req.params.groupId.toString()), parseInt(req.params.userId.toString()))
 
     if(data){
         res.json(data)
@@ -335,11 +348,11 @@ async function getGroupMember(req: Request, res: Response) {
 
 async function createGroupMember(req: Request, res: Response) {  
     
-    if (req.params.id == undefined || req.params.userId == undefined) {
+    if (req.params.groupId == undefined || req.params.userId == undefined) {
         res.status(400).send('You need to pass an group id and a user id.')
     }
 
-    if(isNaN(parseInt(req.params.id.toString()))){
+    if(isNaN(parseInt(req.params.groupId.toString()))){
         res.status(400).send('Group Id must be an integer.')
         return
     }
@@ -349,7 +362,7 @@ async function createGroupMember(req: Request, res: Response) {
         return
     }
 
-    const data = await groups.createGroupMember(parseInt(req.params.id.toString()), parseInt(req.params.userId.toString()))
+    const data = await groups.createGroupMember(parseInt(req.params.groupId.toString()), parseInt(req.params.userId.toString()))
 
     // TODO: Fix Status Code for errors.
 
@@ -365,11 +378,11 @@ async function createGroupMember(req: Request, res: Response) {
 
 async function deleteGroupMember(req: Request, res: Response) {  
 
-    if (req.params.id == undefined || req.params.userId == undefined) {
+    if (req.params.groupId == undefined || req.params.userId == undefined) {
         res.status(400).send('You need to pass an group id and a user id.')
     }
 
-    if(isNaN(parseInt(req.params.id.toString()))){
+    if(isNaN(parseInt(req.params.groupId.toString()))){
         res.status(400).send('Group Id must be an integer.')
         return
     }
@@ -379,7 +392,7 @@ async function deleteGroupMember(req: Request, res: Response) {
         return
     }
 
-    const data = await groups.deleteGroupMember(parseInt(req.params.id.toString()), parseInt(req.params.userId.toString()))
+    const data = await groups.deleteGroupMember(parseInt(req.params.groupId.toString()), parseInt(req.params.userId.toString()))
 
     // TODO: Fix Status Code for errors.
 
