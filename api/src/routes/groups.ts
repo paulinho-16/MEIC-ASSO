@@ -155,7 +155,7 @@ router.post('/',auth.verifySessionToken,controller.createGroup)
  *       500:
  *         description: Unexpected error.
 */
-router.delete('/:id', controller.deleteGroup)
+router.delete('/:id/:groupId',auth.verifyAuthorization, controller.deleteGroup)
 
 
 /**
@@ -189,7 +189,7 @@ router.delete('/:id', controller.deleteGroup)
  *       500:
  *         description: Unexpected error.
 */
-router.get('/myGroups/:id', auth.verifyAuthorization ,controller.getMyGroups);
+router.get('/myGroups/:id', auth.verifyAuthorization ,controller.getMyGroups)
 
 
 /**
@@ -241,7 +241,7 @@ router.get('/myGroups/:id', auth.verifyAuthorization ,controller.getMyGroups);
  *         description: Unexpected error.
  *      
 */
-router.patch('/:id',controller.editGroup);
+router.patch('/:id/:groupId',auth.verifyAuthorization,controller.editGroup)
 
 
 
@@ -294,7 +294,7 @@ router.patch('/:id',controller.editGroup);
  *       500:
  *         description: Unexpected error.
 */
-router.get('/:id/members', controller.getGroupMembers)
+router.get('/:id/:groupId/members', auth.verifyAuthorization, controller.getGroupMembers)
 
 
 /**
@@ -331,7 +331,7 @@ router.get('/:id/members', controller.getGroupMembers)
  *       500:
  *         description: Unexpected error.
 */
-router.get('/:id/members/:userId', controller.getGroupMember)
+router.get('/:id/:groupId/members/:userId',  auth.verifyAuthorization, controller.getGroupMember)
 
 
 /**
@@ -358,7 +358,7 @@ router.get('/:id/members/:userId', controller.getGroupMember)
  *       500:
  *         description: Unexpected error.
 */
-router.post('/:id/members/:userId', controller.createGroupMember)
+router.post('/:id/:groupId/members/:userId',  auth.verifyAuthorization, controller.createGroupMember)
 
 
 /**
@@ -385,7 +385,7 @@ router.post('/:id/members/:userId', controller.createGroupMember)
  *       500:
  *         description: Unexpected error.
 */
-router.delete('/:id/members/:userId', controller.deleteGroupMember)
+router.delete('/:id/:groupId/members/:userId', auth.verifyAuthorization, controller.deleteGroupMember)
 
 
 
@@ -432,7 +432,7 @@ router.delete('/:id/members/:userId', controller.deleteGroupMember)
  *       500:
  *         description: Unexpected error.
 */
-router.get('/:id/admins', controller.getGroupAdmins)
+router.get(':id/:groupId/admins', auth.verifyAuthorization, controller.getGroupAdmins)
 
 
 /**
@@ -459,7 +459,7 @@ router.get('/:id/admins', controller.getGroupAdmins)
  *       500:
  *         description: Unexpected error.
 */
-router.post('/:id/admins/:userId', controller.addGroupAdmin)
+router.post(':id/:groupId/admins/:userId', auth.verifyAuthorization,controller.addGroupAdmin)
 
 
 /**
@@ -486,7 +486,7 @@ router.post('/:id/admins/:userId', controller.addGroupAdmin)
  *       500:
  *         description: Unexpected error.
 */
-router.delete('/:id/admins/:userId', controller.deleteGroupAdmin)
+router.delete(':id/:groupId/admins/:userId', auth.verifyAuthorization, controller.deleteGroupAdmin)
 
 
 
