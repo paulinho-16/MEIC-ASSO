@@ -2,6 +2,7 @@ import axios from 'axios'
 
 import { Request, Response } from 'express'
 import { Event } from '@/@types/events'
+import { DateTime } from 'luxon'
 
 import events from '@/services/calendar'
 
@@ -12,39 +13,81 @@ export enum EventType {
   PUBLIC = 'PUBLIC',
 }
 
+const weekdays: { [day: string]: number } = {
+  Monday: 1,
+  Tuesday: 2,
+  Wednesday: 3,
+  Thursday: 4,
+  Friday: 5,
+  Saturday: 6,
+  Sunday: 7,
+}
+
+function getWeekDaysBetweenTwoDates(leftISO: string, rightISO: string, weekday: string) {
+  // using luxon library to deal with special cases (e.g. daylight savings time)
+  let currentDate = DateTime.fromISO(leftISO)
+  const targetWeekDay = weekdays[weekday]
+  const result = []
+
+  while (currentDate <= DateTime.fromISO(rightISO)) {
+    const currentWeekDay = currentDate.weekday
+    if (currentWeekDay === targetWeekDay) result.push(currentDate)
+    const diff =
+      targetWeekDay > currentWeekDay
+        ? targetWeekDay - currentWeekDay
+        : targetWeekDay + 7 - currentWeekDay // number of days needed to get to the next desired week day
+
+    currentDate = currentDate.plus({ days: diff })
+  }
+  return result.map(v => v.toISODate())
+}
+
+function parseBlockDateToISO(date: string) {
+  // blockStartDate: '27-02-2022', blockEndDate: '11-06-2022'
+  const parts = date.split('-')
+  return `${parts[2]}-${parts[1]}-${parts[0]}`
+}
+
 async function indexTimetable(userId: string) {
   const timetableObject = (await axios.get('http://localhost:3000/schedule/student')).data
 
   await events.deleteAllEvents(userId, EventType.TIMETABLE)
 
-  const weekBlock = timetableObject.weekBlock // blockStartDate: '27-02-2022', blockEndDate: '11-06-2022'
+  const blockStartDate = parseBlockDateToISO(timetableObject.weekBlock.blockStartDate)
+  const blockEndDate = parseBlockDateToISO(timetableObject.weekBlock.blockEndDate)
+
   const scheduleTable = timetableObject.scheduleTable
 
   for (let index = 0; index < scheduleTable.length; index++) {
     const classBlock = scheduleTable[index]
-    const new_event: Event = {
-      summary: classBlock.curricularUnitName,
-      description:
-        classBlock.dayOfTheWeek +
-        ' ' +
-        classBlock.classType +
-        ' ' +
-        classBlock.class +
-        ' ' +
-        classBlock.professors,
-      location: classBlock.room,
-      date: new Date('2022-05-21'),
-      startTime: new Date('2022-05-21' + ' ' + classBlock.startTime + ':00'),
-      endTime: new Date('2022-05-21' + ' ' + classBlock.endTime + ':00'),
-      recurrence: 'weekly',
-      type: EventType.TIMETABLE,
-    }
 
-    const retval = await events.createEvent(new_event)
+    const dates = getWeekDaysBetweenTwoDates(blockStartDate, blockEndDate, classBlock.dayOfTheWeek)
 
-    if (retval != false) {
-      const eventId = retval
-      await events.createEventRelation(eventId, userId)
+    for (const date of dates) {
+      const new_event: Event = {
+        summary: classBlock.curricularUnitName,
+        description:
+          classBlock.dayOfTheWeek +
+          ' ' +
+          classBlock.classType +
+          ' ' +
+          classBlock.class +
+          ' ' +
+          classBlock.professors,
+        location: classBlock.room,
+        date: new Date(date),
+        startTime: new Date(date + ' ' + classBlock.startTime + ':00'),
+        endTime: new Date(date + ' ' + classBlock.endTime + ':00'),
+        recurrence: 'weekly',
+        type: EventType.TIMETABLE,
+      }
+
+      const retval = await events.createEvent(new_event)
+
+      if (retval != false) {
+        const eventId = retval
+        await events.createEventRelation(eventId, userId)
+      }
     }
   }
 }
