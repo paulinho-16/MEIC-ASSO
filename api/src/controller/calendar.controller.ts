@@ -5,16 +5,20 @@ import { Event } from '@/@types/events'
 
 import events from '@/services/calendar'
 
-async function timetableEndpoint(req: any, res: any) {
-  res.status(200).send(await parseJsonTimetable('0'))
+export enum EventType {
+  CUSTOM = 'CUSTOM',
+  TIMETABLE = 'TIMETABLE',
+  EXAM = 'EXAM',
+  PUBLIC = 'PUBLIC',
 }
 
-async function parseJsonTimetable(userdId: string) {
-  console.log('start')
-  // const timetable =
-  //   '{"scheduleTable":[{"dayOfTheWeek":"Wednesday","startTime":"09:00","endTime":"10:30","curricularUnitName":"CPM","classType":"TP","class":"1MEIC01","professors":"APM","room":"B229"},{"dayOfTheWeek":"Saturday","startTime":"09:00","endTime":"12:00","curricularUnitName":"ASSO","classType":"TP","class":"1MEIC01","professors":"AMA","room":"B303"},{"dayOfTheWeek":"Wednesday","startTime":"14:00","endTime":"17:00","curricularUnitName":"BDNR","classType":"TP","class":"1MEIC01","professors":"SSN","room":"B203"},{"dayOfTheWeek":"Saturday","startTime":"14:00","endTime":"16:00","curricularUnitName":"LGP","classType":"T","class":"COMP_2933","professors":"GMG","room":"B001"},{"dayOfTheWeek":"Tuesday","startTime":"14:30","endTime":"17:30","curricularUnitName":"GEE","classType":"TP","class":"1MEIC01","professors":"JCR+JPC+LP+MCF","room":"B024"},{"dayOfTheWeek":"Wednesday","startTime":"15:30","endTime":"17:00","curricularUnitName":"CPM","classType":"TP","class":"1MEIC01","professors":"APM","room":"B343"}]}'
+async function indexTimetable(userId: string) {
   const timetableObject = (await axios.get('http://localhost:3000/schedule/student')).data
-  let scheduleTable = timetableObject.scheduleTable
+
+  await events.deleteAllEvents(userId, EventType.TIMETABLE)
+
+  const weekBlock = timetableObject.weekBlock // blockStartDate: '27-02-2022', blockEndDate: '11-06-2022'
+  const scheduleTable = timetableObject.scheduleTable
 
   for (let index = 0; index < scheduleTable.length; index++) {
     const classBlock = scheduleTable[index]
@@ -33,37 +37,24 @@ async function parseJsonTimetable(userdId: string) {
       startTime: new Date('2022-05-21' + ' ' + classBlock.startTime + ':00'),
       endTime: new Date('2022-05-21' + ' ' + classBlock.endTime + ':00'),
       recurrence: 'weekly',
-      isUni: true,
-    }
-
-    let event_id = await events.eventExists(
-      new_event.startTime,
-      new_event.endTime,
-      new_event.summary,
-      new_event.description
-    )
-
-    if (event_id > 0) {
-      if (!(await events.eventRelationExists(userdId, event_id))) {
-        await events.createEventRelation(event_id, userdId)
-      }
-      continue
+      type: EventType.TIMETABLE,
     }
 
     const retval = await events.createEvent(new_event)
 
     if (retval != false) {
       const eventId = retval
-      await events.createEventRelation(eventId, userdId)
+      await events.createEventRelation(eventId, userId)
     }
   }
 }
 
-async function parseJsonExams(userdId: string) {
-  const exams =
-    '{"course": "MIEIC", "seasons": [{"name": "normal", "exams": [{"acronym": "MK", "url": "asdadaw", "day": "21-06-2022", "begin": "14:30", "duration": "2 hours", "rooms": "B104 B107"}]}]}'
-  let examsObject = JSON.parse(exams)
-  let seasons = examsObject.seasons
+async function indexExams(userId: string, studentCode: string) {
+  const examsObject = (await axios.get(`http://localhost:3000/student-exams/${studentCode}`)).data
+
+  await events.deleteAllEvents(userId, EventType.EXAM)
+
+  const seasons = examsObject.seasons
 
   for (let x = 0; x < seasons.length; x++) {
     const season = seasons[x]
@@ -73,55 +64,112 @@ async function parseJsonExams(userdId: string) {
       const exam = exams[y]
 
       const new_event: Event = {
-        summary: exams.course + ' ' + exam.acronym + ' ' + season.name,
-        description: exam.url,
+        summary: exam.curricularUnit + ' ' + season.name,
+        description: null,
         location: exam.rooms,
-        date: new Date(exam.day), // verify day format
-        startTime: new Date(exam.day + ' ' + exam.begin + ':00'),
-        endTime: new Date(exam.day + ' ' + exam.begin + exam.duration + ':00'), // verify duration format
-        recurrence: 'single',
-        isUni: true,
-      }
-
-      let event_id = await events.eventExists(
-        new_event.startTime,
-        new_event.endTime,
-        new_event.summary,
-        new_event.description
-      )
-
-      if (event_id > 0) {
-        if (!(await events.eventRelationExists(userdId, event_id))) {
-          await events.createEventRelation(event_id, userdId)
-        }
-        continue
+        date: new Date(exam.date), // verify day format
+        startTime: new Date(exam.date + ' ' + exam.beginHour + ':00'),
+        endTime: new Date(exam.date + ' ' + exam.endHour + ':00'), // verify duration format
+        recurrence: null,
+        type: EventType.EXAM,
       }
 
       const retval = await events.createEvent(new_event)
 
       if (retval != false) {
         const eventId = retval
-        await events.createEventRelation(eventId, userdId)
+        await events.createEventRelation(eventId, userId)
       }
     }
   }
 }
 
-async function getCalendarEvents(req: Request, res: Response) {
+const eventTypeUpdaters = {
+  [EventType.PUBLIC.toString()]: { daysValid: 0, update: async () => {} },
+  [EventType.EXAM.toString()]: { daysValid: 1, update: indexExams },
+  [EventType.TIMETABLE.toString()]: { daysValid: 1, update: indexTimetable },
+}
+
+async function updateEvents(eventType: string, userId: string, studentCode: string) {
+  const lastDate: any = await events.getLastScrapeDate(eventType, userId)
+  if (lastDate === false) return false
+
+  const currentDate: any = new Date()
+  const diffMs = Math.abs(currentDate - lastDate) // diff in milliseconds
+  const diffDays = diffMs / 1000 / 3600 / 24
+
+  if (diffDays >= eventTypeUpdaters[eventType].daysValid) {
+    console.log(
+      `Indexing ${eventType} of user with id = ${userId} and studentCode = ${studentCode}.`
+    )
+    await eventTypeUpdaters[eventType].update(userId, studentCode)
+    await events.updateLastScrapeDate(eventType, userId)
+  }
+}
+
+async function updateDataFromSigarra(wishlist: Array<string>, userId: string, studentCode: string) {
+  const promises = wishlist
+    .filter(eventType => eventType in eventTypeUpdaters)
+    .map(eventType => updateEvents(eventType, userId, studentCode))
+  await Promise.all(promises)
+}
+
+function allEventTypes() {
+  return [EventType.CUSTOM, EventType.EXAM, EventType.PUBLIC, EventType.TIMETABLE]
+}
+
+function validateWishList(wishlist: any) {
+  if (wishlist == undefined) return allEventTypes()
+
+  let wishes: Array<string>
+  let result: Array<string> = []
+
+  if (typeof wishlist === 'object') wishes = wishlist
+  else wishes = [wishlist]
+
+  for (const wish of wishes) {
+    if (typeof wish === 'string' && wish.toUpperCase() in EventType) result.push(wish.toUpperCase())
+  }
+
+  return result.length > 0 ? result : allEventTypes() // if no valid wish, then return all events
+}
+
+function getStartEndDates(query: any) {
   let startDate
-  if (req.query.startDate == null) {
+  if (query.startDate == null) {
     const today = new Date()
     startDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
   } else {
-    startDate = req.query.startDate.toString()
+    startDate = query.startDate.toString()
   }
-  const endDate = req.query.endDate == null ? null : req.query.endDate.toString()
-  const retval = await events.getCalendarEvents(req.body.id, startDate, endDate)
+  const endDate = query.endDate == null ? null : query.endDate.toString()
+
+  return [startDate, endDate]
+}
+
+function sendUnknownError(res: Response) {
+  res.status(500).send({ error: 'Something went wrong. Try again!' })
+}
+
+function sendGetResponse(res: Response, retval: any) {
   if (retval !== false) {
-    res.status(201).send(retval)
-  } else {
-    res.status(500).send('Something went wrong. Try again!')
-  }
+    res.status(200).send(retval)
+  } else sendUnknownError(res)
+}
+
+async function getCalendarEvents(req: Request, res: Response) {
+  const wishlist = validateWishList(req.query.wishlist)
+  await updateDataFromSigarra(wishlist, req.body.id, req.query.studentCode as string)
+  const [startDate, endDate] = getStartEndDates(req.query)
+  const retval = await events.getCalendarEvents(req.body.id, startDate, endDate, wishlist)
+  sendGetResponse(res, retval)
+}
+
+async function getCalendarPublicEvents(req: Request, res: Response) {
+  const [startDate, endDate] = getStartEndDates(req.query)
+  // TODO public events don't need user id (create new table)
+  const retval = await events.getCalendarEvents(req.body.id, startDate, endDate, [EventType.PUBLIC])
+  sendGetResponse(res, retval)
 }
 
 async function addCalendarEvent(req: Request, res: Response) {
@@ -133,7 +181,7 @@ async function addCalendarEvent(req: Request, res: Response) {
     req.query['endTime'] == null
   ) {
     console.log(req)
-    res.status(400).send('Invalid syntax!') // trocar para json com codigo de erro
+    res.status(400).send({ error: 'Invalid request!' }) // trocar para json com codigo de erro
     return
   }
 
@@ -145,7 +193,7 @@ async function addCalendarEvent(req: Request, res: Response) {
     startTime: new Date(req.query.date.toString() + ' ' + req.query.startTime.toString()),
     endTime: new Date(req.query.date.toString() + ' ' + req.query.endTime.toString()),
     recurrence: req.query.recurrence == null ? null : req.query.recurrence.toString(),
-    isUni: false,
+    type: EventType.CUSTOM,
   }
 
   const retval = await events.createEvent(new_event)
@@ -156,15 +204,17 @@ async function addCalendarEvent(req: Request, res: Response) {
     if (data) {
       res.status(201).send('Success')
     } else {
-      res.status(500).send('Something went wrong. Try again!')
+      sendUnknownError(res)
     }
   } else {
-    res.status(500).send('Something went wrong. Try again!')
+    sendUnknownError(res)
   }
 }
 
 export default {
   getCalendarEvents,
   addCalendarEvent,
-  timetableEndpoint,
+  getCalendarPublicEvents,
+  validateWishList,
+  EventType,
 }

@@ -2,7 +2,7 @@ import express from 'express'
 
 import controller from '@/controller/calendar.controller'
 import auth from '@/middleware/auth'
-
+import calendarMiddleware from '@/middleware/calendar'
 
 const router = express.Router()
 
@@ -23,7 +23,7 @@ const router = express.Router()
  *         type: string
  *         description: retrieve events before endDate. String in format YYYY-MM-DD. Defaults to null
  *     responses:
- *       201:
+ *       200:
  *         description: The request made was successful
  *         content:
  *           application/json:
@@ -43,8 +43,13 @@ const router = express.Router()
  *                 message:
  *                   type: string
  *                   example: "Something went wrong. Try again!"
-*/
-router.get('/', auth.verifySessionToken, controller.getCalendarEvents)
+ */
+router.get(
+  '/',
+  calendarMiddleware.verifyCalendarRequest,
+  auth.verifySessionToken,
+  controller.getCalendarEvents
+)
 
 /**
  * @swagger
@@ -113,7 +118,5 @@ router.get('/', auth.verifySessionToken, controller.getCalendarEvents)
  *                   example: "Something went wrong. Try again!"
  */
 router.post('/create', auth.verifySessionToken, controller.addCalendarEvent)
-
-router.get('/test', controller.timetableEndpoint);
 
 export default router

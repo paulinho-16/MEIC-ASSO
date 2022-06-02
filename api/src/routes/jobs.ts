@@ -11,8 +11,8 @@ const router = express.Router()
  *     summary: Get jobs
  *     parameters:
  *     responses:
- *       201:
- *         description: The request made was successful
+ *       200:
+ *         description: The request was successful
  *         content:
  *           application/json:
  *             schema:
@@ -21,7 +21,7 @@ const router = express.Router()
  *                 url:
  *                   type: string
  *                   example: "https://sigarra.up.pt/feup/pt/noticias_geral.ver_noticia?p_nr=133870"
- *                 title: 
+ *                 title:
  *                    type: string
  *                    example: "FEUP  |Bolsa de Investigação  |FERROVIA 4.0-PPS2-Civil"
  *                 descriptionEN:
@@ -41,7 +41,7 @@ const router = express.Router()
  *                    example: "24-05-2022"
  *                 endDate:
  *                    type: string
- *                    example: "06-06-2022"  
+ *                    example: "06-06-2022"
  *       500:
  *         description: "Problem fetching data from SIGARRA"
  *         content:
