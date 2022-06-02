@@ -60,7 +60,7 @@ async function get(_req: Request, res: Response) {
   const html = await getHTML(`${rootURL}noticias_geral.lista_noticias?p_grupo_noticias=19`)
 
   if (!html) {
-    res.status(500).send({ error: 'Cannot fetch SIGARRA jobs page!' })
+    res.status(500).send({ message: 'Cannot fetch SIGARRA jobs page!' })
     return
   }
 
