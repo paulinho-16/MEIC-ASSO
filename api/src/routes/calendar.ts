@@ -10,28 +10,34 @@ const router = express.Router()
  * @swagger
  * /calendar:
  *   get:
+ *     tags:
+ *       - calendar
  *     summary: Get the calendar events
  *     parameters:
  *       - in: query
+ *         name: wishlist
+ *         required: false
+ *         schema:
+ *           type: array
+ *         description: Retrieve only the specified types of events. Array of strings. Supported types of events are TIMETABLE (from the SIGARRA schedule), CUSTOM (created by the user) and EXAM (from the user's SIGARRA exam calendar). Defaults to all types
+ *       - in: query
  *         name: startDate
  *         required: false
- *         type: string
- *         description: retrieve events after startDate. String in format YYYY-MM-DD. Defaults to today
+ *         schema:
+ *           type: string
+ *         description: Retrieve events after startDate. String in format YYYY-MM-DD. Defaults to today
  *       - in: query
  *         name: endDate
  *         required: false
- *         type: string
- *         description: retrieve events before endDate. String in format YYYY-MM-DD. Defaults to null
- *       - in: query
- *         name: wishlist
- *         required: false
- *         type: array
- *         description: retrieve only the specified types of events. Array of strings. Supported types of events are TIMETABLE (from the SIGARRA schedule), CUSTOM (created by the user) and EXAM (from the user's SIGARRA exam calendar). Defaults to all types
+ *         schema:
+ *           type: string
+ *         description: Retrieve events before endDate. String in format YYYY-MM-DD. Defaults to null
  *       - in: query
  *         name: studentCode
  *         required: false
- *         type: string
- *         description: SIGARRA code of the user (used for retrieving the exams events). Required for retrieving EXAM type events. Example: 2018XXXXX (without up)
+ *         schema:
+ *           type: string
+ *         description: SIGARRA code of the user (used for retrieving the exams events). Required for retrieving EXAM type events. Example - 2018XXXXX (without up)
  *     responses:
  *       200:
  *         description: The request made was successful
@@ -88,6 +94,8 @@ router.get(
  * @swagger
  * /calendar/create:
  *   post:
+ *     tags:
+ *       - calendar
  *     description: Add a calendar event
  *     requestBody:
  *       description: Event info

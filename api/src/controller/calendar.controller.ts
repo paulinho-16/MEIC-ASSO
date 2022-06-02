@@ -191,7 +191,7 @@ function getStartEndDates(query: any) {
 }
 
 function sendUnknownError(res: Response) {
-  res.status(500).send({ error: 'Something went wrong. Try again!' })
+  res.status(500).send({ message: 'Something went wrong. Try again!' })
 }
 
 function sendGetResponse(res: Response, retval: any) {
@@ -225,7 +225,7 @@ async function addCalendarEvent(req: Request, res: Response) {
     req.query['endTime'] == null
   ) {
     console.log(req)
-    res.status(400).send({ error: 'Invalid request!' }) // trocar para json com codigo de erro
+    res.status(400).send({ message: 'Invalid request!' }) // trocar para json com codigo de erro
     return
   }
 
@@ -246,7 +246,7 @@ async function addCalendarEvent(req: Request, res: Response) {
     const eventId = retval
     const data = await events.createEventRelation(eventId, req.body.id)
     if (data) {
-      res.status(201).send('Success')
+      res.status(201).send({ message: 'Success!' })
     } else {
       sendUnknownError(res)
     }
