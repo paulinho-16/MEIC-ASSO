@@ -23,18 +23,23 @@ const router = express.Router()
  *               type: object
  *               properties:
  *                 scheduleTable:
- *                    type: array
- *                    items:
- *                        type: object
- *                        properties:
- *                            dayOfTheWeek: string
- *                            startTime: string
- *                            endTime: string
- *                            curricularUnitName: string
- *                            classType: string
- *                            class: string
- *                            professors: string
- *                            room: string
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       dayOfTheWeek: string
+ *                       startTime: string
+ *                       endTime: string
+ *                       curricularUnitName: string
+ *                       classType: string
+ *                       class: string
+ *                       professors: string
+ *                       room: string
+ *                 weekBlock:
+ *                   type: object
+ *                   properties:
+ *                     blockStartDate: string
+ *                     blockEndDate: string
  *             example:
  *               scheduleTable:
  *                 - dayOfTheWeek: Wednesday
@@ -53,6 +58,9 @@ const router = express.Router()
  *                   class: 1MEIC01
  *                   professors: APM
  *                   room: B222
+ *               weekBlock:
+ *                 blockStartDate: '27-02-2022'
+ *                 blockEndDate: '11-06-2022'
  *       '500':
  *         description: Unexpected error
  */

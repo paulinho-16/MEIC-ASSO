@@ -17,4 +17,6 @@ export default {
     'https://sigarra.up.pt/feup/pt/fest_geral.curso_percurso_academico_view?pv_fest_id',
   planPositionBaseUrl:
     'https://sigarra.up.pt/feup/pt/fest_geral.curso_posicao_plano_view?pv_fest_id',
+    studentExamsUrl:
+    'https://sigarra.up.pt/feup/pt/exa_geral.mapa_de_exames?pv_estud_num='
 }

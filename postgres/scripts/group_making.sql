@@ -49,6 +49,6 @@ INSERT INTO Student
 VALUES (3, '23123', 'Laura', 'doe');
 
 INSERT INTO Group_Student (groupId, studentId)
-VALUES (2, 1);    
+VALUES (2, 1);
 
 
