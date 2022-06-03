@@ -18,6 +18,6 @@ CREATE TABLE Events (
 CREATE TABLE EventUsers (
     eventId     INTEGER,
     userId      INTEGER,
-    FOREIGN KEY (userId) REFERENCES UniUser(id),
-    FOREIGN KEY (eventId) REFERENCES Events(id)
+    FOREIGN KEY (userId) REFERENCES UniUser(id) ON DELETE CASCADE,
+    FOREIGN KEY (eventId) REFERENCES Events(id) ON DELETE CASCADE
 );

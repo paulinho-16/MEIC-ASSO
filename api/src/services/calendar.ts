@@ -1,8 +1,6 @@
 import { Client } from 'pg'
 
-import {
-  Event
-} from '@/@types/events'
+import { Event } from '@/@types/events'
 
 // Database Setup Methods.
 
@@ -14,12 +12,10 @@ const client = new Client({
   port: 5432,
 })
 
-let connected = false;
+let connected = false
 
-
-async function connectDatabase(){
-
-  if(connected){
+async function connectDatabase() {
+  if (connected) {
     return true
   }
 
@@ -33,79 +29,109 @@ async function connectDatabase(){
   }
 }
 
-async function getCalendarEvents(userId : string, startDate : string, endDate : string){
-    let query;
-    if(!connectDatabase()){
-      console.log("Failed to connect to db")
-      return false;
-    }
-    
-    if(endDate == null){
-      query = {text: 'SELECT summary, description, location, date, starttime, endtime, recurrence, isUni FROM EventUsers INNER JOIN Events ON id = eventId WHERE date >= $1 AND userId = $2',
-      values: [startDate, userId]
-      }
-    }
-    else{
-      query = {text: 'SELECT summary, description, location, date, starttime, endtime, recurrence, isUni FROM EventUsers INNER JOIN Events ON id = eventId WHERE date >= $1 AND date <= $2 AND userId = $3',
-      values: [startDate, endDate, userId]
-      }
-    }
-
-    try{
-        let res = await client.query(query)
-        return res.rows
-      }
-      catch(err){
-        console.log(err);
-        return false
-      }
-}
-
-async function createEvent(event: Event){
-  console.log("Creating event");
-
-  if(!connectDatabase()){
-    return false;
-  }
-  let query = {
-    text: 'INSERT INTO Events(summary, description, location, date, startTime, endTime, recurrence, isUni) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id',
-    values: [event.summary, event.description, event.location, event.date, event.startTime, event.endTime, event.recurrence, event.isUni],
+async function getCalendarEvents(userId: string, startDate: string, endDate: string) {
+  let query
+  if (!connectDatabase()) {
+    console.log('Failed to connect to db')
+    return false
   }
 
-  try{
+  if (endDate == null) {
+    query = {
+      text: 'SELECT summary, description, location, date, starttime, endtime, recurrence, isUni FROM EventUsers INNER JOIN Events ON id = eventId WHERE date >= $1 AND userId = $2',
+      values: [startDate, userId],
+    }
+  } else {
+    query = {
+      text: 'SELECT summary, description, location, date, starttime, endtime, recurrence, isUni FROM EventUsers INNER JOIN Events ON id = eventId WHERE date >= $1 AND date <= $2 AND userId = $3',
+      values: [startDate, endDate, userId],
+    }
+  }
+
+  try {
     let res = await client.query(query)
-    return res.rows[0].id
-  }
-  catch(err){
-    console.log(err);
+    return res.rows
+  } catch (err) {
+    console.log(err)
     return false
   }
 }
 
-async function createEventRelation(eventId: string, userId: string){
-  console.log("Creating event relation");
+async function createEvent(event: Event) {
+  console.log('Creating event')
 
-  if(!connectDatabase()){
-    return false;
+  if (!connectDatabase()) {
+    return false
+  }
+  let query = {
+    text: 'INSERT INTO Events(summary, description, location, date, startTime, endTime, recurrence, isUni) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id',
+    values: [
+      event.summary,
+      event.description,
+      event.location,
+      event.date,
+      event.startTime,
+      event.endTime,
+      event.recurrence,
+      event.isUni,
+    ],
+  }
+
+  try {
+    let res = await client.query(query)
+    return res.rows[0].id
+  } catch (err) {
+    console.log(err)
+    return false
+  }
+}
+
+async function createEventRelation(eventId: string, userId: string) {
+  console.log('Creating event relation')
+
+  if (!connectDatabase()) {
+    return false
   }
   const query = {
     text: 'INSERT INTO EventUsers(eventId, userId) VALUES($1, $2)',
     values: [eventId, userId],
   }
 
-  try{
+  try {
     let res = await client.query(query)
     return true
-  }
-  catch(err){
-    console.log(err);
+  } catch (err) {
+    console.log(err)
     return false
   }
 }
 
+async function deleteEvent(id: string) {
+  console.log('Deleting event')
 
-export default{
+  if (!connectDatabase()) {
+    return { linesDeleted: 0, message: 'Error connecting to database!' }
+  }
+  let query = {
+    text: 'DELETE FROM Events WHERE id=$1',
+    values: [id],
+  }
+
+  try {
+    let res = await client.query(query)
+    return {
+      linesDeleted: res.rowCount,
+      message: res.rowCount > 0 ? 'Deleted successfully' : `There is no event with id = ${id}`,
+    }
+  } catch (err) {
+    console.log(err)
+    return { linesDeleted: 0, message: 'Error executing query...' }
+  }
+}
+
+export default {
   createEvent,
   getCalendarEvents,
-  createEventRelation
+  createEventRelation,
+  deleteEvent,
 }

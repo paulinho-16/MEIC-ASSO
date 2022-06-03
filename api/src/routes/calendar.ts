@@ -3,7 +3,6 @@ import express from 'express'
 import controller from '@/controller/calendar.controller'
 import auth from '@/middleware/auth'
 
-
 const router = express.Router()
 
 /**
@@ -43,12 +42,12 @@ const router = express.Router()
  *                 message:
  *                   type: string
  *                   example: "Something went wrong. Try again!"
-*/
+ */
 router.get('/', auth.verifySessionToken, controller.getCalendarEvents)
 
 /**
  * @swagger
- * /calendar/create:
+ * /calendar/event:
  *   post:
  *     description: Add a calendar event
  *     requestBody:
@@ -112,6 +111,10 @@ router.get('/', auth.verifySessionToken, controller.getCalendarEvents)
  *                   type: string
  *                   example: "Something went wrong. Try again!"
  */
-router.post('/create', auth.verifySessionToken, controller.addCalendarEvent)
+router.post('/event', auth.verifySessionToken, controller.addCalendarEvent)
+
+router.delete('/event/:id', auth.verifySessionToken, controller.deleteCalendarEvent)
+
+router.put('/event/:id', auth.verifySessionToken, controller.updateCalendarEvent)
 
 export default router
