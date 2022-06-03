@@ -23,6 +23,18 @@ const weekdays: { [day: string]: number } = {
   Sunday: 7,
 }
 
+const eventParameters = [
+  'id',
+  'summary',
+  'description',
+  'location',
+  'date',
+  'starttime',
+  'endtime',
+  'recurrence',
+  'type',
+]
+
 function getWeekDaysBetweenTwoDates(leftISO: string, rightISO: string, weekday: string) {
   // using luxon library to deal with special cases (e.g. daylight savings time)
   let currentDate = DateTime.fromISO(leftISO)
@@ -161,8 +173,13 @@ function allEventTypes() {
   return [EventType.CUSTOM, EventType.EXAM, EventType.PUBLIC, EventType.TIMETABLE]
 }
 
-function validateWishList(wishlist: any) {
-  if (wishlist == undefined) return allEventTypes()
+function validateWishList(
+  wishlist: any,
+  normalize: (wish: string) => string,
+  isValid: (wish: string) => boolean,
+  all: () => Array<string>
+) {
+  if (wishlist == undefined) return all()
 
   let wishes: Array<string>
   let result: Array<string> = []
@@ -171,10 +188,19 @@ function validateWishList(wishlist: any) {
   else wishes = [wishlist]
 
   for (const wish of wishes) {
-    if (typeof wish === 'string' && wish.toUpperCase() in EventType) result.push(wish.toUpperCase())
+    if (typeof wish === 'string' && isValid(normalize(wish))) result.push(normalize(wish))
   }
 
-  return result.length > 0 ? result : allEventTypes() // if no valid wish, then return all events
+  return result.length > 0 ? result : all() // if no valid wish, then return all events
+}
+
+function validateRequestWishList(req: Request) {
+  return validateWishList(
+    req.query.wishlist,
+    v => v.toUpperCase(),
+    v => v in EventType,
+    allEventTypes
+  )
 }
 
 function getStartEndDates(query: any) {
@@ -201,18 +227,37 @@ function sendGetResponse(res: Response, retval: any) {
 }
 
 async function getCalendarEvents(req: Request, res: Response) {
-  const wishlist = validateWishList(req.query.wishlist)
+  const wishlist = validateRequestWishList(req)
+  const eventWishlist = validateWishList(
+    req.query.eventWishlist,
+    v => v.toLowerCase(),
+    v => eventParameters.findIndex(v1 => v1 === v) !== -1,
+    () => eventParameters
+  )
+
   await updateDataFromSigarra(wishlist, req.body.id, req.query.studentCode as string)
   const [startDate, endDate] = getStartEndDates(req.query)
 
-  const retval = await events.getCalendarEvents(req.body.id, startDate, endDate, wishlist)
+  const retval = await events.getCalendarEvents(
+    req.body.id,
+    startDate,
+    endDate,
+    wishlist,
+    eventWishlist
+  )
   sendGetResponse(res, retval)
 }
 
 async function getCalendarPublicEvents(req: Request, res: Response) {
   const [startDate, endDate] = getStartEndDates(req.query)
   // TODO public events don't need user id (create new table)
-  const retval = await events.getCalendarEvents(req.body.id, startDate, endDate, [EventType.PUBLIC])
+  const retval = await events.getCalendarEvents(
+    req.body.id,
+    startDate,
+    endDate,
+    [EventType.PUBLIC],
+    eventParameters
+  )
   sendGetResponse(res, retval)
 }
 
@@ -259,6 +304,6 @@ export default {
   getCalendarEvents,
   addCalendarEvent,
   getCalendarPublicEvents,
-  validateWishList,
+  validateRequestWishList,
   EventType,
 }

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import controller from '@/controller/calendar.controller'
 
 async function verifyCalendarRequest(req: Request, res: Response, next: NextFunction) {
-  const wishlist = controller.validateWishList(req.query.wishlist)
+  const wishlist = controller.validateRequestWishList(req)
 
   // if doesn't need authentication
   if (

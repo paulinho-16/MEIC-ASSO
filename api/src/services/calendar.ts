@@ -40,26 +40,32 @@ function getEventTypeCondition(eventTypes: Array<string>): string {
   return `(${eventTypes.map(eventType => `type = '${eventType}'`).join(' OR ')})`
 }
 
+function getSelectFields(fields: Array<string>): string {
+  return fields.join(', ')
+}
+
 async function getCalendarEvents(
   userId: string,
   startDate: string,
   endDate: string,
-  eventTypes: Array<string>
+  eventTypes: Array<string>,
+  eventWishlist: Array<string>
 ) {
   let query
 
   const eventTypeCondition = getEventTypeCondition(eventTypes)
+  const selectFields = getSelectFields(eventWishlist)
 
   if (endDate == null) {
     query = {
-      text: `SELECT summary, description, location, date, starttime, endtime, recurrence, type
+      text: `SELECT ${selectFields}
              FROM EventUsers INNER JOIN Events ON id = eventId
              WHERE date >= $1 AND userId = $2 AND ${eventTypeCondition}`,
       values: [startDate, userId],
     }
   } else {
     query = {
-      text: `SELECT summary, description, location, date, starttime, endtime, recurrence, type
+      text: `SELECT ${selectFields}
              FROM EventUsers INNER JOIN Events ON id = eventId
              WHERE date >= $1 AND date <= $2 AND userId = $3 AND ${eventTypeCondition}`,
       values: [startDate, endDate, userId],

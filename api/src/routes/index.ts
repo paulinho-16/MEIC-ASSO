@@ -17,6 +17,7 @@ import examsCalendar from './exams-calendar'
 import schedule from './schedule'
 import grades from './grades'
 import capacity from './capacity'
+import queues from './queues'
 import studentExams from './student-exams'
 
 export default {
@@ -39,5 +40,6 @@ export default {
   schedule,
   grades,
   capacity,
+  queues,
   studentExams
 }
