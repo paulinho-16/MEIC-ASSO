@@ -2,6 +2,8 @@ import express from 'express'
 
 import controller from '@/controller/student-exams.controller'
 
+import constants from '@/config/constants'
+
 const router = express.Router()
 
 /**
@@ -71,5 +73,28 @@ const router = express.Router()
  *         description: Unexpected error
 */
 router.get('/:studentNumber', controller.getStudentExams)
+
+/**
+ * @swagger
+ * /student-exams/{studentNumber}/url:
+ *   get:
+ *     summary: Fetch URL necessary to retrieve curricular unit information
+ *     parameters:
+ *     responses:
+ *       200:
+ *         description: The URL necessary to retrieve curricular unit information
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *             example:
+ *               https://sigarra.up.pt/feup/pt/exa_geral.mapa_de_exames?pv_estud_num=201801234
+ *       500:
+ *         description: Unexpected error
+ */
+ router.route('/:id/url')
+ .get(function (req, res) {
+     res.status(200).send(`${constants.studentExamsUrl}${req.params.id}`);
+ });
 
 export default router
