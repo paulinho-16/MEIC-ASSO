@@ -78,11 +78,11 @@ router.get('/:studentNumber', controller.getStudentExams)
  * @swagger
  * /student-exams/{studentNumber}/url:
  *   get:
- *     summary: Fetch URL necessary to retrieve curricular unit information
+ *     summary: Fetch URL of necessary information to retrieve the exams of a given student
  *     parameters:
  *     responses:
  *       200:
- *         description: The URL necessary to retrieve curricular unit information
+ *         description: The URL of necessary information to retrieve the exams of a given student
  *         content:
  *           application/json:
  *             schema:
