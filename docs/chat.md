@@ -7,11 +7,40 @@ Uni4all chat backend implementation.
 > **for outsiders 👀**: take into account that this is still a WiP, and as such, this document represents the actual state of the implementation.
 
 ## Current Features
+- chat client
+  - see all user's groups
+  - see all groups messages
+  - send messages   
+- chat server 
+  - create new chat 
+  - join chat
+  - leave chat
+  - get groups or group (by id)
+  - get group messages w/ **pagination**
+  - get user's groups
+  - create new message
+  - update user info: username, name and whether is online or not
 
-- chat globally
-- chat directly to another user
-- notifications for user connections and disconnections
-- update user username
+## Architecture and Choices
+
+```mermaid
+flowchart LR
+    client[Client]
+    chat-server[Chat Server]
+    client -->|websocket| chat-server
+```
+
+For communication with the client, the chat server needs to send messages autonomously. For this polling, long-polling, and websockets are possibilities. Polling and long-polling are more demanding computationally, hence the coice for **websockets**.
+
+## Technologies
+
+- Chat server
+  - **websockets** socket.io, is a common solution for most real-time chat systems, providing a bi-directional communication channel between a client and a server. It focus equally on reliability and speed.
+  - **backend** node.js with framework express, because is the most well documented technology with socket.io and socket.io is built on top of node.js.
+- Database
+  - **mongoDB**, because there is no need to define schemas allowing for a more flexibility in the development. Is good for a large dataset, low latency and low response times. As it is a NoSQL database it has the characteristics of it, it was designed for fast and simple questions, large dataset and frequent application changes. It also scales well horizontally allowing more machines to be added and handle the data across multiple servers. Concluding: flexibility, scalability, high-performance, availability, highly functional.
+  
+---
 
 ## API Endpoints
 For more detailed documentation, refer to the swagger hub documentation.
@@ -134,7 +163,6 @@ Updates user.
 ```
 
 
-## Socket Endpoints
 
 # Chat implementation
 
@@ -143,26 +171,26 @@ Updates user.
 
 There are different kinds of events:
 * **connection**:  receives the socket created between the client and the server and happens when the socket is created between client and server;
-```json
+```
 {
     socket: String
 }
 ```
 
 * **online**: receives the up (identifier of the user) that is getting online and happens when a user goes online in the app;
-```json
+```
 {
   up: String
 }
 ```
 * **disconnect**: receives the up (identifier of the user) that is disconnecting and happens when a user goes offline;
-```json
+```
 {
   up: String
 }
 ```
 *  **chat message**: receives the message to be sent to the chat, the up(identifier) from the user sending, the chat room (identifier) for where it is being sent, and the timestamp when it was sent. This happens whenever a user sends a message to a chat room;
-```json
+```
 {
   message: String
   up: String,
@@ -173,7 +201,7 @@ There are different kinds of events:
 
 
 * **join room**: receives the up(identifier) from the user joining, and the chat room (identifier) it is joining. This happens when a user joins a new chat room.
-```json
+```
 {
   up: String
 }
@@ -181,27 +209,20 @@ There are different kinds of events:
 
 This implementation has event-driven architecture where the client emits events and triggers the communication with the server.
 
-
-## Architecture and Choices
-
-```mermaid
-flowchart LR
-    client[Client]
-    chat-server[Chat Server]
-    client -->|websocket| chat-server
-```
-
-For communication with the client, the chat server needs to send messages autonomously. For this polling, long-polling, and websockets are possibilities. Polling and long-polling are more demanding computationally, hence the coice for **websockets**.
-
-## Technologies
-
-- chat server
-  - **backend** node.js
-  - **websockets** socket.io
-
-## Operations
+---
+# Operations
+- how to set up de environment - services on, how they connect and by which order they go up
+- how to build and run
+- how to deploy to production
+- how to operate the system
+- how to run and access fitness functions
 
 ### Non Functional Requirements
+
+The code is modular, so new features can easily be added.
+Code convention are maintained using Eslint, a JavaScript linter that enables the enforcement of a set of style, formatting, and coding standards for the code, with airbnb rules.
+
+
 
 #### Fitness Functions
 
