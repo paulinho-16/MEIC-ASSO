@@ -1,126 +1,264 @@
+import axios from 'axios'
+
 import { Request, Response } from 'express'
-import {
-  Event
-} from '@/@types/events'
+import { Event } from '@/@types/events'
+import { DateTime } from 'luxon'
 
 import events from '@/services/calendar'
 
-
-const marketing = {
-  'acronym': 'MK',
-  'week day': 'Tuesday',
-  'time': '14:00-17:00',
-  'room': 'B020',
-  'teacher': 'GB',
-  'type': 'TP'
+export enum EventType {
+  CUSTOM = 'CUSTOM',
+  TIMETABLE = 'TIMETABLE',
+  EXAM = 'EXAM',
+  PUBLIC = 'PUBLIC',
 }
 
-const gestao_empresas = {
-  'acronym': 'GEE',
-  'week day': 'Thursday',
-  'time': '14:00-17:00',
-  'room': 'B006',
-  'teacher': 'MR',
-  'type': 'TP'
+const weekdays: { [day: string]: number } = {
+  Monday: 1,
+  Tuesday: 2,
+  Wednesday: 3,
+  Thursday: 4,
+  Friday: 5,
+  Saturday: 6,
+  Sunday: 7,
 }
 
-const cpm1 = {
-  'acronym': 'CPM',
-  'week day': 'Tuesday',
-  'time': '09:00-10:30',
-  'room': 'B229',
-  'teacher': 'APM',
-  'type': 'TP'
+function getWeekDaysBetweenTwoDates(leftISO: string, rightISO: string, weekday: string) {
+  // using luxon library to deal with special cases (e.g. daylight savings time)
+  let currentDate = DateTime.fromISO(leftISO)
+  const targetWeekDay = weekdays[weekday]
+  const result = []
+
+  while (currentDate <= DateTime.fromISO(rightISO)) {
+    const currentWeekDay = currentDate.weekday
+    if (currentWeekDay === targetWeekDay) result.push(currentDate)
+    const diff =
+      targetWeekDay > currentWeekDay
+        ? targetWeekDay - currentWeekDay
+        : targetWeekDay + 7 - currentWeekDay // number of days needed to get to the next desired week day
+
+    currentDate = currentDate.plus({ days: diff })
+  }
+  return result.map(v => v.toISODate())
 }
 
-const cpm2 = {
-  'acronym': 'CPM',
-  'week day': 'Thursday',
-  'time': '15:30-17:00',
-  'room': 'B343',
-  'teacher': 'APM',
-  'type': 'TP'
+function parseBlockDateToISO(date: string) {
+  // blockStartDate: '27-02-2022', blockEndDate: '11-06-2022'
+  const parts = date.split('-')
+  return `${parts[2]}-${parts[1]}-${parts[0]}`
 }
 
-const sigarra_timetable = [
-  marketing, gestao_empresas, cpm1, cpm2
-]
+async function indexTimetable(userId: string) {
+  const timetableObject = (await axios.get('http://localhost:3000/schedule/student')).data
 
-const evaluation_assessment = {
-  'acronym': 'MK',
-  'day': '21 junho',
-  'time': '11:30-13:30',
-  'rooms': 'B113'
-} 
+  await events.deleteAllEvents(userId, EventType.TIMETABLE)
 
-function parseJSONTimetable (sigarra_timetable: JSON){
-  //for(let i = 0; i  < sigarra_timetable; i++){
-    
-  //}
-} 
+  const blockStartDate = parseBlockDateToISO(timetableObject.weekBlock.blockStartDate)
+  const blockEndDate = parseBlockDateToISO(timetableObject.weekBlock.blockEndDate)
 
+  const scheduleTable = timetableObject.scheduleTable
 
+  for (let index = 0; index < scheduleTable.length; index++) {
+    const classBlock = scheduleTable[index]
 
+    const dates = getWeekDaysBetweenTwoDates(blockStartDate, blockEndDate, classBlock.dayOfTheWeek)
+
+    for (const date of dates) {
+      const new_event: Event = {
+        summary: classBlock.curricularUnitName,
+        description:
+          classBlock.dayOfTheWeek +
+          ' ' +
+          classBlock.classType +
+          ' ' +
+          classBlock.class +
+          ' ' +
+          classBlock.professors,
+        location: classBlock.room,
+        date: new Date(date),
+        startTime: new Date(date + ' ' + classBlock.startTime + ':00'),
+        endTime: new Date(date + ' ' + classBlock.endTime + ':00'),
+        recurrence: 'weekly',
+        type: EventType.TIMETABLE,
+      }
+
+      const retval = await events.createEvent(new_event)
+
+      if (retval != false) {
+        const eventId = retval
+        await events.createEventRelation(eventId, userId)
+      }
+    }
+  }
+}
+
+async function indexExams(userId: string, studentCode: string) {
+  const examsObject = (await axios.get(`http://localhost:3000/student-exams/${studentCode}`)).data
+
+  await events.deleteAllEvents(userId, EventType.EXAM)
+
+  const seasons = examsObject.seasons
+
+  for (let x = 0; x < seasons.length; x++) {
+    const season = seasons[x]
+    let exams = season.exams
+
+    for (let y = 0; y < exams.length; y++) {
+      const exam = exams[y]
+
+      const new_event: Event = {
+        summary: exam.curricularUnit + ' ' + season.name,
+        description: null,
+        location: exam.rooms,
+        date: new Date(exam.date), // verify day format
+        startTime: new Date(exam.date + ' ' + exam.beginHour + ':00'),
+        endTime: new Date(exam.date + ' ' + exam.endHour + ':00'), // verify duration format
+        recurrence: null,
+        type: EventType.EXAM,
+      }
+
+      const retval = await events.createEvent(new_event)
+
+      if (retval != false) {
+        const eventId = retval
+        await events.createEventRelation(eventId, userId)
+      }
+    }
+  }
+}
+
+const eventTypeUpdaters = {
+  [EventType.PUBLIC.toString()]: { daysValid: 0, update: async () => {} },
+  [EventType.EXAM.toString()]: { daysValid: 1, update: indexExams },
+  [EventType.TIMETABLE.toString()]: { daysValid: 1, update: indexTimetable },
+}
+
+async function updateEvents(eventType: string, userId: string, studentCode: string) {
+  const lastDate: any = await events.getLastScrapeDate(eventType, userId)
+  if (lastDate === false) return false
+
+  const currentDate: any = new Date()
+  const diffMs = Math.abs(currentDate - lastDate) // diff in milliseconds
+  const diffDays = diffMs / 1000 / 3600 / 24
+
+  if (diffDays >= eventTypeUpdaters[eventType].daysValid) {
+    console.log(
+      `Indexing ${eventType} of user with id = ${userId} and studentCode = ${studentCode}.`
+    )
+    await eventTypeUpdaters[eventType].update(userId, studentCode)
+    await events.updateLastScrapeDate(eventType, userId)
+  }
+}
+
+async function updateDataFromSigarra(wishlist: Array<string>, userId: string, studentCode: string) {
+  const promises = wishlist
+    .filter(eventType => eventType in eventTypeUpdaters)
+    .map(eventType => updateEvents(eventType, userId, studentCode))
+  await Promise.all(promises)
+}
+
+function allEventTypes() {
+  return [EventType.CUSTOM, EventType.EXAM, EventType.PUBLIC, EventType.TIMETABLE]
+}
+
+function validateWishList(wishlist: any) {
+  if (wishlist == undefined) return allEventTypes()
+
+  let wishes: Array<string>
+  let result: Array<string> = []
+
+  if (typeof wishlist === 'object') wishes = wishlist
+  else wishes = [wishlist]
+
+  for (const wish of wishes) {
+    if (typeof wish === 'string' && wish.toUpperCase() in EventType) result.push(wish.toUpperCase())
+  }
+
+  return result.length > 0 ? result : allEventTypes() // if no valid wish, then return all events
+}
+
+function getStartEndDates(query: any) {
+  let startDate
+  if (query.startDate == null) {
+    const today = new Date()
+    startDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
+  } else {
+    startDate = query.startDate.toString()
+  }
+  const endDate = query.endDate == null ? null : query.endDate.toString()
+
+  return [startDate, endDate]
+}
+
+function sendUnknownError(res: Response) {
+  res.status(500).send({ message: 'Something went wrong. Try again!' })
+}
+
+function sendGetResponse(res: Response, retval: any) {
+  if (retval !== false) {
+    res.status(200).send(retval)
+  } else sendUnknownError(res)
+}
 
 async function getCalendarEvents(req: Request, res: Response) {
-    let startDate;
-    if(req.query.startDate == null){
-      const today = new Date();
-      startDate = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-    }
-    else{
-      startDate = req.query.startDate.toString()
-    }
-    const endDate = req.query.endDate == null ? null : req.query.endDate.toString();
-    const retval = await events.getCalendarEvents(req.body.id, startDate, endDate);
-    if(retval !== false){
-      res.status(201).send(retval)
-    }
-    else{
-      res.status(500).send('Something went wrong. Try again!')
-    }
+  const wishlist = validateWishList(req.query.wishlist)
+  await updateDataFromSigarra(wishlist, req.body.id, req.query.studentCode as string)
+  const [startDate, endDate] = getStartEndDates(req.query)
+
+  const retval = await events.getCalendarEvents(req.body.id, startDate, endDate, wishlist)
+  sendGetResponse(res, retval)
+}
+
+async function getCalendarPublicEvents(req: Request, res: Response) {
+  const [startDate, endDate] = getStartEndDates(req.query)
+  // TODO public events don't need user id (create new table)
+  const retval = await events.getCalendarEvents(req.body.id, startDate, endDate, [EventType.PUBLIC])
+  sendGetResponse(res, retval)
 }
 
 async function addCalendarEvent(req: Request, res: Response) {
-    console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
-    if (req.query["summary"] == null || req.query["date"] == null || req.query["startTime"] == null || req.query["endTime"] == null)
-    {
-        console.log(req);
-        res.status(400).send("Invalid syntax!") // trocar para json com codigo de erro
-        return
-    }
-    
-    const new_event: Event = {
-      summary: req.query.summary.toString(),
-      description: req.query.description == null ? null : req.query.description.toString(),
-      location: req.query.location == null ? null : req.query.location.toString(),
-      date: new Date(req.query.date.toString()),
-      startTime: new Date(req.query.date.toString() + ' ' + req.query.startTime.toString()),
-      endTime: new Date(req.query.date.toString() + ' ' + req.query.endTime.toString()),
-      recurrence: req.query.recurrence == null ? null: req.query.recurrence.toString(),
-      isUni: false
-    }
-
-  const retval = await events.createEvent(new_event);
-
-  if(retval != false){
-    const eventId = retval
-    const data = await events.createEventRelation(eventId, req.body.id);
-    if(data){
-        res.status(201).send('Success')
-    }
-    else{
-      res.status(500).send('Something went wrong. Try again!')
-    }
+  console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
+  if (
+    req.query['summary'] == null ||
+    req.query['date'] == null ||
+    req.query['startTime'] == null ||
+    req.query['endTime'] == null
+  ) {
+    console.log(req)
+    res.status(400).send({ message: 'Invalid request!' }) // trocar para json com codigo de erro
+    return
   }
-  else{
-    res.status(500).send('Something went wrong. Try again!')
 
+  const new_event: Event = {
+    summary: req.query.summary.toString(),
+    description: req.query.description == null ? null : req.query.description.toString(),
+    location: req.query.location == null ? null : req.query.location.toString(),
+    date: new Date(req.query.date.toString()),
+    startTime: new Date(req.query.date.toString() + ' ' + req.query.startTime.toString()),
+    endTime: new Date(req.query.date.toString() + ' ' + req.query.endTime.toString()),
+    recurrence: req.query.recurrence == null ? null : req.query.recurrence.toString(),
+    type: EventType.CUSTOM,
+  }
+
+  const retval = await events.createEvent(new_event)
+
+  if (retval != false) {
+    const eventId = retval
+    const data = await events.createEventRelation(eventId, req.body.id)
+    if (data) {
+      res.status(201).send({ message: 'Success!' })
+    } else {
+      sendUnknownError(res)
+    }
+  } else {
+    sendUnknownError(res)
   }
 }
 
-
 export default {
-    getCalendarEvents,
-    addCalendarEvent
+  getCalendarEvents,
+  addCalendarEvent,
+  getCalendarPublicEvents,
+  validateWishList,
+  EventType,
 }
