@@ -114,6 +114,8 @@ router.get('/', auth.verifySessionToken, controller.getCalendarEvents)
  */
 router.post('/create', auth.verifySessionToken, controller.addCalendarEvent)
 
-router.post('/google-calendar-token', controller.getGCToken)
+router.get('/google-calendar-token', auth.verifySessionToken, controller.getGCToken) 
+
+router.post('/exportgc', auth.verifySessionToken, controller.exportToGC)
 
 export default router

@@ -6,6 +6,7 @@ import {
 import events from '@/services/calendar'
 import { calendar_v3, google } from "googleapis";
 import { makeOAuth2Client } from "../middleware/shared";
+import calendar from '@/services/calendar';
 
 const marketing = {
   'acronym': 'MK',
@@ -125,37 +126,45 @@ async function getGCToken(req: Request, res: Response) {
   const oauth2Client = makeOAuth2Client();
 
   if (code){
+    console.log(code);
     const refreshToken = await getRefreshToken(code);
     res.status(200).send(refreshToken);
   } 
   else{
-    const url = getAuthUrl();
+    const url = await getAuthUrl();
+    console.log(url);
     res.status(200).send(url);
   }
 
   async function getAuthUrl() {
-    const url = oauth2Client.generateAuthUrl({
+    const url = oauth2Client.generateAuthUrl({ 
       // 'online' (default) or 'offline' (gets refresh_token)
-      access_type: "offline",
+      access_type: "offline", 
 
       // scopes are documented here: https://developers.google.com/identity/protocols/oauth2/scopes#calendar
       scope: ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/calendar.events"],
     });
-
-    console.log(`Go to this URL to acquire a refresh token:\n\n${url}\n`);
+    return url;
   }
 
   async function getRefreshToken(code: string) {
+    console.log(oauth2Client);
     const token = await oauth2Client.getToken(code);
-    console.log(token);
+    return token;
   }
 }
 
 async function exportToGC(req: Request, res: Response){
-  const token = req.query["token"] as string;
+  const token = req.query["gctoken"] as string;
   const calendarClient = await makeCalendarClient(token);
-  createCalendarOnGC(calendarClient);
-  
+  const uniCalendarId = await createCalendarOnGC(calendarClient);
+  const retval = await addEventsToGC(uniCalendarId, req, calendarClient, token);
+  if(retval !== false){
+    res.send(200);
+  }
+  else{
+    res.send(500);
+  }
 }
 
 async function makeCalendarClient(refreshToken : string) {
@@ -170,30 +179,53 @@ async function makeCalendarClient(refreshToken : string) {
   return calendarClient;
 }
 
-async function addEventsToGC(uniCalendarId: string){
-
+async function addEventsToGC(uniCalendarId: string, req: Request, calendarClient : calendar_v3.Calendar, token : string){
+  const today = new Date();
+  const startDate = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+  const retval = await events.getCalendarEvents(req.body.id, startDate, null);
+  var GCevent;
+    if(retval !== false){
+      retval.forEach(async unievent => {
+        GCevent = {
+          'summary': unievent.summary,
+          'start':{
+            'dateTime': unievent.starttime,
+            'timeZone': 'America/Los_Angeles',
+          },
+          'end':{
+            'dateTime': unievent.endtime,
+            'timeZone': 'America/Los_Angeles',
+          }
+        }
+        if(unievent.description != null){
+          GCevent = {...GCevent, 'description': unievent.description};
+        }
+        if(unievent.location != null){
+          GCevent = {...GCevent, 'location': unievent.location};
+        }
+        const res = await calendarClient.events.insert({
+          calendarId: uniCalendarId,
+          requestBody: GCevent,
+        }, (error: Error) => console.log(error));
+        })
+    }
+    else{
+      return false;
+    }
 }
 
 async function createCalendarOnGC(calendarClient : calendar_v3.Calendar) {
-
-  const { data: calendars, status } = await calendarClient.calendarList.list();
+  
   let uniCalendarId;
 
-  if (status === 200) {
-    calendars.items.forEach(calendar => {
-      if(calendar.summary === "Uni4All Calendar"){
-        uniCalendarId = calendar.id;
-      }
-    });
-    if(uniCalendarId == null){
-      const res = await calendarClient.calendars.insert({
-        requestBody: {
-             "summary": "Uni4All Calendar",
-        },
-      });
-      uniCalendarId = res.data.id;
-    }
-  }
+  const res = await calendarClient.calendars.insert({
+    requestBody: {
+          "summary": "Uni4All Calendar", // maybe add date
+    },
+  });
+  uniCalendarId = res.data.id;
+  //  }
+  //}
   return uniCalendarId;
 }
 
@@ -201,5 +233,6 @@ async function createCalendarOnGC(calendarClient : calendar_v3.Calendar) {
 export default {
     getCalendarEvents,
     addCalendarEvent,
-    getGCToken
+    getGCToken,
+    exportToGC
 }
