@@ -26,6 +26,12 @@ export default function GroupChat({data, socket}) {
   }
 
   useEffect(() => {
+    setMessages(data.messages.map(message => ({
+      from: message.from.number, message: message.message, timestamp: message.createdAt
+    })))
+  }, [data]);
+
+  useEffect(() => {
     if (socket) {
       socket.emit("join room", up, data.id);
     }
