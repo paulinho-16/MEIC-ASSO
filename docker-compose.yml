@@ -70,18 +70,6 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=password12345678
       - MONGODB_URI=mongodb://mongo_chat:27017/
 
-  chat-client:
-    build:
-      context: ./chat/client
-      dockerfile: Dockerfile
-    volumes:
-      - ./chat/client/src:/usr/src/app/chat/client/src/
-    container_name: chat-client
-    ports:
-      - 5500:5500
-    depends_on:
-      - chat-server
-
   postgres:
     container_name: postgres
     restart: always
