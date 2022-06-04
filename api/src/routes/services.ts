@@ -2,6 +2,8 @@ import express from 'express'
 
 import controller from '../controller/services.controller'
 
+import constants from '@/config/constants'
+
 const router = express.Router()
 
 /**
@@ -60,5 +62,28 @@ const router = express.Router()
  *         description: Unexpected error
  */
 router.get('/:id', controller.getServices)
+
+/**
+ * @swagger
+ * /services/{serviceNumber}/url:
+ *   get:
+ *     summary: Fetch URL of service's information for service with serviceNumber
+ *     parameters:
+ *     responses:
+ *       200:
+ *         description: The URL necessary to retrieve service's information for service with serviceNumber
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *             example:
+ *               https://sigarra.up.pt/feup/pt/uni_geral.unidade_view?pv_unidade=73
+ *       500:
+ *         description: Unexpected error
+ */
+router.route('/:id/url')
+    .get(function (req, res) {
+        res.status(200).send(`${constants.mainUrl}/uni_geral.unidade_view?pv_unidade=${req.params.id}`);
+    });
 
 export default router

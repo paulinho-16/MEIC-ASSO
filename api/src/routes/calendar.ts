@@ -21,6 +21,12 @@ const router = express.Router()
  *           type: array
  *         description: Retrieve only the specified types of events. Array of strings. Supported types of events are TIMETABLE (from the SIGARRA schedule), CUSTOM (created by the user) and EXAM (from the user's SIGARRA exam calendar). Defaults to all types
  *       - in: query
+ *         name: eventWishlist
+ *         required: false
+ *         schema:
+ *           type: array
+ *         description: Retrieve only the specified fields of each event. Array of strings. The supported fields are listed in the response example. Defaults to all fields
+ *       - in: query
  *         name: startDate
  *         required: false
  *         schema:
@@ -48,6 +54,9 @@ const router = express.Router()
  *               items:
  *                 type: object
  *                 properties:
+ *                   id:
+ *                     type: int
+ *                     example: "1"
  *                   summary:
  *                     type: string
  *                     example: "CPM"
