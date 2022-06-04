@@ -2,10 +2,6 @@
 
 Uni4all payments backend implementation.
 
-> **for developers**: write this as you build.
->
-> **for outsiders 👀**: take into account that this is still a WiP, and as such, this document represents the actual state of the implementation.
-
 ## Current features
 
 - Get the current balance of a user
