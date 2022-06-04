@@ -139,9 +139,8 @@ router.post('/create', auth.verifySessionToken, controller.addCalendarEvent)
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   type: array
- *                   example: []
+ *                 token:
+ *                   type: string
 */
 router.get('/google-calendar-token', auth.verifySessionToken, controller.getGCToken)
 
