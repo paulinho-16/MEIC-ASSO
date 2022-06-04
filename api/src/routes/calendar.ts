@@ -10,6 +10,8 @@ const router = express.Router()
  * @swagger
  * /calendar:
  *   get:
+ *     tags:
+ *       - calendar
  *     summary: Get the calendar events
  *     parameters:
  *       - in: header
@@ -50,6 +52,8 @@ router.get('/', auth.verifySessionToken, controller.getCalendarEvents)
  * @swagger
  * /calendar/create:
  *   post:
+ *     tags:
+ *       - calendar
  *     description: Add a calendar event
  *     requestBody:
  *       description: Event info
@@ -114,7 +118,7 @@ router.get('/', auth.verifySessionToken, controller.getCalendarEvents)
  */
 router.post('/create', auth.verifySessionToken, controller.addCalendarEvent)
 
-router.get('/google-calendar-token', auth.verifySessionToken, controller.getGCToken) 
+router.get('/google-calendar-token', auth.verifySessionToken, controller.getGCToken)
 
 router.post('/exportgc', auth.verifySessionToken, controller.exportToGC)
 
