@@ -7,4 +7,9 @@ router.get('/location', controller.location)
 router.get('/:group/message', controller.groupMessage)
 router.get('/message', controller.message)
 
+router.get('/group', controller.getGroups)
+router.post('/group', controller.createGroup)
+router.get('/group/:groupID/messages', controller.getGroupMessages)
+router.put('/group/:groupID/members', controller.addToGroup)
+router.delete('/group/:groupID/members/:userUp', controller.removeFromGroup)
 export default router
