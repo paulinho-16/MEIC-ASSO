@@ -106,22 +106,37 @@ async function createEventRelation(eventId: string, userId: string) {
   }
 }
 
-async function deleteEvent(id: string) {
+async function deleteEvent(eventId: string, userId: string) {
   console.log('Deleting event')
 
   if (!connectDatabase()) {
     return { linesDeleted: 0, message: 'Error connecting to database!' }
   }
+
+  let verifyUserQuery = {
+    text: 'SELECT * FROM EventUsers WHERE eventId=$1 AND userId=$2',
+    values: [eventId, userId],
+  }
+
+  try {
+    let res = await client.query(verifyUserQuery)
+    if (res.rowCount == 0)
+      return { linesDeleted: 0, message: `No event wit id = ${eventId} associated with logged in user!` }
+  } catch (err) {
+    console.log(err)
+    return { linesDeleted: 0, message: 'Error executing query...' }
+  }
+
   let query = {
     text: 'DELETE FROM Events WHERE id=$1',
-    values: [id],
+    values: [eventId],
   }
 
   try {
     let res = await client.query(query)
     return {
       linesDeleted: res.rowCount,
-      message: res.rowCount > 0 ? 'Deleted successfully' : `There is no event with id = ${id}`,
+      message: res.rowCount > 0 ? 'Deleted successfully' : `There is no event with id = ${eventId}`,
     }
   } catch (err) {
     console.log(err)

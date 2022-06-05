@@ -116,7 +116,7 @@ async function deleteCalendarEvent(req: Request, res: Response) {
     return
   }
 
-  const retval = await events.deleteEvent(req.params.id as string)
+  const retval = await events.deleteEvent(req.params.id as string, req.body.id as string)
   res.status(200).send(retval)
 }
 
