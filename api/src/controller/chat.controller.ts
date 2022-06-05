@@ -247,7 +247,13 @@ async function getGroupMessages(req: Request, res: Response) {
     })
 
   try {
-    const response = await axios.get(`http://mongo_chat_server:3000/group/messages`) // TODO concrete location
+    const response = await axios.get(`http://mongo_chat_server:3000/group/messages`, {
+      data: {
+        groupID,
+        page,
+        perPage,
+      },
+    }) // TODO concrete location
 
     return res.status(200).json(response.data)
   } catch (error) {
