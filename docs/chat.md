@@ -211,9 +211,20 @@ This implementation has event-driven architecture where the client emits events 
 
 ---
 # Operations
-- how to set up de environment - services on, how they connect and by which order they go up
-- how to build and run
+
+For the chat to be operational it needs three containers working: mongo-chat, mongo-chat-server and chat-server. The order by whitch they must go up can be seen in the Docker-compose but is mongo-chat goes first, then mongo-chat-server that depends on mongo-chat and lastly chat-server that depends on mongo-chat-server. 
+
+To build and run these containers, it is needed:
+- to run the command that builds and runs the docker file 
+```
+docker-compose up --build
+```
+
 - how to deploy to production
+
+The deployment to production is made along with the rest of the containers using GitHub actions.
+
+
 - how to operate the system
 - how to run and access fitness functions
 
