@@ -75,41 +75,49 @@ async function getGroupMessages(req: Request, res: Response) {
 }
 
 async function addToGroup(req: Request, res: Response) {
-  const { groupID, userNumber } = req.body;
+  const { id: groupID } = req.params;
+  const { userNumber } = req.body;
+
   if (groupID === undefined || userNumber === undefined)
     return res
       .status(400)
       .json("You need to specify the groupID and userNumber arguments.");
   const { status, data } = await _getGroupById(groupID);
-  if (status >= 200) {
+  if (status >= 400) {
     return res.status(status).json(data);
   }
 
-  const group = await Group.findById(groupID);
+  const { modifiedCount } = await Group.updateOne(
+    { _id: groupID },
+    { $push: { userNumbers: userNumber } }
+  );
 
-  group.userNumbers.push(userNumber);
-
-  await group.save();
-  return res.status(200).json(group);
+  return res.status(200).json({
+    modified: modifiedCount,
+  });
 }
 
 async function removeFromGroup(req: Request, res: Response) {
-  const { groupID, userNumber } = req.body;
+  const { id: groupID } = req.params;
+  const { userNumber } = req.body;
+
   if (groupID === undefined || userNumber === undefined)
     return res
       .status(400)
       .json("You need to specify the groupID and userNumber arguments.");
   const { status, data } = await _getGroupById(groupID);
-  if (status >= 200) {
+  if (status >= 400) {
     return res.status(status).json(data);
   }
 
-  const group = await Group.findById(groupID);
+  const { modifiedCount } = await Group.updateOne(
+    { _id: groupID },
+    { $pull: { userNumbers: userNumber } }
+  );
 
-  group.userNumbers = group.userNumbers.filter((user) => user !== userNumber);
-
-  await group.save();
-  return res.status(200).json(group);
+  return res.status(200).json({
+    modified: modifiedCount,
+  });
 }
 
 export default {
