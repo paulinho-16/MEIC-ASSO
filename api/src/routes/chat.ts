@@ -7,7 +7,7 @@ router.get('/location', controller.location)
 router.get('/:group/message', controller.groupMessage)
 router.get('/message', controller.message)
 
-router.get('/groups', controller.getGroups)
+router.get('/group', controller.getGroups)
 router.post('/group', controller.createGroup)
 router.get('/group/:groupID/messages', controller.getGroupMessages)
 router.put('/group/:groupID/members', controller.addToGroup)
