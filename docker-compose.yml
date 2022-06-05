@@ -69,6 +69,8 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=password12345678
       - MONGODB_URI=mongodb://mongo_chat:27017/
+    depends_on:
+      - mongo_chat_server
 
   postgres:
     container_name: postgres

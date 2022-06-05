@@ -15,15 +15,12 @@ function location(req: Request, res: Response) {
   return res.status(200).json({ url: 'http://uni4all.servehttp.com:8082/' }) // TODO concrete location, not this
 }
 
-async function _groupMessage(group: string) {
+async function _getGroup(group: string) {
   // use this method when you know that all parameters are correct
   // requests the mongo chat
-  console.log(group)
   const groupObject: Group = await axios.get(`http://mongo_chat_server:3000/group/${group}`) // TODO concrete location
-  console.log(groupObject.data)
-  const messages: Message[] = groupObject.data.messages
 
-  return messages
+  return groupObject
 }
 
 async function groupMessage(req: Request, res: Response) {
@@ -71,24 +68,20 @@ async function groupMessage(req: Request, res: Response) {
   //   return res.status(500).json({ error })
   // }
 
-  return await _groupMessage(group)
-    .then(messages => {
-      console.log('aaaa')
-      return res.status(200).json({ messages })
+  return await _getGroup(group)
+    .then(group => {
+      return res.status(200).json({ group })
     })
     .catch(error => {
       // if the error status code is 404
       //  return a 404
       console.log(error)
-      console.log('fds')
       if (error.response.status === 404) {
         return res.status(404).json({ error: 'group not found' })
       } else {
         return res.status(500).json({ error })
       }
     })
-
-  console.log('chef')
 }
 
 async function message(req: Request, res: Response) {
@@ -119,7 +112,6 @@ async function message(req: Request, res: Response) {
   const messages = new Map<string, any>()
 
   groups.forEach((group: { _id: string; messages: any }) => {
-    console.log(group)
     messages.set(group._id, group.messages)
   })
 
