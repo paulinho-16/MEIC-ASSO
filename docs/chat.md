@@ -7,11 +7,19 @@ Uni4all chat backend implementation.
 > **for outsiders 👀**: take into account that this is still a WiP, and as such, this document represents the actual state of the implementation.
 
 ## Current Features
-
-- chat globally
-- chat directly to another user
-- notifications for user connections and disconnections
-- update user username
+- chat client
+  - see all user's groups
+  - see all groups messages
+  - send messages   
+- chat server 
+  - create new chat 
+  - join chat
+  - leave chat
+  - get groups or group (by id)
+  - get group messages w/ **pagination**
+  - get user's groups
+  - create new message
+  - update user info: username, name and whether is online or not
 
 ## Architecture and Choices
 
@@ -24,38 +32,208 @@ flowchart LR
 
 For communication with the client, the chat server needs to send messages autonomously. For this polling, long-polling, and websockets are possibilities. Polling and long-polling are more demanding computationally, hence the coice for **websockets**.
 
-## Socket Endpoints
-
-### Receiving
-
-- `connection`: (implicit) on a new connection
-- `disonnect`: (implicit) on a disconnection
-- `username`: to update a username
-  - msg (string): the new username
-- `chat message`: to send a chat message
-  - msg (string): the message
-  - to (string): the recipient
-
-### Sending
-
-- `notification`: a notification
-  - msg (string): the message
-- `private message`: a private message
-  - sender (string): the sender
-  - msg (string): the message
-- `chat message`: a general message
-  - sender (string): the sender
-  - msg (string): the message
-
 ## Technologies
 
-- chat server
-  - **backend** node.js
-  - **websockets** socket.io
+- Chat server
+  - **websockets** socket.io, is a common solution for most real-time chat systems, providing a bi-directional communication channel between a client and a server. It focus equally on reliability and speed.
+  - **backend** node.js with framework express, because is the most well documented technology with socket.io and socket.io is built on top of node.js.
+- Database
+  - **mongoDB**, because there is no need to define schemas allowing for a more flexibility in the development. Is good for a large dataset, low latency and low response times. As it is a NoSQL database it has the characteristics of it, it was designed for fast and simple questions, large dataset and frequent application changes. It also scales well horizontally allowing more machines to be added and handle the data across multiple servers. Concluding: flexibility, scalability, high-performance, availability, highly functional.
+  
+---
 
-## Operations
+## API Endpoints
+For more detailed documentation, refer to the swagger hub documentation.
+### `GET` /chat/location
+Gets the URL for the client to connect with.
+To be used when the client wants to connect a socket to a chat server.
+### `GET` /chat/:group/message
+Gets messages for a given group.
+This may be useful for when, for example, the user opens a chat group and scrolls up.
+- [Information Holder Resource](https://microservice-api-patterns.org/patterns/responsibility/endpointRoles/InformationHolderResource);
+- Returns a [Parameter Forest](https://microservice-api-patterns.org/patterns/structure/representationElements/ParameterForest) with information regarding each received message;
+- Given the sheer amount of possible messages, includes [Pagination](https://microservice-api-patterns.org/patterns/structure/compositeRepresentations/Pagination):
+	- If the page is not requested it returns the first page.
+### `GET` /chat/message
+Gets all possible messages.
+- Really a [Request Bundle](https://microservice-api-patterns.org/patterns/quality/dataTransferParsimony/RequestBundle) that verifies the groups in which the logged client is in, and performs a bunch of `/chat/:group/message` requests;
+- Returns a [Parameter Forest](https://microservice-api-patterns.org/patterns/structure/representationElements/ParameterForest) with a list of groups, and a list of messages per group;
+- Given the sheer amount of possible messages, includes [Pagination](https://microservice-api-patterns.org/patterns/structure/compositeRepresentations/Pagination):
+	- If the page is not requested it returns the first page.
+
+## Mongo Chat Server Endpoints
+To access the mongo chat server, use the following URL:
+```
+http://mongo_chat_server:3000/
+```
+
+### Groups
+
+### `GET` /group/
+Gets all groups.
+- Returns a [Parameter Forest](https://microservice-api-patterns.org/patterns/structure/representationElements/ParameterForest) with a list of groups;
+- Pagination is not supported.
+
+### `GET` /group/:id/
+Gets a group given a id.
+- Needs the id of the group to get.
+
+### `GET` /group/messages
+Gets all messages for a given group with pagination.
+- Returns a [Parameter Forest](https://microservice-api-patterns.org/patterns/structure/representationElements/ParameterForest) with a list of messages per group;
+- Given the sheer amount of possible messages, includes [Pagination](https://microservice-api-patterns.org/patterns/structure/compositeRepresentations/Pagination).
+- Receives the following arguments:
+  - `groupID`: the group to get the messages for;
+  - `page`: the page to get (starts at 0);
+  - `perPage`: the amount of messages per page.
+```
+{
+  "groupID": String required,
+  "page": Number required,
+  "perPage": Number required
+}
+```
+
+### `GET` /group/user/:up
+Gets all groups for a given user.
+- Returns a [Parameter Forest](https://microservice-api-patterns.org/patterns/structure/representationElements/ParameterForest) with a list of groups;
+- Needs the username of the user to get the groups for.	
+
+### `POST` /group/
+Creates a new group.
+- Receives the following arguments:
+  - `name`: the name of the group;
+  - `users`: the users that are part of the group.
+```
+{
+  "name": String required,
+  "users": [String] required
+}
+```
+
+### Messages
+
+### `GET` /message/
+Gets all messages with pagination.
+- Returns a [Parameter Forest](https://microservice-api-patterns.org/patterns/structure/representationElements/ParameterForest) with a list of messages;
+- Given the sheer amount of possible messages, includes [Pagination](https://microservice-api-patterns.org/patterns/structure/compositeRepresentations/Pagination).
+- Receives the following arguments:
+  - `page`: the page to get (starts at 0);
+  - `perPage`: the amount of messages per page.
+```
+{
+  "page": Number required,
+  "perPage": Number required
+}
+```
+
+### `GET` /message/:id
+Gets a message given an id.
+- Needs the id of the message to get.
+
+### `POST` /message/
+Creates a new message.
+- Receives the following arguments:
+  - `group`: the group the message is for;
+  - `from`: the user that sent the message;
+  - `message`: the message itself.
+```
+{
+  "group": String required,
+  "from": String required,
+  "message": String required
+}
+```
+
+### Users
+
+### `POST` /user/:up
+Updates user.
+- Needs the username of the user to update.
+- Receives the following arguments:
+  - `username`: the new username;
+  - `name`: the new name;
+  - `online`: the new online status.
+```
+{
+  "username": String,
+  "name": String,
+  "online": Boolean
+}
+```
+
+
+
+# Chat implementation
+
+- In `/server` expect an implementation of a chat server.
+- In `/client` expect an implementation of a frontend that tests and demonstrates the chat features.
+
+There are different kinds of events:
+* **connection**:  receives the socket created between the client and the server and happens when the socket is created between client and server;
+```
+{
+    socket: String
+}
+```
+
+* **online**: receives the up (identifier of the user) that is getting online and happens when a user goes online in the app;
+```
+{
+  up: String
+}
+```
+* **disconnect**: receives the up (identifier of the user) that is disconnecting and happens when a user goes offline;
+```
+{
+  up: String
+}
+```
+*  **chat message**: receives the message to be sent to the chat, the up(identifier) from the user sending, the chat room (identifier) for where it is being sent, and the timestamp when it was sent. This happens whenever a user sends a message to a chat room;
+```
+{
+  message: String
+  up: String,
+  room: String,
+  timestamp: String
+}
+```
+
+
+* **join room**: receives the up(identifier) from the user joining, and the chat room (identifier) it is joining. This happens when a user joins a new chat room.
+```
+{
+  up: String
+}
+```
+
+This implementation has event-driven architecture where the client emits events and triggers the communication with the server.
+
+---
+# Operations
+
+For the chat to be operational it needs three containers working: mongo-chat, mongo-chat-server and chat-server. The order by whitch they must go up can be seen in the Docker-compose but is mongo-chat goes first, then mongo-chat-server that depends on mongo-chat and lastly chat-server that depends on mongo-chat-server. 
+
+To build and run these containers, it is needed:
+- to run the command that builds and runs the docker file 
+```
+docker-compose up --build
+```
+
+- how to deploy to production
+
+The deployment to production is made along with the rest of the containers using GitHub actions.
+
+
+- how to operate the system
+- how to run and access fitness functions
 
 ### Non Functional Requirements
+
+The code is modular, so new features can easily be added.
+Code convention are maintained using Eslint, a JavaScript linter that enables the enforcement of a set of style, formatting, and coding standards for the code, with airbnb rules.
+
+
 
 #### Fitness Functions
 
