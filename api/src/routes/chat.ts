@@ -7,4 +7,5 @@ router.get('/location', controller.location)
 router.get('/:group/message', controller.groupMessage)
 router.get('/message', controller.message)
 
+router.get('/groups', controller.getGroups)
 export default router

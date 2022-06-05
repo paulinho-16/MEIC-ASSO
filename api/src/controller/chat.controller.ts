@@ -127,8 +127,107 @@ async function message(req: Request, res: Response) {
   return res.status(200).json({ messages: [...messages] })
 }
 
+async function addToGroup(req: Request, res: Response) {
+  const { userUp, groupID } = req.body
+
+  const errors = []
+
+  if (userUp === undefined) errors.push('userUp is not defined')
+
+  if (groupID === undefined) errors.push('groupID is not defined')
+
+  if (errors.length > 0)
+    return res.status(400).json({
+      messages: ['userUp is not defined'],
+    })
+
+  try {
+    const response = await axios.post(`http://mongo_chat_server:3000/${groupID}/`, {
+      userNumber: userUp,
+    }) // TODO concrete location
+
+    return res.status(200).json(response.data)
+  } catch (error) {
+    return res.status(400).json(error.response.data)
+  }
+}
+
+async function removeFromGroup(req: Request, res: Response) {
+  const { userUp, groupID } = req.body
+
+  const errors = []
+
+  if (userUp === undefined) errors.push('userUp is not defined')
+
+  if (groupID === undefined) errors.push('groupID is not defined')
+
+  if (errors.length > 0)
+    return res.status(400).json({
+      messages: ['userUp is not defined'],
+    })
+
+  try {
+    const response = await axios.delete(`http://mongo_chat_server:3000/${groupID}`, {
+      data: {
+        userNumber: userUp,
+      },
+    }) // TODO concrete location
+
+    return res.status(200).json(response.data)
+  } catch (error) {
+    return res.status(400).json(error.response.data)
+  }
+}
+
+async function getGroups(req: Request, res: Response) {
+  const { userUp } = req.body
+
+  if (userUp === undefined) {
+    return res.status(400).json({
+      messages: ['userUp is not defined'],
+    })
+  }
+
+  try {
+    const response = await axios.get(`http://mongo_chat_server:3000/group/user/${userUp}`) // TODO concrete location
+
+    return res.status(200).json(response.data)
+  } catch (error) {
+    return res.status(400).json(error.response.data)
+  }
+}
+
+async function getGroupMessages(req: Request, res: Response) {
+  const { groupID, perPage, page } = req.body
+
+  const errors = []
+
+  if (groupID === undefined) errors.push('groupID is not defined')
+
+  if (perPage === undefined) errors.push('perPage is not defined')
+
+  if (page === undefined) errors.push('page is not defined')
+
+  if (errors.length > 0)
+    return res.status(400).json({
+      messages: ['userUp is not defined'],
+    })
+
+  try {
+    const response = await axios.get(`http://mongo_chat_server:3000/group/messages`) // TODO concrete location
+
+    return res.status(200).json(response.data)
+  } catch (error) {
+    return res.status(400).json(error.response.data)
+  }
+}
+
 export default {
   location,
   groupMessage,
   message,
+  getGroups,
+  getGroupMessages,
+  addToGroup,
+  removeFromGroup,
 }
