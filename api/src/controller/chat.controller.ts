@@ -127,8 +127,37 @@ async function message(req: Request, res: Response) {
   return res.status(200).json({ messages: [...messages] })
 }
 
+async function createGroup(req: Request, res: Response) {
+  const { name, userNumbers } = req.body
+
+  const errors = []
+
+  if (name === undefined) errors.push('name is not defined')
+
+  if (userNumbers === undefined) errors.push('userNumbers is not defined')
+
+  if (userNumbers !== undefined && userNumbers.length === 0) errors.push('userNumbers is empty')
+
+  if (errors.length > 0)
+    return res.status(400).json({
+      messages: errors,
+    })
+
+  try {
+    const response = await axios.post(`http://mongo_chat_server:3000/group`, {
+      name,
+      userNumbers,
+    }) // TODO concrete location
+
+    return res.status(200).json(response.data)
+  } catch (error) {
+    return res.status(400).json(error.response.data)
+  }
+}
+
 async function addToGroup(req: Request, res: Response) {
-  const { userUp, groupID } = req.body
+  const { groupID } = req.params
+  const { userUp } = req.body
 
   const errors = []
 
@@ -138,7 +167,7 @@ async function addToGroup(req: Request, res: Response) {
 
   if (errors.length > 0)
     return res.status(400).json({
-      messages: ['userUp is not defined'],
+      messages: errors,
     })
 
   try {
@@ -153,7 +182,8 @@ async function addToGroup(req: Request, res: Response) {
 }
 
 async function removeFromGroup(req: Request, res: Response) {
-  const { userUp, groupID } = req.body
+  const { groupID } = req.params
+  const { userUp } = req.body
 
   const errors = []
 
@@ -182,11 +212,14 @@ async function removeFromGroup(req: Request, res: Response) {
 async function getGroups(req: Request, res: Response) {
   const { userUp } = req.body
 
-  if (userUp === undefined) {
+  const errors = []
+
+  if (userUp === undefined) errors.push('userUp is not defined')
+
+  if (errors.length > 0)
     return res.status(400).json({
       messages: ['userUp is not defined'],
     })
-  }
 
   try {
     const response = await axios.get(`http://mongo_chat_server:3000/group/user/${userUp}`) // TODO concrete location
@@ -198,7 +231,8 @@ async function getGroups(req: Request, res: Response) {
 }
 
 async function getGroupMessages(req: Request, res: Response) {
-  const { groupID, perPage, page } = req.body
+  const { groupID } = req.params
+  const { perPage, page } = req.body
 
   const errors = []
 
@@ -210,7 +244,7 @@ async function getGroupMessages(req: Request, res: Response) {
 
   if (errors.length > 0)
     return res.status(400).json({
-      messages: ['userUp is not defined'],
+      messages: errors,
     })
 
   try {
@@ -226,6 +260,7 @@ export default {
   location,
   groupMessage,
   message,
+  createGroup,
   getGroups,
   getGroupMessages,
   addToGroup,
