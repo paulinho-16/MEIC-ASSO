@@ -182,8 +182,7 @@ async function addToGroup(req: Request, res: Response) {
 }
 
 async function removeFromGroup(req: Request, res: Response) {
-  const { groupID } = req.params
-  const { userUp } = req.body
+  const { userUp, groupID } = req.params
 
   const errors = []
 
@@ -193,7 +192,7 @@ async function removeFromGroup(req: Request, res: Response) {
 
   if (errors.length > 0)
     return res.status(400).json({
-      messages: ['userUp is not defined'],
+      messages: errors,
     })
 
   try {
@@ -218,7 +217,7 @@ async function getGroups(req: Request, res: Response) {
 
   if (errors.length > 0)
     return res.status(400).json({
-      messages: ['userUp is not defined'],
+      messages: errors,
     })
 
   try {
