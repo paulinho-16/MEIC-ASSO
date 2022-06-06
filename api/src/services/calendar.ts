@@ -203,7 +203,7 @@ async function updateEvent(eventId: string, userId: string, parameters: Array<st
     }
   }
 
-  const ret = verifyEventTypeAndUser(eventId, userId, true) 
+  const ret = await verifyEventTypeAndUser(eventId, userId, true) 
   if (ret) return ret 
 
   values.push(eventId)
@@ -235,7 +235,7 @@ async function updateEvent(eventId: string, userId: string, parameters: Array<st
 async function deleteEvent(eventId: string, userId: string) {
   console.log('Deleting event')
 
-  const ret = verifyEventTypeAndUser(eventId, userId, false)
+  const ret = await verifyEventTypeAndUser(eventId, userId, false)
   if (ret) return ret 
 
   let query = {
