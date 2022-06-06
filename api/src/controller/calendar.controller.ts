@@ -311,7 +311,31 @@ async function deleteCalendarEvent(req: Request, res: Response) {
   res.status(200).send(retval)
 }
 
-async function updateCalendarEvent(req: Request, res: Response) {}
+async function updateCalendarEvent(req: Request, res: Response) {
+
+  if (req.params.id == null) {
+    console.log(req)
+    res.status(400).send({ linesDeleted: 0, message: 'Invalid request syntax, missing id parameter!' })
+    return
+  }
+
+  const parameters: Array<string> = []
+  const values: Array<string> = []
+
+  for (const [parameter, value] of Object.entries(req.body)) {
+    if (parameter == "id") continue
+    if (!eventParameters.includes(parameter)) {
+      res.status(400).send({ linesDeleted: 0, message: `Invalid parameter ${parameter}` })
+      return;
+    }
+
+    parameters.push(parameter)
+    values.push(value as string)
+  }
+
+  const retval = await events.updateEvent(req.params.id as string, req.body.id as string, parameters, values)
+  res.status(200).send(retval)
+}
 
 export default {
   getCalendarEvents,
