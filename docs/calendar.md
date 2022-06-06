@@ -43,7 +43,7 @@ This route was created to generate an authentication token in the Google API, it
 
 All of the responses will also include a message with their description.
 
-This route may receive one parameter (optional):
+This route may receive one parameter (automatically sent after the user authorizes the app):
 - `code` if sent it will retrieve a Refresh Token, else it will retrieve an Auth URL.
 
 This route requires authentication.
@@ -51,7 +51,7 @@ This route requires authentication.
 ### POST `/calendar/exportgc`
 
 This route was created to export events to the Google Calendar:
-- `gctoken` - the Google Calendar Token
+- `gctoken` - the Google Calendar Token (to generate this token, use the route /google-calendar-token)
 
 It will return a response with a status code of:
 - 200 if successfully exported events to Google Calendar
