@@ -179,32 +179,36 @@ async function verifyEventUser(eventId: string, userId: string) {
   }
 }
 
-async function verifyEventTypeAndUser(eventId: string, userId: string, update: boolean) {
+async function verifyEventTypeAndUser(eventId: string, userId: string) {
   const res = await verifyEventUser(eventId, userId)
-  const rowsKey = `rows${update ? "Updated" : "Deleted"}`
   if (res == null)
     return {
-      [rowsKey]: 0,
-      message: `No event wit id = ${eventId} associated with logged in user!`,
+      message: `No event with id = ${eventId} associated with logged in user!`,
+      statusCode: 401,
     }
 
   if (!verifyEventType(res))
     return {
-      [rowsKey]: 0,
-      message: `Event wit id = ${eventId} cannot be removed!`,
+      message: `Event with id = ${eventId} cannot be removed or edited!`,
+      statusCode: 403,
     }
 }
 
-async function updateEvent(eventId: string, userId: string, parameters: Array<string>, values: Array<string>) {
+async function updateEvent(
+  eventId: string,
+  userId: string,
+  parameters: Array<string>,
+  values: Array<string>
+) {
   if (parameters.length != values.length || parameters.length == 0) {
     return {
-      rowsUpdated: 0,
       message: 'Invalid parameters and values size!',
+      statusCode: 400,
     }
   }
 
-  const ret = await verifyEventTypeAndUser(eventId, userId, true) 
-  if (ret) return ret 
+  const ret = await verifyEventTypeAndUser(eventId, userId)
+  if (ret) return ret
 
   values.push(eventId)
   let updateValues = ''
@@ -223,20 +227,20 @@ async function updateEvent(eventId: string, userId: string, parameters: Array<st
   try {
     let res = await client.query(query)
     return {
-      rowsUpdated: res.rowCount,
       message: res.rowCount > 0 ? 'Updated successfully' : `There is no event with id = ${eventId}`,
+      statusCode: res.rowCount > 0 ? 200 : 404,
     }
   } catch (err) {
     console.log(err)
-    return { rowsUpdated: 0, message: 'Error executing query...' }
+    return { message: 'Error executing query...', statusCode: 500 }
   }
 }
 
 async function deleteEvent(eventId: string, userId: string) {
   console.log('Deleting event')
 
-  const ret = await verifyEventTypeAndUser(eventId, userId, false)
-  if (ret) return ret 
+  const ret = await verifyEventTypeAndUser(eventId, userId)
+  if (ret) return ret
 
   let query = {
     text: 'DELETE FROM Events WHERE id=$1',
@@ -246,12 +250,12 @@ async function deleteEvent(eventId: string, userId: string) {
   try {
     let res = await client.query(query)
     return {
-      rowsDeleted: res.rowCount,
       message: res.rowCount > 0 ? 'Deleted successfully' : `There is no event with id = ${eventId}`,
+      statusCode: res.rowCount > 0 ? 200 : 404,
     }
   } catch (err) {
     console.log(err)
-    return { rowsDeleted: 0, message: 'Error executing query...' }
+    return { message: 'Error executing query...', statusCode: 500 }
   }
 }
 
