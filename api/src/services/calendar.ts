@@ -1,49 +1,73 @@
-import { Client } from 'pg'
+import client from '@/util/connect-postgres'
 
 import { Event } from '@/@types/events'
 
-// Database Setup Methods.
-
-const client = new Client({
-  user: 'postgres',
-  host: 'postgres',
-  database: 'postgres',
-  password: 'postgres',
-  port: 5432,
-})
-
-let connected = false
-
-async function connectDatabase() {
-  if (connected) {
-    return true
+async function eventExists(startTime: Date, endTime: Date, summary: string, date: Date) {
+  let query = {
+    text: 'SELECT id FROM Events WHERE startTime = $1 AND endTime = $2 AND summary = $3 AND date = $4',
+    values: [startTime, endTime, summary, date],
   }
 
   try {
-    await client.connect()
-    connected = true
+    let res = await client.query(query)
+    if (res.rows.length > 0) return res.rows[0].id
+
+    return false
   } catch (err) {
-    connected = false
-    setTimeout(connectDatabase, 2000)
-    console.log('Error connecting to db. Retrying in 1s')
+    console.log(err)
+    return false
   }
 }
 
-async function getCalendarEvents(userId: string, startDate: string, endDate: string) {
-  let query
-  if (!connectDatabase()) {
-    console.log('Failed to connect to db')
+async function eventRelationExists(userdId: string, eventId: string) {
+  let query = {
+    text: 'SELECT eventId FROM EventUsers WHERE userId = $1 AND eventId = $2',
+    values: [userdId, eventId],
+  }
+
+  try {
+    let res = await client.query(query)
+    if (res.rows.length > 0) return true
+
+    return false
+  } catch (err) {
+    console.log(err)
     return false
   }
+}
+
+function getEventTypeCondition(eventTypes: Array<string>): string {
+  return `(${eventTypes.map(eventType => `type = '${eventType}'`).join(' OR ')})`
+}
+
+function getSelectFields(fields: Array<string>): string {
+  return fields.join(', ')
+}
+
+async function getCalendarEvents(
+  userId: string,
+  startDate: string,
+  endDate: string,
+  eventTypes: Array<string>,
+  eventWishlist: Array<string>
+) {
+  let query
+
+  const eventTypeCondition = getEventTypeCondition(eventTypes)
+  const selectFields = getSelectFields(eventWishlist)
 
   if (endDate == null) {
     query = {
-      text: 'SELECT summary, description, location, date, starttime, endtime, recurrence, isUni FROM EventUsers INNER JOIN Events ON id = eventId WHERE date >= $1 AND userId = $2',
+      text: `SELECT ${selectFields}
+             FROM EventUsers INNER JOIN Events ON id = eventId
+             WHERE date >= $1 AND userId = $2 AND ${eventTypeCondition}`,
       values: [startDate, userId],
     }
   } else {
     query = {
-      text: 'SELECT summary, description, location, date, starttime, endtime, recurrence, isUni FROM EventUsers INNER JOIN Events ON id = eventId WHERE date >= $1 AND date <= $2 AND userId = $3',
+      text: `SELECT ${selectFields}
+             FROM EventUsers INNER JOIN Events ON id = eventId
+             WHERE date >= $1 AND date <= $2 AND userId = $3 AND ${eventTypeCondition}`,
       values: [startDate, endDate, userId],
     }
   }
@@ -60,11 +84,8 @@ async function getCalendarEvents(userId: string, startDate: string, endDate: str
 async function createEvent(event: Event) {
   console.log('Creating event')
 
-  if (!connectDatabase()) {
-    return false
-  }
   let query = {
-    text: 'INSERT INTO Events(summary, description, location, date, startTime, endTime, recurrence, isUni) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id',
+    text: 'INSERT INTO Events(summary, description, location, date, startTime, endTime, recurrence, type) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id',
     values: [
       event.summary,
       event.description,
@@ -73,7 +94,7 @@ async function createEvent(event: Event) {
       event.startTime,
       event.endTime,
       event.recurrence,
-      event.isUni,
+      event.type,
     ],
   }
 
@@ -89,9 +110,6 @@ async function createEvent(event: Event) {
 async function createEventRelation(eventId: string, userId: string) {
   console.log('Creating event relation')
 
-  if (!connectDatabase()) {
-    return false
-  }
   const query = {
     text: 'INSERT INTO EventUsers(eventId, userId) VALUES($1, $2)',
     values: [eventId, userId],
@@ -106,22 +124,60 @@ async function createEventRelation(eventId: string, userId: string) {
   }
 }
 
+async function getLastScrapeDate(eventType: string, userId: string) {
+  let query = {
+    text: 'SELECT lastScraped FROM CalendarScrapingControl WHERE userId = $1 AND eventType = $2',
+    values: [userId, eventType],
+  }
+
+  try {
+    let res = await client.query(query)
+    if (res.rows.length > 0) return new Date(res.rows[0].lastscraped)
+
+    return new Date('2000-01-01')
+  } catch (err) {
+    console.log(err)
+    return false
+  }
+}
+
+async function updateLastScrapeDate(eventType: string, userId: string) {
+  let query = {
+    text: `INSERT INTO CalendarScrapingControl(userId, eventType, lastScraped)
+           VALUES($1, $2, $3) ON CONFLICT(userId, eventType)
+           DO UPDATE SET lastScraped = EXCLUDED.lastScraped`,
+    values: [userId, eventType, new Date()],
+  }
+
+  try {
+    await client.query(query)
+  } catch (err) {
+    console.log(err)
+    return false
+  }
+  return true
+}
+
 async function deleteEvent(eventId: string, userId: string) {
   console.log('Deleting event')
 
-  if (!connectDatabase()) {
-    return { linesDeleted: 0, message: 'Error connecting to database!' }
-  }
-
   let verifyUserQuery = {
-    text: 'SELECT * FROM EventUsers WHERE eventId=$1 AND userId=$2',
+    text: 'SELECT type FROM EventUsers INNER JOIN Events ON id = eventId WHERE eventId=$1 AND userId=$2',
     values: [eventId, userId],
   }
 
   try {
     let res = await client.query(verifyUserQuery)
     if (res.rowCount == 0)
-      return { linesDeleted: 0, message: `No event wit id = ${eventId} associated with logged in user!` }
+      return {
+        linesDeleted: 0,
+        message: `No event wit id = ${eventId} associated with logged in user!`,
+      }
+    if (res.rows[0].type != "CUSTOM")
+      return {
+        linesDeleted: 0,
+        message: `Event wit id = ${eventId} cannot be removed!`,
+      }
   } catch (err) {
     console.log(err)
     return { linesDeleted: 0, message: 'Error executing query...' }
@@ -144,9 +200,29 @@ async function deleteEvent(eventId: string, userId: string) {
   }
 }
 
+async function deleteAllEvents(userId: string, eventType: string) {
+  let query = {
+    text: `DELETE FROM Events WHERE id IN (SELECT id FROM Events INNER JOIN EventUsers ON(eventId = id) WHERE type = $1 and userId = $2)`,
+    values: [eventType, userId],
+  }
+
+  try {
+    await client.query(query)
+  } catch (err) {
+    console.log(err)
+    return false
+  }
+  return true
+}
+
 export default {
   createEvent,
   getCalendarEvents,
   createEventRelation,
+  eventExists,
+  eventRelationExists,
+  getLastScrapeDate,
+  updateLastScrapeDate,
   deleteEvent,
+  deleteAllEvents,
 }
