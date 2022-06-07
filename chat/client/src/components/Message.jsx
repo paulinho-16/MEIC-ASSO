@@ -1,5 +1,5 @@
-import { BsFillPersonFill } from 'react-icons/bs'
-import useUsername from '../hooks/username'
+import { BsFillPersonFill } from 'react-icons/bs';
+import useUp from '../hooks/up';
 
 const SystemMessage = ({ content }) => {
 	return (
@@ -13,9 +13,9 @@ const SystemMessage = ({ content }) => {
 }
 
 const UserMessage = ({ sender, content }) => {
-	const { username } = useUsername()
+	const {up} = useUp();
 
-	const own = sender === username
+	const own = sender === up;
 
 	return (
 		<>

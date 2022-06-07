@@ -41,10 +41,17 @@ This route requires authentication.
 This route was created to generate an authentication token in the Google API, it will return a response with a status code of:
 - 200 if the request was made successfully
 
-All of the responses will also include a message with their description.
-
 This route may receive one parameter (automatically sent after the user authorizes the app):
 - `code` if sent it will retrieve a Refresh Token, else it will retrieve an Auth URL.
+
+If it doesn't receive the parameter `code`, the response will include the Auth URL.
+
+This response, after the authorization has been granted, includes: 
+- `access_token`
+- `refresh_token`
+- `scope`
+- `token_type`
+- `expiry date`
 
 This route requires authentication.
 

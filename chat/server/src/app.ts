@@ -8,14 +8,14 @@ import setRequests from '@/socket';
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: 'http://localhost:5500',
-    methods: ['GET'],
-  },
-});
+	cors: {
+		origin: '*',
+	},
+})
 
 setRequests(io);
 

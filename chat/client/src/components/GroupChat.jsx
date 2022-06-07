@@ -1,11 +1,10 @@
 import {useEffect, useState} from "react";
 import {Button, Form, Modal, Row} from "react-bootstrap";
-import useUsername from "../hooks/username";
+import useUp from "../hooks/up";
 import Message from "./Message";
 
-export default function GroupChat({name, socket}) {
-  const { username } = useUsername();
-
+export default function GroupChat({data, socket}) {
+  const {up} = useUp();
   const [show, setShow] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -21,20 +20,25 @@ export default function GroupChat({name, socket}) {
     event.preventDefault()
     const content = message.trim()
     if (content) {
-      console.log(name)
-      socket.emit('chat message', content, username, name, new Date().toLocaleString())
+      socket.emit('chat message', content, up, data.id, new Date().toLocaleString())
       setMessage('')
     }
   }
 
   useEffect(() => {
+    setMessages(data.messages.map(message => ({
+      from: message.from.number, message: message.message, timestamp: message.createdAt
+    })))
+  }, [data]);
+
+  useEffect(() => {
     if (socket) {
-      socket.emit("join room", username, name);
+      socket.emit("join room", up, data.id);
     }
   }, [socket]);
 
   if (socket) {
-    socket.on(`${name} message`, (from, message, timestamp) => {
+    socket.on(`${data.id} message`, (from, message, timestamp) => {
       setMessages([...messages, { from, message, timestamp }])
     })
   }
@@ -42,12 +46,12 @@ export default function GroupChat({name, socket}) {
   return (
     <Row>
       <Button variant="primary" className='w-auto' onClick={handleShow}>
-        {name}'s Chat
+        {data.name}'s Chat
       </Button>
 
       <Modal show={show} size='lg' onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>{name}'s Chat</Modal.Title>
+          <Modal.Title>{data.name}'s Chat</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className='px-6 grow overflow-y-auto'>
