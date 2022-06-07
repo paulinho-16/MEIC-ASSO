@@ -265,6 +265,11 @@ _Instructions: Tools and rationale for choosing them (programming languages, fra
     - [beautifulsoup4](https://pypi.org/project/beautifulsoup4/)
     - [selenium](https://www.selenium.dev/)
 
+### Authentication & Authorization: 
+- nodemailer: to send the password recover email
+- redis: for session storage
+- postgres: to store the credentials (email and password) of the user
+
 ## Design and architecture
 
 _Instructions: Document design and architecture problems and solutions, preferably using pattern instances. Justify all design and architectural choices, preferably based on operational data.<br><br>
@@ -292,27 +297,124 @@ It is expected that you start this section with system-wide patterns, but you sh
 
 ### Access Token
 
+- https://learning.oreilly.com/library/view/architectural-patterns/9781787287495/2f3c5677-2687-4338-bf23-72dbb77828f8.xhtml
+- https://microservices.io/patterns/security/access-token.html
+
 #### Context 
 
-Our application makes use of a Microservices architecture, this means there are several services that need to be accessed. In order to provide a single interface for the client, an access token will be used to authenticate the user. Based on information from [this blog](https://microservices.io/patterns/security/access-token.html).
+Our application makes use of a Microservices architecture and therefore, there are multiple services that must authenticate the User to verify his identity and authorize the access to specific resources. In order to provide a single interface that can be reused by each of the services, the Access Token pattern is used to authenticate the user.
+
 
 #### Mapping
+
 ![](https://i.imgur.com/c3rHVIS.png)
-Based on this diagram, the Flutter apps would be the client, which would send an Access Token to API endpoints that require authentication, our Authentication service would intercept that request to make sure the user is authenticated.
+
+Based on this diagram, the Flutter App would be the client, which would send an Access Token to the API endpoints that require authentication or authorization. Our Authentication service, in particular the middleware, intercepts the requests to verify if the user is authenticated and authorized to access the resource.
 
 #### Consequences
 
 ##### Pros
 
-- Higher scalability and efficiency (access tokens are not stored on the server)
-- Flexibility and performance (offers authentication for several applications or services)
-- Robust security (only a secret key can validate the token)
+- Higher scalability and efficiency: access tokens are not stored on the server;
+- Flexibility: offers authentication and authorization for several applications or services;
+- Robust security: a secret key is required to generate and validate the token;
+- Usability: the user doesn't need to authenticate at every request, he just needs to send the access token.
 
 ##### Cons
 
-- Compromised secret key (if key is not processed correctly the secret key could be exposed)
-- Data overhead (access token is usually bigger than normal session token)
-- Shorter lifespan (access tokens like ours have a short lifespan which could lead to a worse UX)
+- Compromised access token: if the secret key or token are not stored correctly, security can be compromised;
+- Data overhead: the access token is usually bigger than a normal session token;
+- Shorter lifespan: access tokens have a short lifespan which could lead to a worse UX.
+
+### API Key
+
+https://microservice-api-patterns.org/patterns/quality/qualityManagementAndGovernance/APIKey
+
+#### Context
+
+Some of the services offered by our API will return different data depending on the user trying to access it, therefore we need a way to identify and authenticate users.
+
+#### Mapping
+
+![](https://i.imgur.com/zVXqqR0.png)
+
+Based on this diagram, the client is the Flutter App, which requires authentication to obtain certain information. Our backend offers the API that receives the token.
+
+#### Consequences
+
+##### Pros
+
+- Security: The token makes the service more secure by allowing us to identify the user.
+
+##### Cons
+
+- Sending the token in every request increases the network traffic.
+
+### Error Report
+
+#### Context
+
+Our app services need to handle errors generated at runtime. To achieve this, our error messages have to follow a specific design that everyone agreed on.
+
+#### Mapping
+
+![](https://i.imgur.com/69C1ZxW.png)
+
+The image represents what an error message would be like in the context of our application.
+
+#### Consequences
+
+##### Pros
+
+- Error messages allow the end user to understand what generated the error in a simplistic way;
+- Having a detailed report of the error may help achieve a solution.
+
+##### Cons
+
+- Having a very detailed explanation may expose sensitive data and other details related to provider side implementation.
+
+### Client Session State
+
+#### Context
+The session state is stored in the client, in order to keep the session alive without having to reinsert the authentication credentials. In this case, in particular, the token can be stored inside a cookie, for praticality purposes or in other types of storage (i.e. Flutter's SecureStorage) and then sent to the server in the Authorization Header.
+
+#### Mapping
+
+TODO
+
+#### Consequences
+
+##### Pros
+
+- Low Latency: validating and creating sessions is faster as it doesn't need to consult the database;
+- Increases usability for the user;
+- Supports stateless server objects with maximal clustering and failover resiliency.
+
+##### Cons
+
+- Sessions cannot be terminated (even though there are workarounds);
+- Logout is not possible: the session token can be dropped from the browser (in case of a cookie) or from storage, but it would still work if resubmitted, unless other workarounds are used to avoid that (which is the case).
+- Performance burden due to encryption and decryption in each request.
+
+### Saving User Login Information
+
+#### Context
+
+Jwt tokens are sent as a response to login requests, but these tokens have a specified lifetime. A priori, we have no way to invalidate it before it expires, which is necessary when the user wants to logout.
+
+#### Mapping
+
+We can save the session information in a database when the user logs in and remove it on logout. However, this implies a verification of each request containing tokens, and that's why a cache database like Redis is better for this purpose.
+
+#### Consequences
+
+##### Pros
+
+TODO
+
+##### Cons
+
+TODO
 
 ### Sigarra's Authentication
 
@@ -380,3 +482,18 @@ At least two endpoints are required if you must do the scraping of a page that r
 
 **Additional Notes**:
 - The access to most of the User's confidential data requires a special user id (`pv_fest_id`). Therefore, the teams may need to get this id before performing the steps described above. This can be done by requesting the front-end to provide the HTML of the profile page of the User:`https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=<up_identifier>`. The `pv_fest_id` is available in the link to the Academic pathway. Other ways to get this id are probably available. After getting this id, the server may proceed normally with the steps descriped above by adding this query parameter.
+
+### Authentication Middleware
+#### Context - How are we authenticating the user?
+In order to authenticate the user we use JWT tokens. This tokens are sent to the user upon a successful login both in the response and in a cookie. The JWT token must then be sent in every request that requires authentication and authorization. For that, the request may send the **cookie** or it can set the **Bearer Token in the Authorization header**.
+
+#### Usage of the Authentication Middleware
+If a service needs to authenticate the user before providing access to a resource, it can use the **authentication middleware** to do so, particularly the `verifySessionToken` middleware function.
+You just need to define your route like the one below, setting the first and third parameters with the appropriate path and handler:
+```typescript=
+import auth from '@/middleware/auth'
+router.get(PATH, auth.verifySessionToken, HANDLER)`
+```
+If you need to know who is accessing your endpoint, you can access the id of the user, which will be set by our middleware in the request body (`req.body.id`).
+
+In the file that contains the authentication routes, you can find an example route (`testAuth`), which returns as a response the id of the user if a valid access token is provided. Otherwise, an error message will be returned.
