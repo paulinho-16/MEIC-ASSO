@@ -85,3 +85,21 @@ For this, the *Group Making* module uses the *Authentication* middleware impleme
 
 + With an **API Key** the endpoint can identify the client. 
 + Using and **API Key** instead of the user's account credentials decouples different users roles from each other. 
+
+### How can an API provider inform its clients about communication and processing faults? 
+
+**Context:**
+
+While using any endpoint in the API the user may face different errors such as: unauthorized access, input error, invalid operation.
+This kinds of errors can either be the fault of the client or of the API provider so it's important to transmit this type of information in a consistent manner.
+
+**Solution:**
+
+Reply with an error code in the response message that indicates and classifies the fault in a simple, machine-readable way (i.e., either an integer or a string constant). In addition, add a textual description of the error for the API client stakeholders (which could be developers and/or end users such as administrators).
+
+**Consequences:**
+
++ An error report that contains a code allows the API consumer to handle the error programmatically and to present an internationalized, human-readable message to the end-user.
+- May expose provider-side implementation details or other sensitive data that can be used for cyberattacks. 
+
+
