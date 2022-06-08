@@ -25,6 +25,7 @@ async function createTopic(req: Request, res: Response) {
         answer = {"status":"ok","topicTokenId":topicTokenId}
     }else{
         answer = {"status":"error","error":"topic already exists"}
+        db.createErrorLog("01","topic already exists");
     }
 
     res.send(answer)
@@ -38,7 +39,8 @@ async function deleteTopic(req: Request, res: Response) {
     if (await db.deleteTopic(topicTokenId)){
         answer = {"status":"ok"}
     }else {
-        answer = {"status":"error","error":"topic missing"}
+        answer = {"status":"error","error":"trying to exist a unexisting topic"}
+        db.createErrorLog("02","trying to exist a unexisting topic");
     }
 
     res.send(answer)
@@ -56,6 +58,7 @@ async function createNotification(req: Request, res: Response) {
         await sendNotification(title, content, device_token)
     }else {
         answer = {"status":"error","error":"error creating notification,check the userId and topic_identification_token"}
+        db.createErrorLog("10","error creating notification,check the userId and topic_identification_token");
     }
 
     res.send(answer)
@@ -73,6 +76,9 @@ async function getAllNotifications(req: Request, res: Response) {
 
     if(notifications)
         res.send({"status":'ok',"notifications":notifications})
+    else{
+        db.createErrorLog("11","couldn't retrieve notifications upon request");
+    }
 }
 
 async function getTopics(req: Request, res: Response){

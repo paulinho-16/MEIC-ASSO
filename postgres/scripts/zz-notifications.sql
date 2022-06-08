@@ -34,7 +34,7 @@ CREATE TABLE Notifications (
     foreign key (topicTokenId) references Topic(tokenId)
 );
 
-CREATE TABLE Error_Report (
+CREATE TABLE Notification_Error_Log (
     id              SERIAL PRIMARY KEY,
     code            INTEGER NOT NULL,
     description     TEXT

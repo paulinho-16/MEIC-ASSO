@@ -142,6 +142,22 @@ async function getTopics() {
     }
 }
 
+async function createErrorLog(code:string, message:string){
+    const query = {
+        text: 'INSERT INTO Notification_Error_Log(code, description) VALUES($1, $2)',
+        values: [parseInt(code), message],
+    }
+
+    try{
+        let res = await client.query(query)
+        return true
+    }
+    catch(err){
+        console.log(err);
+        return false
+    }
+}
+
 export default {
     getDeviceToken,
     addDeviceToken,
@@ -153,4 +169,5 @@ export default {
     getAllNotifications,
 
     getTopics,
+    createErrorLog,
 }
