@@ -74,7 +74,7 @@ async function createTopic(name:string, topicTokenId:string) : Promise<boolean>{
 }
 
 // Delete existing topic
-async function deleteTopic(topicTokenId:String) : Promise<boolean>{
+async function deleteTopic(topicTokenId:string) : Promise<boolean>{
 
     console.log("Delete Topic");
 
@@ -127,6 +127,21 @@ async function getAllNotifications(userID:string) {
     }
 }
 
+// Return all notifications sent to the user
+async function getTopics() {
+    const query = {
+        text: 'SELECT * FROM Notifications WHERE userID = $1',
+    }
+
+    try{
+        return await client.query(query)
+    }
+    catch(err){
+        console.log(err);
+        return null
+    }
+}
+
 export default {
     getDeviceToken,
     addDeviceToken,
@@ -136,4 +151,6 @@ export default {
 
     createNotification,
     getAllNotifications,
+
+    getTopics,
 }
