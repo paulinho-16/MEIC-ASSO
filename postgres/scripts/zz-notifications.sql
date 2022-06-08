@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS Notifications;
 -- Table: Topic
 CREATE TABLE Topic(
     id                      SERIAL PRIMARY KEY,
-    name                    varchar(100) NOT NULL,
+    name                    varchar(100) NOT NULL UNIQUE,
     tokenId                 varchar(100) NOT NULL UNIQUE
 );
 
@@ -14,6 +14,14 @@ CREATE TABLE Topic(
 CREATE TABLE User_Device(
     userId          varchar(100) NOT NULL,
     deviceToken     varchar(100) NOT NULL
+);
+
+-- Table: Notificatio_Ignore
+CREATE TABLE Notificatio_Ignore(
+    userId          varchar(100) NOT NULL,
+    topicName       varchar(100) NOT NULL,	
+    foreign key (userId) references User_Device(userId),
+    foreign key (topicName) references Topic(name)    
 );
 
 -- Table: Notifications
