@@ -2,6 +2,8 @@ import express from 'express'
 
 import controller from '@/controller/associations.controller'
 
+import constants from '@/config/constants'
+
 const router = express.Router()
 
 /**
@@ -54,5 +56,28 @@ const router = express.Router()
  *         description: Unexpected error
  */
 router.get('/', controller.getAssociations)
+
+/**
+ * @swagger
+ * /associations/url:
+ *   get:
+ *     summary: Fetch URL necessary to retrieve information about the student associations
+ *     parameters:
+ *     responses:
+ *       200:
+ *         description: The URL necessary to retrieve information about the student associations
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *             example:
+ *               https://paginas.fe.up.pt/~estudar/vida-na-feup/associacoes-de-estudantes/
+ *       500:
+ *         description: Unexpected error
+ */
+router.route('/url')
+  .get(function (req, res) {
+    res.status(200).send(`${constants.associationsUrl}`);
+  });
 
 export default router

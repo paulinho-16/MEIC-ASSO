@@ -2,11 +2,13 @@ import express from 'express'
 
 import controller from '@/controller/schedule.controller'
 
+import constants from '@/config/constants'
+
 const router = express.Router()
 
 /**
  * @swagger
- * /schedule/student:
+ * /schedule/{studentNumber}:
  *   get:
  *     summary: Fetch the current student schedule.
  *     parameters:
@@ -64,6 +66,29 @@ const router = express.Router()
  *       '500':
  *         description: Unexpected error
  */
-router.get('/student', controller.getStudentSchedule)
+router.get('/:studentNumber', controller.getStudentSchedule)
+
+/**
+ * @swagger
+ * /schedule/{studentNumber}/url:
+ *   get:
+ *     summary: Fetch URL necessary to retrieve current student schedule
+ *     parameters:
+ *     responses:
+ *       200:
+ *         description: The URL necessary to retrieve current student schedule
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *             example:
+ *               https://sigarra.up.pt/feup/pt/hor_geral.estudantes_view=201800000
+ *       500:
+ *         description: Unexpected error
+ */
+ router.route('/:studentNumber/url')
+ .get(function (req, res) {
+     res.status(200).send(`${constants.studentSchedulePageBaseUrl}=`+req.params.studentNumber);
+});
 
 export default router

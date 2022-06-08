@@ -2,6 +2,8 @@ import express from 'express'
 
 import controller from '@/controller/profile.controller'
 
+import constants from '@/config/constants'
+
 const router = express.Router()
 
 /**
@@ -62,5 +64,28 @@ const router = express.Router()
 */
 
 router.get('/:studentNumber', controller.get)
+
+/**
+ * @swagger
+ * /profile/{studentNumber}/url:
+ *   get:
+ *     summary: Fetch URL necessary to retrieve studentNumber profile
+ *     parameters:
+ *     responses:
+ *       200:
+ *         description: The URL necessary to retrieve studentNumber profile
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *             example:
+ *               https://sigarra.up.pt/feup/pt/fest_geral.info_pessoal_completa_view?pv_num_unico=201800000
+ *       500:
+ *         description: Unexpected error
+ */
+router.route('/:studentNumber/url')
+  .get(function (req, res) {
+    res.status(200).send(`https://sigarra.up.pt/feup/pt/fest_geral.info_pessoal_completa_view?pv_num_unico=` + req.params.studentNumber);
+  });
 
 export default router
