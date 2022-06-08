@@ -88,11 +88,13 @@ export default {
 
     createNotification,
     getAllNotifications,
+
+    getTopics,
 }
 
 async function sendNotification(title:string, content:string, device_token:string){
     console.log(title,content,device_token)
-    var myHeaders = new Headers();
+    const myHeaders = new Headers();
     myHeaders.append("Authorization", "key=AAAArP_sy-s:APA91bFbcwvy_mjJtt94nZZ9rd7CDWNI2wykQ_t9hYQejRVj7IkN2VyRor1ZGM-p8jx5VoU_Uuwgk22fsWhMaixcUIw3JaNpmgdzxtJXxnACIxc8TFzhiAXiimlLjq-TwDngrman-G3f");
     myHeaders.append("Content-Type", "application/json");
 

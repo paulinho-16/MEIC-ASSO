@@ -16,12 +16,12 @@ CREATE TABLE User_Device(
     deviceToken     varchar(100) NOT NULL
 );
 
--- Table: Notificatio_Ignore
-CREATE TABLE Notificatio_Ignore(
+-- Table: Notification_Ignore
+CREATE TABLE Notification_Ignore(
     userId          varchar(100) NOT NULL,
-    topicName       varchar(100) NOT NULL,	
+    topicName       varchar(100) NOT NULL,
     foreign key (userId) references User_Device(userId),
-    foreign key (topicName) references Topic(name)    
+    foreign key (topicName) references Topic(name)
 );
 
 -- Table: Notifications
