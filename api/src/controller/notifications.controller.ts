@@ -3,14 +3,14 @@ import { Request, Response } from 'express'
 
 import {v4 as uuidv4} from 'uuid';
 import fetch from 'node-fetch';
-import fb from '@/services/notifications'
+import db from '@/services/notifications'
 import {Headers} from "node-fetch";
 
 async function addDeviceToken(req: Request, res: Response) {
     const deviceToken = req.params.deviceToken
     const {userID} = req.body
 
-    await fb.addDeviceToken(deviceToken, userID)
+    await db.addDeviceToken(deviceToken, userID)
 
     res.send( {"status":"ok"})
 }
@@ -21,7 +21,7 @@ async function createTopic(req: Request, res: Response) {
     const topicTokenId = uuidv4();
     let answer
 
-    if (await fb.createTopic(name, topicTokenId)){
+    if (await db.createTopic(name, topicTokenId)){
         answer = {"status":"ok","topicTokenId":topicTokenId}
     }else{
         answer = {"status":"error","error":"topic already exists"}
@@ -35,7 +35,7 @@ async function deleteTopic(req: Request, res: Response) {
 
     let answer
 
-    if (await fb.deleteTopic(topicTokenId)){
+    if (await db.deleteTopic(topicTokenId)){
         answer = {"status":"ok"}
     }else {
         answer = {"status":"error","error":"topic missing"}
@@ -50,9 +50,9 @@ async function createNotification(req: Request, res: Response) {
 
     let answer
 
-    if(await fb.createNotification(userID, topicTokenId, title, content)){
+    if(await db.createNotification(userID, topicTokenId, title, content)){
         answer = {"status":"ok"}
-        const device_token = await fb.getDeviceToken(userID)
+        const device_token = await db.getDeviceToken(userID)
         await sendNotification(title, content, device_token)
     }else {
         answer = {"status":"error","error":"error creating notification,check the userId and topic_identification_token"}
@@ -69,10 +69,25 @@ async function getAllNotifications(req: Request, res: Response) {
         return
     }
 
-    const notifications = await fb.getAllNotifications(userId)
+    const notifications = await db.getAllNotifications(userId)
 
     if(notifications)
         res.send({"status":'ok',"notifications":notifications})
+}
+
+async function getTopics(req: Request, res: Response){
+    const topics = await db.getTopics()
+    res.send({"status":'ok',"topics":topics})
+}
+
+export default {
+    addDeviceToken,
+
+    createTopic,
+    deleteTopic,
+
+    createNotification,
+    getAllNotifications,
 }
 
 async function sendNotification(title:string, content:string, device_token:string){
@@ -104,12 +119,3 @@ async function sendNotification(title:string, content:string, device_token:strin
         .catch(error => console.log('error', error));
 }
 
-export default {
-    addDeviceToken,
-
-    createTopic,
-    deleteTopic,
-
-    createNotification,
-    getAllNotifications,
-}
