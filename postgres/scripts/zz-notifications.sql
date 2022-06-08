@@ -33,11 +33,3 @@ CREATE TABLE Notifications (
     userID          INTEGER NOT NULL,
     foreign key (topicTokenId) references Topic(tokenId)
 );
-
-
-INSERT INTO Topic (id, "name", tokenId) VALUES (1, 'Guns', 'c372a3ba-db47-11ec-9d64-0242ac120002');
-
-INSERT INTO User_Device (userId, deviceToken) VALUES (1, 'c372a3ba-db47-11ec-9d64-0242ac120002');
-
-INSERT INTO Notifications (id, content, title, topicTokenId, userID)
-Values (1, 'My description 1', 'James Bond 1', 'c372a3ba-db47-11ec-9d64-0242ac120002', 1);
