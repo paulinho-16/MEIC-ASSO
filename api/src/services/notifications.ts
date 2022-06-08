@@ -130,7 +130,7 @@ async function getAllNotifications(userID:string) {
 // Return all notifications sent to the user
 async function getTopics() {
     const query = {
-        text: 'SELECT * FROM Notifications WHERE userID = $1',
+        text: 'SELECT name FROM Notifications',
     }
 
     try{
