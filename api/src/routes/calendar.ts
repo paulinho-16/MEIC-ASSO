@@ -175,7 +175,7 @@ router.post('/event', auth.verifySessionToken, controller.addCalendarEvent)
  *   delete:
  *     tags:
  *       - calendar
- *     description: Edit a calendar event
+ *     description: Delete a calendar event
  *     parameters:
  *       - in: path
  *         name: id
@@ -183,7 +183,7 @@ router.post('/event', auth.verifySessionToken, controller.addCalendarEvent)
  *         description: Event ID
  *     responses:
  *       200:
- *         description: Successfully added event to calendar
+ *         description: Successfully deleted event from calendar
  *         content:
  *           application/json:
  *             schema:
@@ -290,7 +290,7 @@ router.delete('/event/:id', auth.verifySessionToken, controller.deleteCalendarEv
  *                 example: "weekly"
  *     responses:
  *       200:
- *         description: Successfully added event to calendar
+ *         description: Successfully edited event in calendar
  *         content:
  *           application/json:
  *             schema:
