@@ -1,6 +1,7 @@
 import client from '@/util/connect-postgres'
 
 import { Event } from '@/@types/events'
+import { QueryResult } from 'pg'
 
 async function eventExists(startTime: Date, endTime: Date, summary: string, date: Date) {
   let query = {
@@ -158,6 +159,106 @@ async function updateLastScrapeDate(eventType: string, userId: string) {
   return true
 }
 
+async function verifyEventType(res: QueryResult) {
+  return res.rows[0].type == 'CUSTOM'
+}
+
+async function verifyEventUser(eventId: string, userId: string) {
+  let verifyUserQuery = {
+    text: 'SELECT type FROM EventUsers INNER JOIN Events ON id = eventId WHERE eventId=$1 AND userId=$2',
+    values: [eventId, userId],
+  }
+
+  try {
+    let res = await client.query(verifyUserQuery)
+    if (res.rowCount == 0) return null
+    return res
+  } catch (err) {
+    console.log(err)
+    return null
+  }
+}
+
+async function verifyEventTypeAndUser(eventId: string, userId: string) {
+  const res = await verifyEventUser(eventId, userId)
+  if (res == null)
+    return {
+      message: `No event with id = ${eventId} associated with logged in user!`,
+      statusCode: 401,
+    }
+
+  if (!verifyEventType(res))
+    return {
+      message: `Event with id = ${eventId} cannot be removed or edited!`,
+      statusCode: 403,
+    }
+}
+
+async function updateEvent(
+  eventId: string,
+  userId: string,
+  parameters: Array<string>,
+  values: Array<string>
+) {
+  if (parameters.length != values.length || parameters.length == 0) {
+    return {
+      message: 'Invalid parameters and values size!',
+      statusCode: 400,
+    }
+  }
+
+  const ret = await verifyEventTypeAndUser(eventId, userId)
+  if (ret) return ret
+
+  values.push(eventId)
+  let updateValues = ''
+  for (const i in parameters) {
+    updateValues += `${parameters[i]} = $${Number(i) + 1}, `
+  }
+  updateValues = updateValues.substring(0, updateValues.length - 2)
+
+  const query = {
+    text: `UPDATE Events 
+          SET ${updateValues}
+          WHERE id = $${values.length}`,
+    values: values,
+  }
+
+  try {
+    let res = await client.query(query)
+    return {
+      message: res.rowCount > 0 ? 'Updated successfully' : `There is no event with id = ${eventId}`,
+      statusCode: res.rowCount > 0 ? 200 : 404,
+    }
+  } catch (err) {
+    console.log(err)
+    return { message: 'Error executing query...', statusCode: 500 }
+  }
+}
+
+async function deleteEvent(eventId: string, userId: string) {
+  console.log('Deleting event')
+
+  const ret = await verifyEventTypeAndUser(eventId, userId)
+  if (ret) return ret
+
+  let query = {
+    text: 'DELETE FROM Events WHERE id=$1',
+    values: [eventId],
+  }
+
+  try {
+    let res = await client.query(query)
+    return {
+      message: res.rowCount > 0 ? 'Deleted successfully' : `There is no event with id = ${eventId}`,
+      statusCode: res.rowCount > 0 ? 200 : 404,
+    }
+  } catch (err) {
+    console.log(err)
+    return { message: 'Error executing query...', statusCode: 500 }
+  }
+}
+
 async function deleteAllEvents(userId: string, eventType: string) {
   let query = {
     text: `DELETE FROM Events WHERE id IN (SELECT id FROM Events INNER JOIN EventUsers ON(eventId = id) WHERE type = $1 and userId = $2)`,
@@ -181,5 +282,7 @@ export default {
   eventRelationExists,
   getLastScrapeDate,
   updateLastScrapeDate,
+  deleteEvent,
   deleteAllEvents,
+  updateEvent,
 }

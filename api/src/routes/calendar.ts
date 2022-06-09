@@ -101,7 +101,7 @@ router.get(
 
 /**
  * @swagger
- * /calendar/create:
+ * /calendar/event:
  *   post:
  *     tags:
  *       - calendar
@@ -134,7 +134,7 @@ router.get(
  *                 example: "15:00:00"
  *               recurrence:
  *                 type: string
- *                 example: TBD
+ *                 example: "weekly"
  *     responses:
  *       201:
  *         description: Successfully added event to calendar
@@ -167,7 +167,193 @@ router.get(
  *                   type: string
  *                   example: "Something went wrong. Try again!"
  */
-router.post('/create', auth.verifySessionToken, controller.addCalendarEvent)
+router.post('/event', auth.verifySessionToken, controller.addCalendarEvent)
+
+/**
+ * @swagger
+ * /calendar/event/{id}:
+ *   delete:
+ *     tags:
+ *       - calendar
+ *     description: Delete a calendar event
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Event ID
+ *     responses:
+ *       200:
+ *         description: Successfully deleted event from calendar
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Success"
+ *       400:
+ *         description: One of the parameters is missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid parameters and values size!"
+ *       401:
+ *         description: User is not authorized to delete the event
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "No event with id = 1 associated with logged in user!"
+ *       403:
+ *         description: User is trying to delete an event that comes from another service (SIGARRA)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Event with id = 1 cannot be removed or edited!"
+ *       404:
+ *         description: Event with the provided id was not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "There is no event with id = 1"
+ *       500:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 rowsUpdated:
+ *                   type: integer
+ *                   example: 0
+ *                 message:
+ *                   type: string
+ *                   example: "Something went wrong. Try again!"
+ */
+router.delete('/event/:id', auth.verifySessionToken, controller.deleteCalendarEvent)
+
+/**
+ * @swagger
+ * /calendar/event/{id}:
+ *   put:
+ *     tags:
+ *       - calendar
+ *     description: Edit a calendar event
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Event ID
+ *     requestBody:
+ *       description: Parameters to edit and respective values
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               summary:
+ *                 type: string
+ *                 example: "A summary"
+ *               description:
+ *                 type: string
+ *                 example: "A description"
+ *               location:
+ *                 type: string
+ *                 example: "Room B101"
+ *               date:
+ *                 type: string
+ *                 example: "2022-05-22"
+ *               startTime:
+ *                 type: string
+ *                 example: "13:00:00"
+ *               endTime:
+ *                 type: string
+ *                 example: "15:00:00"
+ *               recurrence:
+ *                 type: string
+ *                 example: "weekly"
+ *     responses:
+ *       200:
+ *         description: Successfully edited event in calendar
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Success"
+ *       400:
+ *         description: One of the parameters is missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid parameters and values size!"
+ *       401:
+ *         description: User is not authorized to edit the event
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "No event with id = 1 associated with logged in user!"
+ *       403:
+ *         description: User is trying to edit an event that comes from another service (SIGARRA)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Event with id = 1 cannot be removed or edited!"
+ *       404:
+ *         description: Event with the provided id was not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "There is no event with id = 1"
+ *       500:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 rowsUpdated:
+ *                   type: integer
+ *                   example: 0
+ *                 message:
+ *                   type: string
+ *                   example: "Something went wrong. Try again!"
+ */
+router.put('/event/:id', auth.verifySessionToken, controller.updateCalendarEvent)
 
 /**
  * @swagger
