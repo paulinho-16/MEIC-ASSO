@@ -221,6 +221,7 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 _Instructions: Tools and rationale for choosing them (programming languages, frameworks, libraries, database engines, message queues)._
 
 ### Backend Framework
+
 - Node.js
     - **Express ✔**
         - Can integrate with swagger using [swagger-node-express](https://www.npmjs.com/package/swagger-node-express) ❌ or [swagger-ui-express](https://www.npmjs.com/package/swagger-ui-express) ✔️.
@@ -446,20 +447,11 @@ _Instructions: Information about how to set up a production environment, how to 
 
 _Instructions: Information about how the product can be used from the standpoint of its users (e.g., API endpoints and how to use them). The API documention should be usable, accurate and up-to-date._
 
-The following endpoints are work in progress:
+Information about the usage of the product can be found at the following link:
 
-### Turma 1
+- [uni4all.servehttp.com/api-docs/](https://uni4all.servehttp.com/api-docs/)
 
-- Cantine / Menus
-- Library current capacity
-- News
-- Jobs
-
-### Turma 2
-
-- Student Associations
-- Group formation - project groups, study groups and class
-- Feedback
+It includes all the API endpoins and respective usages.
 
 ## Contributing
 
