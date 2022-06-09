@@ -116,12 +116,6 @@ _Instructions: This section is responsible for identifying architectural and des
 
 **Patterns**: Broker, Publisher-Subscriber
 
-### Multiple authentication strategies
-
-(what does this mean? we need Sigarra credentials anyway)
-
-**Patterns**: None
-
 ### Security in payments
 
 - Use third-party APIs
