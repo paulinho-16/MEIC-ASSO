@@ -375,7 +375,7 @@ The session state is stored in the client, in order to keep the session alive wi
 
 #### Mapping
 
-TODO
+![](https://i.imgur.com/KfzTZcm.png)
 
 #### Consequences
 
