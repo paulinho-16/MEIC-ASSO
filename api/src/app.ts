@@ -62,7 +62,7 @@ const swaggerOptions: swaggerJsdoc.Options = {
       cookieAuth: []
     }]
   },
-  apis: ['./src/routes/*.ts'],
+  apis: ['./dist/routes/*.js'],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
@@ -88,3 +88,4 @@ app.use('/schedule', routes.schedule)
 app.use('/grades', routes.grades)
 app.use('/capacity', routes.capacity)
 app.use('/student-exams', routes.studentExams)
+app.use('/queue', routes.queues)
