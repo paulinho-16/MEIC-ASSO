@@ -410,11 +410,13 @@ We can save the session information in a database when the user logs in and remo
 
 ##### Pros
 
-TODO
+- We have a way to check if the tokens are active
+- We can invalidate tokens, so that people cannot use them anymore, which is needed for the logout functionality
 
 ##### Cons
 
-TODO
+- We need to establish connections to the database in every authenticated request, to validate the token
+- The overhead can be mitigated by using a cache database, but it is still there either way
 
 ### Sigarra's Authentication
 
