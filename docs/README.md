@@ -13,7 +13,7 @@ Welcome to the repository supporting the development of the uni4all project, dev
 * [Contributing](#contributing)
 
 
-## Product envisioning 
+## Product envisioning
 
 _Instructions: Use this section to provide a high-level view over what the product intends to provide in terms of function and non-functional requirements. These high-level requirements will later be broken up and documented as user stories._
 
@@ -204,7 +204,7 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 
 - **T1G4** Scraping
 - **T2G1** Authentication
-- **T1G3** Chat
+- **T1G3** [Chat](./chat.md)
 - **T1G2** Calendar and Jobs
 - **T1G1** Payments
 - Notifications
@@ -265,7 +265,7 @@ _Instructions: Tools and rationale for choosing them (programming languages, fra
     - [beautifulsoup4](https://pypi.org/project/beautifulsoup4/)
     - [selenium](https://www.selenium.dev/)
 
-### Authentication & Authorization: 
+### Authentication & Authorization:
 - nodemailer: to send the password recover email
 - redis: for session storage
 - postgres: to store the credentials (email and password) of the user
@@ -273,17 +273,17 @@ _Instructions: Tools and rationale for choosing them (programming languages, fra
 ## Design and architecture
 
 _Instructions: Document design and architecture problems and solutions, preferably using pattern instances. Justify all design and architectural choices, preferably based on operational data.<br><br>
-Documenting pattern instances is important because it will help other developers 
-to better understand the resulting concrete classes, attributes and methods, 
+Documenting pattern instances is important because it will help other developers
+to better understand the resulting concrete classes, attributes and methods,
 and the underneath design decisions. <br>
-This provides a level of abstraction higher than the class/component level, 
-highlighting the commonalities of the system and thus promoting the understandability, 
+This provides a level of abstraction higher than the class/component level,
+highlighting the commonalities of the system and thus promoting the understandability,
 conciseness and consistency of the documentation.  <br>
-At the same time, the documentation of pattern instances will help the designer instantiating a pattern, 
+At the same time, the documentation of pattern instances will help the designer instantiating a pattern,
 to certify himself that he is taking the right decision.  <br>
 In general terms, this results in better communication within the development team, and consequently on less bugs.
-To more formally document a pattern instance we must describe the design context, to justify the selection of the 
-pattern, to explain how the pattern roles, operations and associations were mapped to the concrete design classes, 
+To more formally document a pattern instance we must describe the design context, to justify the selection of the
+pattern, to explain how the pattern roles, operations and associations were mapped to the concrete design classes,
 and to state the benefits and liabilities of instantiating the pattern, eventually in comparison with other alternatives.<br><br>
 It is expected that you start this section with system-wide patterns, but you should link to component-specific pages for describing the design of individual components. <ins>For each pattern instance</ins> that you would like to document, use the following template:_
 
@@ -300,7 +300,7 @@ It is expected that you start this section with system-wide patterns, but you sh
 - https://learning.oreilly.com/library/view/architectural-patterns/9781787287495/2f3c5677-2687-4338-bf23-72dbb77828f8.xhtml
 - https://microservices.io/patterns/security/access-token.html
 
-#### Context 
+#### Context
 
 Our application makes use of a Microservices architecture and therefore, there are multiple services that must authenticate the User to verify his identity and authorize the access to specific resources. In order to provide a single interface that can be reused by each of the services, the Access Token pattern is used to authenticate the user.
 
@@ -418,10 +418,10 @@ TODO
 
 ### Sigarra's Authentication
 
-**Context**: 
+**Context**:
 Some of the functionalitites that Uni4all provides, such as the access to the schedule or classes, require the User to be authenticated in Sigarra. However, Sigarra does not provide any means to authenticate via an API or OAuth.
 
-For security reasons, we decided that our server should not receive Sigarra's credentials at any point. This way, if there is a crash on our Server, it won't compromise Sigarra's credentials. 
+For security reasons, we decided that our server should not receive Sigarra's credentials at any point. This way, if there is a crash on our Server, it won't compromise Sigarra's credentials.
 
 The requests for pages that require authentication will be sent on the client-side directly to Sigarra. Sigarra will reply with the HTML of the requested page, which should be forwarded to the endpoint of our server that performs the scrapping of the respective HTML and returns the processed information.
 > Further details on how to proceed if you need to perform scraping of a page that requires Sigarra's authentication are available in the *Contributing* section under the subtitle [Scraping of Sigarra's protected pages](#Scraping-of-Sigarras-protected-pages) .
@@ -429,11 +429,11 @@ The requests for pages that require authentication will be sent on the client-si
 **Mapping**:
 > N/A: This solution does not map to a pattern
 
-**Consequences**: 
-**Pros**: 
+**Consequences**:
+**Pros**:
 - Security: By adopting this solution, the credentials will only be sent to our server. Therefore, a crash or attack to our server will not reveal sensitive information that could indirectly affect Sigarra.
 
-**Cons**: 
+**Cons**:
 - Latency: the number of requests/responses leads to an increase in latency.
 
 ## Operation
@@ -465,13 +465,13 @@ _Instructions: Information about setting up the development environment, running
 
 ### Scraping of Sigarra's protected pages
 
-**Target Audience**: 
+**Target Audience**:
 Developers/Teams that need to perform scraping of a page that needs the User to be authenticated *e.g.* scraping the schedule
 
 **Request's Flow**:
 - The authentication in Sigarra is made on the client-side by directly making the authentication POST request to sigarra's URL with the password and username as parameters of the request body or using a session token - *so you don't need to worry about this step*;
 - When the user wants to access a service that requires authentication, it makes a request to the endpoint of our API that is responsible for returning as a response the URL that contains the requested information;
-    > *e.g.* If the user wants to access his profile then he must access the URL `https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=<up_identifier>` 
+    > *e.g.* If the user wants to access his profile then he must access the URL `https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=<up_identifier>`
 - At the client-side, a request will be sent to the URL that we provided. That request will return the HTML of the page, which must be sent to the endpoint of our API that performs the scraping of the HTML and returns the processed data;
     > *e.g.* The HTML that is returned by the request made to the URL of Sigarra that contains the schedule is received in the endpoint that is responsible for scraping that information. The schedule data must be returned as response to the request
 

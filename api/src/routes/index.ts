@@ -1,5 +1,6 @@
 import associations from './associations'
 import authentication from './authentication'
+import chat from './chat'
 import curricularUnit from './curricular-unit'
 import feedback from './feedback'
 import groups from './groups'
@@ -23,6 +24,7 @@ import studentExams from './student-exams'
 export default {
   associations,
   authentication,
+  chat,
   curricularUnit,
   feedback,
   hello,

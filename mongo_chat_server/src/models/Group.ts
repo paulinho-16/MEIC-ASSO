@@ -12,6 +12,7 @@ const groupSchema = new Schema<IGroup>(
     messages: [{ type: Schema.Types.ObjectId, ref: "Message" }],
   },
   {
+    id: false,
     toJSON: {
       virtuals: true,
     },
@@ -33,7 +34,10 @@ const autoPopulateLead = function (next: any) {
   next();
 };
 
-groupSchema.pre("findOne", autoPopulateLead).pre("find", autoPopulateLead).pre("findById", autoPopulateLead);
+groupSchema
+  .pre("findOne", autoPopulateLead)
+  .pre("find", autoPopulateLead)
+  .pre("findById", autoPopulateLead);
 
 const Group = model<IGroup>("Group", groupSchema);
 export default Group;
