@@ -95,7 +95,7 @@ This kinds of errors can either be the fault of the client or of the API provide
 
 **Solution:**
 
-Reply with an error code in the response message that indicates and classifies the fault in a simple, machine-readable way (i.e., either an integer or a string constant). In addition, add a textual description of the error for the API client stakeholders (which could be developers and/or end users such as administrators).
+Reply with an error code in the response message that indicates and classifies the fault in a simple, machine-readable way. In addition, add a textual description of the error for the API client stakeholders (which could be developers and/or end users such as administrators).
 
 **Consequences:**
 
