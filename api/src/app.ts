@@ -4,7 +4,7 @@ import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerUi from'swagger-ui-express'
 import 'body-parser'
 import express from 'express'
-import routes from '@/routes'
+import routes from "@/routes";
 import cookieParser from 'cookie-parser'
 
 const app = express()
@@ -79,6 +79,7 @@ app.use('/news', routes.news)
 app.use('/status', routes.status)
 app.use('/services', routes.services)
 app.use('/profile', routes.profile)
+app.use('/notifications', routes.notifications)
 app.use('/groups', routes.groups)
 app.use('/user', routes.user)
 app.use('/curricular-unit', routes.curricularUnit)

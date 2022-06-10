@@ -52,13 +52,28 @@ async function createNotification(req: Request, res: Response) {
 
     let answer
 
-    if(await db.createNotification(userID, topicTokenId, title, content)){
-        answer = {"status":"ok"}
-        const device_token = await db.getDeviceToken(userID)
-        await sendNotification(title, content, device_token)
+    if(await db.checkIfIgnored(userID,topicTokenId)){
+        answer = {"status":"ok","ignored":"true"}
     }else {
-        answer = {"status":"error","error":"error creating notification,check the userId and topic_identification_token"}
-        await db.createErrorLog("10", "error creating notification,check the userId and topic_identification_token");
+        if (await db.createNotification(userID, topicTokenId, title, content)) {
+            answer = {"status": "ok"}
+            const device_token = await db.getDeviceToken(userID)
+            if (device_token == false) {
+                answer = {
+                    "status": "error",
+                    "error": "error creating notification,check the userId and topic_identification_token"
+                }
+                await db.createErrorLog("10", "error creating notification,check the userId and topic_identification_token");
+            } else {
+                await sendNotification(title, content, device_token)
+            }
+        } else {
+            answer = {
+                "status": "error",
+                "error": "error creating notification,check the userId and topic_identification_token"
+            }
+            await db.createErrorLog("10", "error creating notification,check the userId and topic_identification_token");
+        }
     }
 
     res.send(answer)
@@ -81,11 +96,61 @@ async function getAllNotifications(req: Request, res: Response) {
     }
 }
 
+//começa novo
+
 async function getTopics(req: Request, res: Response){
     const topics = await db.getTopics()
     res.send({"status":'ok',"topics":topics})
 }
 
+async function getBlockedTopics(req: Request, res: Response){
+    const userId = req.params.user
+    if(userId == null){
+        res.send({"status":'error',"error":"user does not exist"})
+        return
+    }
+
+    const topics = await db.getBlockedTopics(userId)
+    res.send({"status":'ok',"blocked_topics":topics})
+}
+
+async function ignoreTopics(req: Request, res: Response){
+    const {topics} = req.body
+    if(topics == null){
+        res.send({"status":'error',"error":"topics not specified"})
+        return
+    }
+    const userId = req.params.user
+    if(userId == null){
+        res.send({"status":'error',"error":"user does not exist"})
+        return
+    }
+
+    console.log(topics)
+
+    await db.ignoreTopics(topics, userId)
+
+    res.send({"status":'ok',"blocked_topics":topics})
+}
+
+async function stopIgnoreTopics(req: Request, res: Response){
+    const {topics} = req.body
+    if(topics == null){
+        res.send({"status":'error',"error":"topics not specified"})
+        return
+    }
+    const userId = req.params.user
+    if(userId == null){
+        res.send({"status":'error',"error":"user does not exist"})
+        return
+    }
+
+    await db.stopIgnoreTopics(topics,userId)
+    res.send({"status":'ok',"blocked_topics":topics})
+}
+
+
+// acaba novo
 export default {
     addDeviceToken,
 
@@ -96,6 +161,10 @@ export default {
     getAllNotifications,
 
     getTopics,
+    getBlockedTopics,
+
+    ignoreTopics,
+    stopIgnoreTopics,
 }
 
 async function sendNotification(title:string, content:string, device_token:string){
@@ -104,7 +173,7 @@ async function sendNotification(title:string, content:string, device_token:strin
     myHeaders.append("Authorization", "key=AAAArP_sy-s:APA91bFbcwvy_mjJtt94nZZ9rd7CDWNI2wykQ_t9hYQejRVj7IkN2VyRor1ZGM-p8jx5VoU_Uuwgk22fsWhMaixcUIw3JaNpmgdzxtJXxnACIxc8TFzhiAXiimlLjq-TwDngrman-G3f");
     myHeaders.append("Content-Type", "application/json");
 
-    let raw = JSON.stringify({
+    const raw = JSON.stringify({
         "to": device_token,
         "notification": {
             "body": content,

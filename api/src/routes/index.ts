@@ -20,6 +20,7 @@ import grades from './grades'
 import capacity from './capacity'
 import queues from './queues'
 import studentExams from './student-exams'
+import notifications from "@/routes/notifications";
 
 export default {
   associations,
@@ -43,5 +44,6 @@ export default {
   grades,
   capacity,
   queues,
-  studentExams
+  studentExams,
+  notifications
 }

@@ -9,7 +9,7 @@ const router = express.Router()
  * @swagger
  * paths:
  *
- *   /{user}:
+ *   /notification/{user}:
  *     post:
  *       tags:
  *         - notifications
@@ -65,7 +65,7 @@ const router = express.Router()
  *                     status: "error"
  *                     error: "error creating notification, check the userId and topic_identification_token"
  *
- *   /{user}/all:
+ *   /notification/{user}/all:
  *     get:
  *       tags:
  *         - notifications
@@ -299,11 +299,22 @@ router.post('/topic/:topic', controller.createTopic)
 // Route to delete a notification topic
 router.delete('/topic/:topic', controller.deleteTopic)
 
-router.post('/:user', controller.createNotification)
+
+// notifications configuration
+router.get('/config/all', controller.getTopics)
+router.get('/config/blocked/:user', controller.getBlockedTopics)
+
+
+router.post('/config/:user', controller.ignoreTopics)
+router.delete('/config/:user', controller.stopIgnoreTopics)
+
+router.post('/notification/:user', controller.createNotification)
 
 
 // Route to get all notifications
-router.get('/:user/all', controller.getAllNotifications)
+router.get('/notification/:user/all', controller.getAllNotifications)
+
+
 
 
 export default router

@@ -1,7 +1,8 @@
 DROP TABLE IF EXISTS Topic;
 DROP TABLE IF EXISTS User_Device;
+DROP TABLE IF EXISTS Notification_Error_Log;
+DROP TABLE IF EXISTS Notification_Ignore;
 DROP TABLE IF EXISTS Notifications;
-
 
 -- Table: Topic
 CREATE TABLE Topic(
@@ -19,9 +20,7 @@ CREATE TABLE User_Device(
 -- Table: Notification_Ignore
 CREATE TABLE Notification_Ignore(
     userId          varchar(100) NOT NULL,
-    topicName       varchar(100) NOT NULL,
-    foreign key (userId) references User_Device(userId),
-    foreign key (topicName) references Topic(name)
+    topicName       varchar(100) NOT NULL
 );
 
 -- Table: Notifications
@@ -30,8 +29,7 @@ CREATE TABLE Notifications (
     content         TEXT NOT NULL,
     title           TEXT NOT NULL,
     topicTokenId    varchar(100) NOT NULL,
-    userID          INTEGER NOT NULL,
-    foreign key (topicTokenId) references Topic(tokenId)
+    userID          INTEGER NOT NULL
 );
 
 CREATE TABLE Notification_Error_Log (

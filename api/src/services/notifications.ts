@@ -18,17 +18,19 @@ async function getDeviceToken(userID:string){
 
     console.log("Get token device");
 
-    let query = {
+    const query = {
         text: "SELECT * from User_Device WHERE userId = $1",
         values: [userID],
     }
 
     try {
-        let res = await client.query(query)
+        const res = await client.query(query)
+        if(res.rows.length == 0){
+            return false
+        }
         return res.rows[0]["devicetoken"]
     }
     catch (err) {
-        console.log(err);
         return false
     }
 }
@@ -44,7 +46,7 @@ async function addDeviceToken(deviceToken:string, userID:string): Promise<boolea
     }
 
     try{
-        let res = await client.query(query)
+        await client.query(query);
         return true
     }
     catch(err){
@@ -64,7 +66,7 @@ async function createTopic(name:string, topicTokenId:string) : Promise<boolean>{
     }
 
     try{
-        let res = await client.query(query)
+        await client.query(query);
         return true
     }
     catch(err){
@@ -84,7 +86,7 @@ async function deleteTopic(topicTokenId:string) : Promise<boolean>{
     }
 
     try{
-        let res = await client.query(query)
+        await client.query(query);
         return true
     }
     catch(err){
@@ -101,8 +103,25 @@ async function createNotification(userID:string, topicTokenId:string,title:strin
     }
 
     try{
-        let res = await client.query(query)
+        await client.query(query);
         return true
+    }
+    catch(err){
+        console.log(err);
+        return false
+    }
+}
+
+async function checkIfIgnored(userID: string, topicTokenId: string){
+    const checkQuery = {
+        text: 'SELECT name FROM Topic LEFT JOIN Notification_ignore  on name = topicname where Notification_ignore.userid = $1 AND topic.tokenid = $2',
+        values: [userID,topicTokenId],
+    }
+
+    try{
+        const ret = await client.query(checkQuery);
+        if(ret.rows.length > 0) return true
+        return false
     }
     catch(err){
         console.log(err);
@@ -130,17 +149,70 @@ async function getAllNotifications(userID:string) {
 // Return all notifications sent to the user
 async function getTopics() {
     const query = {
-        text: 'SELECT name FROM Notifications',
+        text: 'SELECT name as topic FROM Topic',
     }
 
     try{
-        return await client.query(query)
+        return (await client.query(query))["rows"]
     }
     catch(err){
         console.log(err);
         return null
     }
 }
+
+// Return all notifications sent to the user
+async function getBlockedTopics(user: string) {
+    const query = {
+        text: 'SELECT topicname as topic FROM Notification_Ignore where userId = $1',
+        values: [user]
+    }
+
+    try{
+        return (await client.query(query))["rows"]
+    }
+    catch(err){
+        console.log(err);
+        return null
+    }
+}
+
+async function ignoreTopics(topics: string[],userId: string){
+
+    try{
+        for (const topic of topics) {
+            const query = {
+                text: 'INSERT INTO Notification_Ignore(userId, topicName) VALUES($1, $2)',
+                values: [userId, topic],
+            }
+            await client.query(query)
+        }
+    }
+    catch(err){
+        console.log(err);
+        return false
+    }
+}
+
+
+
+async function stopIgnoreTopics(topics: string[],userId: string){
+
+    try{
+        for (const topic of topics) {
+            const query = {
+                text: 'DELETE FROM Notification_Ignore WHERE userId = $1 and topicName = $2',
+                values: [userId, topic],
+            }
+            await client.query(query)
+        }
+    }
+    catch(err){
+        console.log(err);
+        return false
+    }
+}
+
 
 async function createErrorLog(code:string, message:string){
     const query = {
@@ -149,7 +221,7 @@ async function createErrorLog(code:string, message:string){
     }
 
     try{
-        let res = await client.query(query)
+        await client.query(query);
         return true
     }
     catch(err){
@@ -169,5 +241,11 @@ export default {
     getAllNotifications,
 
     getTopics,
+    getBlockedTopics,
+
+    ignoreTopics,
+    stopIgnoreTopics,
+    checkIfIgnored,
+
     createErrorLog,
 }
