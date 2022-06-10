@@ -18,6 +18,9 @@ services:
       DB_PORT: ${POSTGRES_PORT}
       DATABASE_URL: ${DATABASE_URL}
       UNI4ALL_URL: https://uni4all.servehttp.com
+      OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID}
+      OAUTH_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET}
+      OAUTH_REDIRECT_URL: ${OAUTH_REDIRECT_URL}
     volumes:
       - ./api/src:/usr/src/app/api/src
     container_name: ts-node-docker
@@ -69,18 +72,8 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=password12345678
       - MONGODB_URI=mongodb://mongo_chat:27017/
-
-  chat-client:
-    build:
-      context: ./chat/client
-      dockerfile: Dockerfile
-    volumes:
-      - ./chat/client/src:/usr/src/app/chat/client/src/
-    container_name: chat-client
-    ports:
-      - 5500:5500
     depends_on:
-      - chat-server
+      - mongo_chat_server
 
   postgres:
     container_name: postgres

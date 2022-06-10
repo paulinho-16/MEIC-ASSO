@@ -204,7 +204,7 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 
 - **T1G4** Scraping
 - Authentication
-- **T1G3** Chat
+- **T1G3** [Chat](./chat.md)
 - **T1G2** Calendar and Jobs
 - **T1G1** Payments
 - Notifications
