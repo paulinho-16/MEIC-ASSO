@@ -10,6 +10,8 @@ const router = express.Router()
  * /authentication:
  *   get:
  *     summary: Test the authentication
+ *     tags:
+ *       - Authentication
  *     security:
  *     - jwt: []
  *     - cookieAuth: []
@@ -54,6 +56,8 @@ router.get('/', auth.verifySessionToken, controller.testAuth)
  * /authentication/register:
  *   post:
  *     description: Create an account
+ *     tags:
+ *       - Authentication
  *     requestBody:
  *       description: Login credentials
  *       required: true
@@ -109,6 +113,8 @@ router.post('/register', controller.register)
  * /authentication/login:
  *   post:
  *     summary: Perform login
+ *     tags:
+ *       - Authentication
  *     requestBody:
  *       description: Login credentials
  *       required: true
@@ -161,10 +167,11 @@ router.post('/login', controller.login)
  * /authentication/logout:
  *   post:
  *     summary: Perform logout, deletes the user cookie
+ *     tags:
+ *       - Authentication
  *     requestBody:
  *       description: Doesn't have one
  *       required: False
- *       content: None
  *     responses:
  *       200:
  *         description: The user logged out successfully created
