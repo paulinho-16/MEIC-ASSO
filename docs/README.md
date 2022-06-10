@@ -209,7 +209,7 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 - **T1G1** Payments
 - Notifications
 - External API / Services
-- Group Making
+- **T2G5** Group Making
 - **T2G2** Feedback
     - canteen/bar meals (reviews)
     - classes/professors (reviews)
@@ -309,6 +309,11 @@ The requests for pages that require authentication will be sent on the client-si
 
 **Cons**: 
 - Latency: the number of requests/responses leads to an increase in latency.
+
+### Groups Making
+
+For Design and Arquitecture documentation related to the **Groups Making** module, please refer to this [document](./groupMaking.md).
+
 
 ## Operation
 

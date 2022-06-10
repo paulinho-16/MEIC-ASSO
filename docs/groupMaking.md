@@ -3,8 +3,8 @@
 ## Content
 
 * [Component Envisioning](#Component-Envisioning)
-* [Data Model](#Data-Model)
-* [Endpoints](#Endpoints)
+* [Design and Architecture](#design-architeceture)
+
 
 <a name="Component-Envisioning"/>
 
@@ -12,230 +12,94 @@
 
 Groups and team work is an essencial part of a student's life. This includes both groups for class projects as well as study groups.
 
-This component helps students on their academic daily life by proving an API that supports the creation, consulting and joining of groups making this process easier.
+This component helps students on their academic daily life by proving an API that supports the creation, listing and joining of groups making this process easier.
 
-<a name="Endpoints"/>
 
-## Endpoints
+<a name="design-architecture"/>
 
-### GET `/groups`
+## Design and Architecture
 
-Provides a list of groups. 
-Supports pagination through "limit" and "offset" query parameters.
 
-#### Parameters
+### How to share knowledge with the clients about the API endpoints?
 
-- Query:
-- - limit: Int?
-- - offset: Int?
-- - classId: Int? -> filter groups by class. 
+**Context:**
 
-#### Responses
+The *Group Making* module should be available as an API provider for its clients. How should the API endpoints be documented to be more easily understood and consumed by its clients? 
 
-Returns a list of groups if they match filters. 
+**Solution:**
 
-- 200 if successful, including a body of type: 
+To fulfill that goal, an [API Description](https://microservice-api-patterns.org/patterns/foundation/APIDescription) should be provided that defines request and response message structures and error reporting.
 
-```json
-[
-    {
-        "id": "Int",
-        "typename": "String",
-        "title": "String",
-        "description": "String",
-        "mlimit": "Int",
-        "autoaccept": "Bool",
-        "classId": "Int"
-    }
-]
-```
+A Swagger documentation is provided for this module. 
 
-- 500 if not successful.
+**Consequences:**
 
-### GET `/groups/{groupId}`
++ This description being minimal is easy to evolve and mantain. 
++ Helps clients during the frontend integration process.  
 
-Provides a single group.
+- Continuous effort on maintaing documentation updated while API evolves. 
 
-#### Parameters
 
-- Path: 
-- - groupId: Int 
+### How can the API provider deliver exactly the number of items the client needs for? 
 
-#### Responses
+**Context:**
 
-Returns a single group that matches the groupId specified. 
+The *Group Making* module makes available a number of endpoints with which the clients can fetch a list of items: get groups, get group's members and get group's admins. 
 
-- 200 if successful, including a body of type: 
+How can the API provider not overwhelm the client with to much data? Or how can the client request and receive for the exact number of items it needs? 
 
-```json
-{
-    "id": "Int",
-    "typename": "String",
-    "title": "String",
-    "description": "String",
-    "mlimit": "Int",
-    "autoaccept": "Bool",
-    "classId": "Int"
-}
-```
+**Solution:**
 
-- 400 if parameters are not valid.
+This can be achived throught the implementation of [Pagination](https://microservice-api-patterns.org/patterns/structure/compositeRepresentations/Pagination).
 
-- 500 if not successful. 
+**Mapping:**
 
-### POST `/groups`
+Endpoints that can be used to fetch a list of an items have two query parameters - *offset* and *limit* - with which the client can specify the number of items it needs. 
 
-Create a group.
+Data is divided in sets (pages) and the page is specified through the *offset* query parameter. 
 
-#### Parameters
+The number of items from that page to return are specified through the *limit* query parameter.
 
-- Body: 
-```json
-[
-    {
-        "id": "Int",
-        "typename": "String",
-        "title": "String",
-        "description": "String",
-        "mlimit": "Int",
-        "autoaccept": "Bool",
-        "classId": "Int"
-    }
-]
-```
+**Consequences:**
 
-#### Responses
++ Improved resource consumption and possible improvements in performance as well. 
 
-Returns a single group that matches the groupId specified. 
+- If there is a need for returning items in a random order, a more complex parameter representation is required. 
 
-- 200 if group was created with success.
 
-- 400 if request body is not valid. 
+### How can the API provider authenticate different users when receiving requests?
 
-- 500 if not successful. 
+**Context:**
 
+The *Group Making* module offers endpoints that can be used only by authenticated users. For example, a user should only be able to join a group project if he is a student in that class. 
 
-### DELETE `/groups/{groupId}`
+How can the *Group Making* module identify the user that is triggering the request without having the need to transmit user account credentials? 
 
-Delete a group.
+**Solution:**
 
-#### Parameters
+This can be achieved through the use of an [API Key](https://microservice-api-patterns.org/patterns/quality/qualityManagementAndGovernance/APIKey) that is passed from the user with each request through the HTTP *Authorization* header. 
 
-- Path: 
-- - groupId: Int 
+For this, the *Group Making* module uses the *Authentication* middleware implemented by another module which standarizes authentication and authorization for the different modules in the system. 
 
-#### Responses
+**Consequences:**
 
-Returns a single group that matches the groupId specified. 
++ With an **API Key** the endpoint can identify the client. 
++ Using and **API Key** instead of the user's account credentials decouples different users roles from each other. 
 
-- 200 if group was deleted with success.
+### How can an API provider inform its clients about communication and processing faults? 
 
-- 400 if parameters are not valid. 
+**Context:**
 
-- 500 if not successful. 
+While using any endpoint in the API the user may face different errors such as: unauthorized access, input error, invalid operation.
+This kinds of errors can either be the fault of the client or of the API provider so it's important to transmit this type of information in a consistent manner.
 
+**Solution:**
 
-### GET `/groups/{groupId}/members`
+Reply with an error code in the response message that indicates and classifies the fault in a simple, machine-readable way. In addition, add a textual description of the error for the API client stakeholders (which could be developers and/or end users such as administrators).
 
-Provides a list with the members of a group.
-Supports pagination through "limit" and "offset" query parameters.
+**Consequences:**
 
-#### Parameters
++ An error report that contains a code allows the API consumer to handle the error programmatically and to present an internationalized, human-readable message to the end-user.
+- May expose provider-side implementation details or other sensitive data that can be used for cyberattacks. 
 
-- Path: 
-- - groupId: Int 
 
-- Query:
-- - limit: Int?
-- - offset: Int?
-
-#### Responses
-
-Returns a single group that matches the groupId specified. 
-
-- 200 if success, including the response body: 
-
-```json
-[
-    {
-        "id": "Int",
-        "groupid": "Int",
-        "studentid": "Int",
-        "isadmin": "Bool",
-        "isaccepted": "Bool"
-    }
-]
-```
-
-- 400 if parameters are not valid. 
-
-- 500 if not successful. 
-
-
-### GET `/groups/{groupId}/members/{memberId}`
-
-Provides a specific member of a group.
-
-#### Parameters
-
-- Path: 
-- - groupId: Int 
-- - memberId: Int
-
-#### Responses
-
-Returns a single member that matches the groupId and memberId specified. 
-
-- 200 if success, including the response body: 
-
-```json
-{
-    "id": "Int",
-    "groupid": "Int",
-    "studentid": "Int",
-    "isadmin": "Bool",
-    "isaccepted": "Bool"
-}
-```
-
-- 400 if parameters are not valid. 
-
-- 500 if not successful. 
-
-
-### POST `/groups/{groupId}/members/{memberId}`
-
-Supports the joinning of a student to a group.
-
-#### Parameters
-
-- Path: 
-- - groupId: Int 
-- - memberId: Int
-
-#### Responses
-
-- 204 if joining was sucessful. 
-
-- 400 if parameters are not valid. 
-
-- 500 if not successful. 
-
-
-### DELETE `/groups/{groupId}/members/{memberId}`
-
-Supports the quit operation of a student from a group.
-
-#### Parameters
-
-- Path: 
-- - groupId: Int 
-- - memberId: Int
-
-#### Responses
-
-- 204 if quit was sucessful. 
-
-- 400 if parameters are not valid. 
-
-- 500 if not successful. 
