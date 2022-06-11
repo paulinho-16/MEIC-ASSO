@@ -107,6 +107,7 @@ async function getBlockedTopics(req: Request, res: Response){
     const userId = req.params.user
     if(userId == null){
         res.send({"status":'error',"error":"user does not exist"})
+        await db.createErrorLog("12", "user trying to get blocked topics doesn't exist");
         return
     }
 
@@ -118,11 +119,13 @@ async function ignoreTopics(req: Request, res: Response){
     const {topics} = req.body
     if(topics == null){
         res.send({"status":'error',"error":"topics not specified"})
+        await db.createErrorLog("13", "no topic specified");
         return
     }
     const userId = req.params.user
     if(userId == null){
         res.send({"status":'error',"error":"user does not exist"})
+        await db.createErrorLog("14", "user trying to get ignore topics doesn't exist");
         return
     }
 
@@ -137,11 +140,13 @@ async function stopIgnoreTopics(req: Request, res: Response){
     const {topics} = req.body
     if(topics == null){
         res.send({"status":'error',"error":"topics not specified"})
+        await db.createErrorLog("14", "topic to ignore was not specified");
         return
     }
     const userId = req.params.user
     if(userId == null){
         res.send({"status":'error',"error":"user does not exist"})
+        await db.createErrorLog("14", "user trying to stop ignore topics doesn't exist");
         return
     }
 

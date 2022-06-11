@@ -207,7 +207,7 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 - **T1G3** [Chat](./chat.md)
 - **T1G2** Calendar and Jobs
 - **T1G1** Payments
-- Notifications
+- **T2G3** Notifications
 - External API / Services
 - Group Making
 - **T2G2** Feedback
