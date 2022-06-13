@@ -147,6 +147,11 @@ Creates a new message.
 
 ### Users
 
+### GET /user/
+Gets all users.
+- Returns a [Parameter Forest](https://microservice-api-patterns.org/patterns/structure/representationElements/ParameterForest) with a list of users;
+- Pagination is not supported.
+
 ### `POST` /user/:up
 Updates user.
 - Needs the username of the user to update.
@@ -161,8 +166,6 @@ Updates user.
   "online": Boolean
 }
 ```
-
-
 
 # Chat implementation
 
