@@ -1,5 +1,6 @@
 import associations from './associations'
 import authentication from './authentication'
+import chat from './chat'
 import curricularUnit from './curricular-unit'
 import feedback from './feedback'
 import groups from './groups'
@@ -13,10 +14,18 @@ import profile from './profile'
 import user from './user'
 import status from './status'
 import services from './services'
+import calendar from './calendar'
+import examsCalendar from './exams-calendar'
+import schedule from './schedule'
+import grades from './grades'
+import capacity from './capacity'
+import queues from './queues'
+import studentExams from './student-exams'
 
 export default {
   associations,
   authentication,
+  chat,
   curricularUnit,
   feedback,
   hello,
@@ -30,4 +39,11 @@ export default {
   user,
   status,
   services,
+  calendar,
+  examsCalendar,
+  schedule,
+  grades,
+  capacity,
+  queues,
+  studentExams
 }

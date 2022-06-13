@@ -10,16 +10,17 @@ const router = express.Router()
  * /user/{id}:
  *   delete:
  *     description: Delete user
+ *     tags:
+ *       - User
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         description: User ID
- *       - in: header
- *         name: jwt
- *         required: true
- *         description: The JWT token
- *     responseBody:
+ *     security:
+ *     - jwt: []
+ *     - cookieAuth: []
+ *     requestBody:
  *       description: Password
  *       required: true
  *       content:
@@ -81,16 +82,17 @@ router.delete('/:id', auth.verifyAuthorization, controller.deleteUser)
  * /user/update-password/{id}:
  *   put:
  *     description: Change Password
+ *     tags:
+ *       - User
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         description: User ID
- *       - in: header
- *         name: jwt
- *         required: true
- *         description: The JWT token
- *     responseBody:
+ *     security:
+ *     - jwt: []
+ *     - cookieAuth: []
+ *     requestBody:
  *       description: Password
  *       required: true
  *       content:
@@ -155,12 +157,12 @@ router.delete('/:id', auth.verifyAuthorization, controller.deleteUser)
  * /user/forgot-password:
  *   put:
  *     description: Send email to the user for password change
- *     parameters:
- *       - in: header
- *         name: jwt
- *         required: true
- *         description: The JWT token
- *     responseBody:
+ *     tags:
+ *       - User
+ *     security:
+ *     - jwt: []
+ *     - cookieAuth: []
+ *     requestBody:
  *       description: Password
  *       required: true
  *       content:
@@ -222,12 +224,12 @@ router.post('/forgot-password', controller.forgotPassword)
  * /user/reset-password:
  *   put:
  *     description: Use token to change an account's password without the old one
- *     parameters:
- *       - in: header
- *         name: jwt
- *         required: true
- *         description: The JWT token
- *     responseBody:
+ *     tags:
+ *       - User
+ *     security:
+ *     - jwt: []
+ *     - cookieAuth: []
+ *     requestBody:
  *       description: Password
  *       required: true
  *       content:

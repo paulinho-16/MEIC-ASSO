@@ -1,5 +1,5 @@
-import { BsFillPersonFill } from 'react-icons/bs'
-import useUsername from '../hooks/username'
+import { BsFillPersonFill } from 'react-icons/bs';
+import useUp from '../hooks/up';
 
 const SystemMessage = ({ content }) => {
 	return (
@@ -12,36 +12,26 @@ const SystemMessage = ({ content }) => {
 	)
 }
 
-const UserMessage = ({ sender, content, to }) => {
-	const { username } = useUsername()
+const UserMessage = ({ sender, content }) => {
+	const {up} = useUp();
 
-	const own = sender === username
+	const own = sender === up;
 
 	return (
-		<div className={`flex flex-col ${own ? 'items-end pl-10' : 'items-start pr-10'}`}>
-			{/* if to */}
-			<div className='text-xs text-gray-400'>
-				{/* if not own */}
-				{!own && <span>{sender}</span>}
-				{/*  if to */}
-				{to && <span className='font-bold'> to {to}</span>}
-			</div>
-			<div
-				className={`px-3 py-1 rounded-3xl w-fit ${
-					own ? 'bg-primary text-white text-right' : 'bg-gray-200 text-black text-gray-600'
-				}`}>
-				{/* bubble */}
-				<p className='w-fit'>{content}</p>
-			</div>
-		</div>
+		<>
+			{ !own && <p className='mb-0'>{sender}</p> }
+			<p className={(own ? 'bg-primary text-white text-end' : 'bg-light') + ' rounded p-2'}>
+				{content}
+			</p>
+		</>
 	)
 }
 
-const Message = ({ sender, content, to }) => {
+const Message = ({ sender, content }) => {
 	if (sender === 'System') {
 		return <SystemMessage content={content} />
 	} else {
-		return <UserMessage sender={sender} content={content} to={to} />
+		return <UserMessage sender={sender} content={content}/>
 	}
 }
 

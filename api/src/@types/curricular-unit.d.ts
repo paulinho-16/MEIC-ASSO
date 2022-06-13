@@ -19,6 +19,19 @@ export type CourseUnitTime = {
   hours: number
 }
 
+export type Student = {
+  name: string
+  number: string
+  email: string
+  allocationDate: string
+  enrolled: boolean
+}
+
+export type Class = {
+  name: string
+  students: Student[]
+}
+
 export type CurricularUnit = {
   code: string
   acronym: string
@@ -41,4 +54,5 @@ export type CurricularUnit = {
   calculationFormula?: string
   specialAssessment?: string
   classificationImprovement?: string
+  classes?: Class[]
 }
