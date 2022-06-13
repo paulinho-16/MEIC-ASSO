@@ -32,27 +32,6 @@ flowchart LR
 
 For communication with the client, the chat server needs to send messages autonomously. For this polling, long-polling, and websockets are possibilities. Polling and long-polling are more demanding computationally, hence the coice for **websockets**.
 
-### Future Work and Architectural Goals
-
-![Blank diagram-3](https://user-images.githubusercontent.com/52630567/173246529-14f0934b-9e7a-4d49-b214-4e68875a6979.png)
-
-As the chat application scaled users, one would have to scale its architecture, as well.
-
-For that, the most important choice, would be to increase the number of chat servers, this is, the number of servers that communicate directly with clients. To achieve this, one would have to split the clients by chat servers. This could be done in 2 ways:
-
-- by doing it dynamically;
-- by pre-assigning a server to a client.
-
-Since we know that the users of this are FEUP students, we know a priori that they have a UP number. We can use that number to determine the chat server in which the client must connect to. For example, if we had 10 chat servers available, we could assign the chat server taking into account the last digit of the user's UP number. With this strategy, we can also scale dynamically. For example, if the chat server for the digit number 3 became went full, the system could launch yet another server for the same digit, and they could split the connections taking into account the last 2 digits: one would receive the clients that ended between 03 and 43, and the other would take care of the ones in between 53 and 93.
-
-To achieve this, all chat servers are to be connected to a dispatcher. When the API requests a new connection for a client, it does so by requesting the dispatcher. Understanding the current state of the chat servers, the dispatcher then assigns the current server to the client, returning its URL.
-
-To send a message to a group, a client needs to send the message to its chat server. The chat server will check the other members of the group, and to the ones that belong to the same server, it will send the message directly. Most of the time, not all members will be in the same chat server. In those occasions, the chat server sends the message to the chat dispatcher, which will redirect the message to the correct servers.
-
-Given that the influx to both the dispatcher and the chat servers is going to be giant, one communicates with them not through REST, but rather through a queue, such as Kafka.
-
-The same goes for the database. Given that multiple messages will only be stored temporarily in the system, a single database enough. But multiple chat servers will talk to the database at once. To optimize this process, one makes these communications via queue.
-
 ## Technologies
 
 - Chat server
@@ -268,3 +247,32 @@ Based on [ISO 25010](https://iso25000.com/index.php/en/iso-25000-standards/iso-2
 |Respond to unusual number of simultaneous requests (such as DDOS)      |Reliability|Availability     |-        |20 000 000 |-        |Try a DDoS attack every X time                                                                                                                                              |
 |Have a relatively high uptime with MTBF / MTRS                         |Reliability|Maturity         |99%      |100%       |-        |Try to connect to the chat server every X seconds, checking if its up or down, calculating MTBF / MTRS                                                                      |
 |CVE Analysis, should not use libraries with known vulnerabilities      |Security   |-                |-        |0          |0        |Defect tracking software                                                                                                                                                    |
+
+# Future Work
+
+There were some tasks we were not able to implement because of the delay in finding a solution to work without the authentication from Sigarra.
+
+Ideally, the messages would only be kept in our database until they were read by the user. Once the user has read them, they would be stored in the app's local storage and deleted from the database, as is the case of well-known apps such as Signal and Whatsapp.
+
+Some further enhancements we had in mind were to allow to see who was online of that chat (if any user is online, the chat would be highlighted in a different colour in the frontend, for example); allow sending files and images; cache the messages and mark them as read and lastly, knowing everyone involved in their academic life, have the feature of creating chat groups with the people of the same social circle (everyone the user interacts in their academic life).
+
+### Architectural Goals
+
+![Blank diagram-3](https://user-images.githubusercontent.com/52630567/173246529-14f0934b-9e7a-4d49-b214-4e68875a6979.png)
+
+As the chat application scaled users, one would have to scale its architecture, as well.
+
+For that, the most important choice, would be to increase the number of chat servers, this is, the number of servers that communicate directly with clients. To achieve this, one would have to split the clients by chat servers. This could be done in 2 ways:
+
+- by doing it dynamically;
+- by pre-assigning a server to a client.
+
+Since we know that the users of this are FEUP students, we know a priori that they have a UP number. We can use that number to determine the chat server in which the client must connect to. For example, if we had 10 chat servers available, we could assign the chat server taking into account the last digit of the user's UP number. With this strategy, we can also scale dynamically. For example, if the chat server for the digit number 3 became went full, the system could launch yet another server for the same digit, and they could split the connections taking into account the last 2 digits: one would receive the clients that ended between 03 and 43, and the other would take care of the ones in between 53 and 93.
+
+To achieve this, all chat servers are to be connected to a dispatcher. When the API requests a new connection for a client, it does so by requesting the dispatcher. Understanding the current state of the chat servers, the dispatcher then assigns the current server to the client, returning its URL.
+
+To send a message to a group, a client needs to send the message to its chat server. The chat server will check the other members of the group, and to the ones that belong to the same server, it will send the message directly. Most of the time, not all members will be in the same chat server. In those occasions, the chat server sends the message to the chat dispatcher, which will redirect the message to the correct servers.
+
+Given that the influx to both the dispatcher and the chat servers is going to be giant, one communicates with them not through REST, but rather through a queue, such as Kafka.
+
+The same goes for the database. Given that multiple messages will only be stored temporarily in the system, a single database enough. But multiple chat servers will talk to the database at once. To optimize this process, one makes these communications via queue.
