@@ -9,10 +9,11 @@ import jobs from './jobs'
 import library from './library'
 import meals from './meals'
 import news from './news'
+import payments from './payments'
+import profile from './profile'
 import user from './user'
 import status from './status'
 import services from './services'
-import profile from './profile'
 import calendar from './calendar'
 import examsCalendar from './exams-calendar'
 import schedule from './schedule'
@@ -32,11 +33,12 @@ export default {
   library,
   meals,
   news,
+  payments,
+  profile,
   groups,
   user,
   status,
   services,
-  profile,
   calendar,
   examsCalendar,
   schedule,
