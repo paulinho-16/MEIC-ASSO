@@ -255,10 +255,6 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
     - Information on Sigarra is not structured
     - New structured data may grow fast
 
-### Authentication & Authorization:
-- nodemailer: to send the password recover email
-- redis: for session storage
-- postgres: to store the credentials (email and password) of the user
 
 
 ## Design and architecture
