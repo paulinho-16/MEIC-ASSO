@@ -49,8 +49,8 @@ database();
 
 /*
  * Application middleware
- * - cors
- * - body parser
+ * 1. CORS
+ * 2. Body parser
  */
 app.use(cors());
 app.use(express.json());

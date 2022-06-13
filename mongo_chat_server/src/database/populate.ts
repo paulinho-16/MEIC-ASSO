@@ -8,10 +8,6 @@ export async function populate() {
   await User.deleteMany({});
   await User.insertMany(UserData);
 
-  throw new Error(
-    'FALHOU DE PROPOSITO VOU DEIXAR O COPILOT COMPLETAR ESTA FRASE: "O copilot completa esta frase"'
-  );
-
   await Group.deleteMany({});
   await Group.insertMany(GroupData);
 }
