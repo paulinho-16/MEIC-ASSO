@@ -57,7 +57,7 @@ Uni4all chat backend implementation.
 
 ## High-level Architecture
 
-**! TODO Mudar Texto**
+The following component diagram comprises the chat implementation. No activity or deployment diagram are displayed since there's no real use case for them in the chat component.
 
 ![High Level Architecture](https://user-images.githubusercontent.com/55626181/173329466-9950bf8f-49f0-4602-af01-2510c8da59f2.png)
 
@@ -73,7 +73,25 @@ For communication with the client, the chat server needs to send messages autono
 
 ## Design and Architecture
 
-**! TODO**
+In the current state of the implementation, the chat backend does not have a complex structure. The chat backend consists of 3 microservices:
+
+- Chat Server
+ 
+Responsible for direct communication with the clients. The clients will send the messages to the chat server which will, in real time, resend the same messages to the receiver clients. The communication between clients and the chat server is done via web sockets. Other options were available, such as polling, long-polling. However, these are more demanding computationally.
+
+- Mongo Chat Server
+
+Provides a communication interface for the database. When any other service in the backend wishes to communicate with the chat database, it should do so by making requests to the Mongo Chat Server.
+
+- Mongo Service
+
+Key-Value database for chat.
+
+---
+
+Most communications between microservices occur using the **messages** pattern. This is due to its simplicity and  modularization. Mongo chat server provides a REST API, awaiting requests in the form of messages, responding with a message as well. Even when the communication channel is a web socket - a stream of data - the meaningful information is compartmentalized into messages. The communication between the Mongo Chat Server and the actual Mongo Server is done via a library called [sequelize](https://sequelize.org).
+
+When the chat server sends a message to a group, it is using [socket.io's `.to(room)` function](https://socket.io/docs/v4/#broadcasting). It is not clear how the implementation is done, precisely, however, on a higher level, **Publisher-Subscriber** is applied. When a client joins a group, the chat server makes the call `socket.join(room)`, which is parallel to a subscription; and when a message is sent to a group, the chat server calls `io.to(room).emit(...)`, which is parallel to a publication. In this scenario, every user in a group is both a publisher and a subscriber.
 
 ---
 

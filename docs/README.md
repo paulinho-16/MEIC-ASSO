@@ -199,10 +199,13 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 - **T1G4** Scraping
 - **T2G1** Authentication
 - **T1G3** [Chat](./chat.md)
-- **T1G2** Calendar and Jobs
+- **T1G2** Jobs
 - **T1G1** [Payments](./payments.md)
 - Notifications
 - External API / Services
+- [Calendar](./calendar.md)
+    - **T2G4**
+    - **T1G2**
 - **T2G5** Group Making
 - **T2G2** Feedback
     - canteen/bar meals (reviews)
