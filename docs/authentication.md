@@ -55,7 +55,7 @@ All of the responses will also include a message with their description.
 This is the route for account deletion, it requires one parameter for the account deletion:
 - `password`
 
-But there must be a logged in user, otherwise the same error codes as in the autheAuthntication testing route will appear in the response. Other status codes for responses that can be returned are:
+But there must be a logged in user, otherwise the same error codes as in the authentication testing route will appear in the response. Other status codes for responses that can be returned are:
 - 200 if the account is successfuly deleted
 - 400 if one of the following error happens:
     - The parameter was not provided
