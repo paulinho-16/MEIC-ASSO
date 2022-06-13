@@ -13,13 +13,11 @@ Welcome to the repository supporting the development of the uni4all project, dev
 * [Contributing](#contributing)
 
 
-## Product envisioning
-
-_Instructions: Use this section to provide a high-level view over what the product intends to provide in terms of function and non-functional requirements. These high-level requirements will later be broken up and documented as user stories._
+## Product envisioning    
 
 ### Vision
 
-_Instructions: write a short paragraph describing the overall vision for the system._
+The product intends to improve the uni4all app developed by NIAEFEUP. It will provide features such as authentication, scraping, an integrated chat, calendar and jobs, payments, notifications, group making, feedback and registrations. In terms of non-functional requirements it is of relevance performance, operating and lifecycle quality.
 
 ### Themes
 
@@ -45,8 +43,6 @@ _Instructions: write a short paragraph describing the overall vision for the sys
     - Classrooms
 - External systems
     - GPS systems (e.g. study places)
-    - GPS systems (e.g. study places)
-    - GPS systems (e.g. study places)
     - Housing
     - External places to eat (together with meals)
 - Scheduling appointments
@@ -70,11 +66,15 @@ _Instructions: write a short paragraph describing the overall vision for the sys
 
 ### Quality attributes
 
-_Instructions: This section should give an idea of the high-level non-functional requirements._
+
+There are a few quality attributes defined for this project:
+* **performance quality** - the system needs to be reliable, secure and with a relatively small response time;
+* **operating quality** - the system needs to be available and scalable;
+* **lifecycle quality** - the system should be maintainable and portable.
+
+
 
 ### Challenges and foreseen possible solutions
-
-_Instructions: This section is responsible for identifying architectural and design challenges, as well as the solutions that we foresee may be useful to address them. Many of these solutions can (and should) be expressed as architectural patterns._
 
 #### Data Storage
 
@@ -96,18 +96,18 @@ _Instructions: This section is responsible for identifying architectural and des
 ### Efficiency when dealing with scrapped data
 
 - Scraping on demand can be slow
-    - e.g. user profiles: information can be scrapped once a day, and user can force refresh, action that triggers a new scrapping
+    - e.g. user profiles: information can be scrapped once a day, and the user can force refresh, an action that triggers a new scrapping
 - Scrap periodically and store data in a server (outdated data and privacy concerns)
 
-**Patterns**: (something related with caching)
+**Patterns**: (something related to caching)
 
 ### Data combination from different sources
 
-- How should data submitted by user be combined with scrapped data
+- How should data submitted by users be combined with scrapped data
 
-**Examples**: personal calendars have information that come from different Sigarra pages, endpoints, and possibly external services
+**Examples**: personal calendars have information that comes from different Sigarra pages, endpoints, and possibly external services
 
-**Patterns**: Shared repository, Microkernel (why? 😕)
+**Patterns**: Shared repository, Microkernel
 
 ### Real-time communication in chats
 
@@ -132,9 +132,9 @@ _Instructions: This section is responsible for identifying architectural and des
 
 ### Notifications
 
-- Most of the applications will need to use a notification/alert system to give users relevant information (for example, chat notifications, car sharing notifications, Sigarra notifications, etc.)
+- Most of the applications will need to use a notification/alert system to give users relevant information (for example, chat notifications, car-sharing notifications, Sigarra notifications, etc.)
 - We have 2 problems:
-    1. **Notifications** - sent in real-time, similar to the the real-time communication in chats problem
+    1. **Notifications** - sent in real-time, similar to the real-time communication in chats problem
     2. **Alert** - sent at a reasonable time that would be most effective to your users (for example, some type of notifications will only be sent at some specific hour, taking into account the user's local timezone)
 - The user should be able to **subscribe** to what type of information wishes to be notified about, based on their preferences.
 
@@ -157,7 +157,7 @@ _Instructions: This section is responsible for identifying architectural and des
 - Provide CRUD functionality
     - [Information Holder Resource](https://microservice-api-patterns.org/patterns/responsibility/endpointRoles/InformationHolderResource)
         - map each endpoint to an entity (and expose CRUD operations over that entity)
-- ??
+- Retrieve information from a service provider
     - [Retrieval Operation](https://microservice-api-patterns.org/patterns/responsibility/operationResponsibilities/RetrievalOperation)
 - Let clients exchange data
     - [Data Transfer Resource](https://microservice-api-patterns.org/patterns/responsibility/informationHolderEndpointTypes/DataTransferResource)
@@ -192,7 +192,7 @@ _Instructions: This section is responsible for identifying architectural and des
 
 ## High-level architecture
 
-_Instructions: Information about **Components**, **Activities** and **Infrastructure** (respectivelly, use UML Component, Activity and Deployment diagrams. Provide higher-level views over these three types of elements using _Package_ diagrams, if appropriate._
+_Instructions: Information about **Components**, **Activities** and **Infrastructure** (respectively, use UML Component, Activity and Deployment diagrams. Provide higher-level views over these three types of elements using _Package_ diagrams, if appropriate._
 
 ### Components
 
@@ -207,12 +207,10 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 - **T2G2** Feedback
     - canteen/bar meals (reviews)
     - classes/professors (reviews)
-    - pedagogical surveys (?)
+    - pedagogical surveys
 - Registrations
 
 ## Technologies
-
-_Instructions: Tools and rationale for choosing them (programming languages, frameworks, libraries, database engines, message queues)._
 
 ### Backend Framework
 
@@ -223,14 +221,19 @@ _Instructions: Tools and rationale for choosing them (programming languages, fra
     - Sails
     - Meteor
     - Loopback
+    - Cheerio
+    - Axios
+    - Puppeteer
+    - Playwright
+    - nodemailer: to send the password recover email
+    - Socket.IO: enables real-time, bi-directional communication between web clients and servers
+    - [mongoose](https://mongoosejs.com/): an ODM library for MongoDB and Node 
 - Python
     - If microservices are added in the future
-    - Scrapping
+    - [beautifulsoup4](https://pypi.org/project/beautifulsoup4/)
+    - [selenium](https://www.selenium.dev/)
 
-["The Best NodeJS Frameworks for 2021"](https://rapidapi.com/blog/best-nodejs-frameworks/)
-![](https://i.imgur.com/NrBnTJj.png)
-
-### Miscellaneous
+### Development Environment
 
 - TypeScript
 - EsLint
@@ -241,29 +244,19 @@ _Instructions: Tools and rationale for choosing them (programming languages, fra
 
 ### Database
 
-- PostgreSQL or MariaDB
-- Redis
+- redis: for session storage
+- postgres: to store the credentials (email and password) of the user
     - Cache
-- **MongoDB**
+- MongoDB
     - Default
     - Information on Sigarra is not structured
     - New structured data may grow fast
-- Neo4j
-
-### Scrapping
-
-- Node.js
-    - Cheerio + axios
-    - Puppeteer
-    - Playwright
-- Python
-    - [beautifulsoup4](https://pypi.org/project/beautifulsoup4/)
-    - [selenium](https://www.selenium.dev/)
 
 ### Authentication & Authorization:
 - nodemailer: to send the password recover email
 - redis: for session storage
 - postgres: to store the credentials (email and password) of the user
+
 
 ## Design and architecture
 
