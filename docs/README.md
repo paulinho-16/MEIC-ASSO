@@ -200,7 +200,7 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 - **T2G1** Authentication
 - **T1G3** [Chat](./chat.md)
 - **T1G2** Calendar and Jobs
-- **T1G1** Payments
+- **T1G1** [Payments](./payments.md)
 - Notifications
 - External API / Services
 - **T2G5** Group Making
