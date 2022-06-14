@@ -2,6 +2,8 @@ import express from 'express'
 
 import controller from '@/controller/grades.controller'
 
+import constants from '@/config/constants'
+
 const router = express.Router()
 
 /**
@@ -136,5 +138,28 @@ const router = express.Router()
  *         description: Unexpected error
  */
 router.get('/:studentNumber', controller.get)
+
+/**
+ * @swagger
+ * /grades/{studentNumber}/url:
+ *   get:
+ *     summary: Fetch URL necessary to retrieve grades for student with studentNumber
+ *     parameters:
+ *     responses:
+ *       200:
+ *         description: The URL necessary to retrieve grades for student with studentNumber
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *             example:
+ *               https://sigarra.up.pt/feup/fest_geral.cursos_list?pv_num_unico=201800000
+ *       500:
+ *         description: Unexpected error
+ */
+ router.route('/:studentNumber/url')
+ .get(function (req, res) {
+     res.status(200).send(`${constants.studentPageBaseUrl}=` + req.params.studentNumber);
+});
 
 export default router
