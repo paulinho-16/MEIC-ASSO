@@ -48,13 +48,13 @@ This route allows to obtain the topics that are being ignored by a certain user.
 This route is used so that a user can ignore notification topics.
 
 It requires 1 parameter in the body:
-- topicArray - An array of strings that are topic names the user intends on ignoring.
+- topics - An array of strings that are topic names the user intends on ignoring.
 
 ### PATCH `/config/:user`
 This route is used so that a user stops ignoring notification topics.
 
 It requires 1 parameter in the body:
-- topicArray - An array of strings that are topic names.
+- topics - An array of strings that are topic names.
 
 # Design
 ## Error Report
