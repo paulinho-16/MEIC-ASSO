@@ -1,5 +1,7 @@
 # uni4all Calendar (t1g2)
 
+This document focuses on the work that our group developed for the calendar endpoint.
+
 ## Contents
 
 * [Features](#features)
