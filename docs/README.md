@@ -197,7 +197,7 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 ### Components
 
 - **T1G4** Scraping
-- **T2G1** Authentication
+- **T2G1** [Authentication](./authentication.md)
 - **T1G3** [Chat](./chat.md)
 - **T1G2** Jobs
 - **T1G1** [Payments](./payments.md)
@@ -255,10 +255,6 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
     - Information on Sigarra is not structured
     - New structured data may grow fast
 
-### Authentication & Authorization:
-
-Information regarding this can be found [here](authentication.md#technologies).
-
 ## Design and architecture
 
 _Instructions: Document design and architecture problems and solutions, preferably using pattern instances. Justify all design and architectural choices, preferably based on operational data.<br><br>
@@ -284,10 +280,6 @@ It is expected that you start this section with system-wide patterns, but you sh
 
 **Consequences**: _Explain the pros and cons of instantiating the pattern, eventually in comparison with other alternatives._
 
-### Authentication and Authorization
-
-Information regarding this topic can be found [here](authentication.md#patterns).
-
 
 
 ### Groups Making
@@ -312,8 +304,4 @@ It includes all the API endpoins and respective usages.
 ## Contributing
 
 _Instructions: Information about setting up the development environment, running the system in development, running the tests. Also, should include documentation on all the API endpoints (including internal ones) and how to use them. The API documention should be usable, accurate and up-to-date.
-
-### Authentication and Authorization
-
-Information regarding this topic can be found [here](./authentication.md#contributing).
 
