@@ -9,7 +9,7 @@ const router = express.Router()
  * /jobs:
  *   get:
  *     tags:
- *       - jobs
+ *       - Jobs
  *     summary: Get jobs
  *     parameters:
  *     responses:

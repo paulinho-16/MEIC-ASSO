@@ -11,6 +11,8 @@ const router = express.Router()
  * /profile/{studentNumber}:
  *   get:
  *     summary: Retrieve studentNumber profile
+ *     tags:
+ *       - Profile
  *     parameters:
  *       - in: path
  *         name: studentNumber
@@ -70,6 +72,8 @@ router.get('/:studentNumber', controller.get)
  * /profile/{studentNumber}/url:
  *   get:
  *     summary: Fetch URL necessary to retrieve studentNumber profile
+ *     tags:
+ *       - Profile
  *     parameters:
  *     responses:
  *       200:

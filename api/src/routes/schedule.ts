@@ -11,6 +11,8 @@ const router = express.Router()
  * /schedule/{studentNumber}:
  *   get:
  *     summary: Fetch the current student schedule.
+ *     tags:
+ *       - Schedule
  *     parameters:
  *       - in: query
  *         name: pv_fest_id
@@ -73,6 +75,8 @@ router.get('/:studentNumber', controller.getStudentSchedule)
  * /schedule/{studentNumber}/url:
  *   get:
  *     summary: Fetch URL necessary to retrieve current student schedule
+ *     tags:
+ *       - Schedule
  *     parameters:
  *     responses:
  *       200:

@@ -10,7 +10,7 @@ const router = express.Router()
  * /queue:
  *     post:
  *       tags:
- *         - queues
+ *         - Queues
  *       summary: Add a queue status
  *       responses:
  *         '200':
@@ -51,7 +51,7 @@ router.post('/', controller.postQueue)
  * /queue:
  *     get:
  *       tags:
- *         - queues
+ *         - Queues
  *       summary: Gets a queue status for a given restaurant
  *       description: Obtain the queues' status where the restaurant ID code is required
  *       parameters:

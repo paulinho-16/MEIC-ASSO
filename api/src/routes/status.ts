@@ -9,7 +9,9 @@ const router = express.Router()
  * @swagger
  * /status:
  *  get:
- *    summary:Get server uptime
+ *    summary: Get server uptime
+ *    tags:
+ *       - Status
 */
 router.get('/', controller.get)
 

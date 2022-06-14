@@ -9,6 +9,8 @@ const router = express.Router()
  * /meals/{restaurant}:
  *  get:
  *    summary: Get restaurant meals
+ *    tags:
+ *       - Meals
 */
 router.get('/:restaurant', controller.getRestaurantMeals)
 

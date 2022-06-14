@@ -11,7 +11,7 @@ const router = express.Router()
  * /calendar:
  *   get:
  *     tags:
- *       - calendar
+ *       - Calendar
  *     summary: Get the calendar events
  *     parameters:
  *       - in: query
@@ -104,7 +104,7 @@ router.get(
  * /calendar/event:
  *   post:
  *     tags:
- *       - calendar
+ *       - Calendar
  *     description: Add a calendar event
  *     requestBody:
  *       description: Event info
@@ -174,7 +174,7 @@ router.post('/event', auth.verifySessionToken, controller.addCalendarEvent)
  * /calendar/event/{id}:
  *   delete:
  *     tags:
- *       - calendar
+ *       - Calendar
  *     description: Delete a calendar event
  *     parameters:
  *       - in: path
@@ -253,7 +253,7 @@ router.delete('/event/:id', auth.verifySessionToken, controller.deleteCalendarEv
  * /calendar/event/{id}:
  *   put:
  *     tags:
- *       - calendar
+ *       - Calendar
  *     description: Edit a calendar event
  *     parameters:
  *       - in: path
@@ -360,7 +360,7 @@ router.put('/event/:id', auth.verifySessionToken, controller.updateCalendarEvent
  * /calendar/google-calendar-token:
  *   get:
  *     tags:
- *       - calendar
+ *       - Calendar
  *     summary: Generate an authentication token in the Google Calendar API
  *     parameters:
  *       - in: header
@@ -395,7 +395,7 @@ router.get('/google-calendar-token', auth.verifySessionToken, controller.getGCTo
  * /calendar/exportgc:
  *   post:
  *     tags:
- *       - calendar
+ *       - Calendar
  *     description: Export all future calendar events to Google Calendar
  *     requestBody:
  *       description: Google Calendar Token

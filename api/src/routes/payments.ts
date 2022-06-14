@@ -11,6 +11,8 @@ const router = express.Router()
  * /payments:
  *   get:
  *     summary: Get user payments.
+ *     tags:
+ *       - Payments
  *     description: Get user payments history.
  *     responses:
  *       200:

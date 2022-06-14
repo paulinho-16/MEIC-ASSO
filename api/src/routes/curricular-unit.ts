@@ -11,6 +11,8 @@ const router = express.Router()
  * /curricular-unit/{id}:
  *   get:
  *     summary: Fetch all information about a given curricular unit, including its classes of students
+ *     tags:
+ *         - Curricular Unit
  *     parameters:
  *       - in: path
  *         name: id
@@ -212,6 +214,8 @@ router.get('/:id', controller.getCurricularUnitInfo)
  * /curricular-unit/{id}/url:
  *   get:
  *     summary: Fetch URL necessary to retrieve curricular unit information
+ *     tags:
+ *         - Curricular Unit
  *     parameters:
  *     responses:
  *       200:

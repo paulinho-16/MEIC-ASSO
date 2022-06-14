@@ -9,7 +9,7 @@ const router = express.Router()
  * /capacity:
  *     get:
  *       tags:
- *         - capacity
+ *         - Capacity
  *       summary: Get car parks capacity live
  *       responses:
  *         '200':

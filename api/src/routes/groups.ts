@@ -18,6 +18,8 @@ router.use(express.json())
  * /groups:
  *   get:
  *     summary: Get a list of groups. 
+ *     tags:
+ *       - Groups
  *     parameters:
  *       - in: query
  *         name: limit
@@ -63,6 +65,8 @@ router.get('/', controller.getGroups)
  * /groups:
  *   get:
  *     summary: Get information of a single group. 
+ *     tags:
+ *       - Groups
  *     parameters:
  *       - in: path
  *         name: groupId
@@ -95,6 +99,8 @@ router.get('/:id', controller.getGroup)
  * /groups:
  *   get:
  *     summary: Create a new group.
+ *     tags:
+ *       - Groups
  *     requestBody:
  *       description: Group information.
  *       required: true
@@ -141,6 +147,8 @@ router.post('/',auth.verifySessionToken,controller.createGroup)
  * /groups/{id}/{groupId}:
  *   delete:
  *     summary: Delete a group.
+ *     tags:
+ *       - Groups
  *     parameters:
  *       - in: path
  *         name: id
@@ -168,6 +176,8 @@ router.delete('/:id/:groupId',auth.verifyAuthorization, controller.deleteGroup)
  * /myGroups/{userId}:
  *   get:
  *     summary: Get list of groups where a specific user is a member of. 
+ *     tags:
+ *       - Groups
  *     parameters:
  *       - in: path
  *         name: userId
@@ -202,6 +212,8 @@ router.get('/myGroups/:id', auth.verifyAuthorization ,controller.getMyGroups)
  * /groups/{id}/{groupId}:
  *   patch:
  *     summary: Edit information on an existing group.
+ *     tags:
+ *       - Groups
  *     parameters:
  *      - in: path
  *        name: id
@@ -268,6 +280,8 @@ router.patch('/:id/:groupId',auth.verifyAuthorization,controller.editGroup)
  * /groups/{id}/{groupId}/members:
  *   get:
  *     summary: Get a list of group's members. 
+ *     tags:
+ *       - Group Members
  *     parameters:
  *       - in: path
  *         name: groupId
@@ -317,6 +331,8 @@ router.get('/:id/:groupId/members', auth.verifyAuthorization, controller.getGrou
  * /groups/{id}/{groupId}/members/{memberId}:
  *   get:
  *     summary: Get information of a single group. 
+ *     tags:
+ *       - Group Members
  *     parameters:
  *       - in: path
  *         name: id
@@ -359,6 +375,8 @@ router.get('/:id/:groupId/members/:userId',  auth.verifyAuthorization, controlle
  * /groups/{id}/{groupId}/members/{memberId}:
  *   post:
  *     summary: Join a group. 
+ *     tags:
+ *       - Group Members
  *     parameters:
  *       - in: path
  *         name: id
@@ -391,6 +409,8 @@ router.post('/:id/:groupId/members/:userId',  auth.verifyAuthorization, controll
  * /groups/{id}/{groupId}/members/{memberId}:
  *   delete:
  *     summary: Unjoin a group. 
+ *     tags:
+ *       - Group Members
  *     parameters:
  *       - in: path
  *         name: id
@@ -436,6 +456,8 @@ router.delete('/:id/:groupId/members/:userId', auth.verifyAuthorization, control
  * /groups/{id}/{groupId}/admins:
  *   get:
  *     summary: Get a list of group's admins. 
+ *     tags:
+ *       - Group Admins
  *     parameters:
  *       - in: path
  *         name: id
@@ -472,9 +494,11 @@ router.get(':id/:groupId/admins', auth.verifyAuthorization, controller.getGroupA
 
 /**
  * @swagger
- * /groups/{id}/{groupId}/members/{userId}:
+ * /groups/{id}/{groupId}/admins/{userId}:
  *   post:
- *     summary: Join a group. 
+ *     summary: Add an admin to a group. 
+ *     tags:
+ *       - Group Admins
  *     parameters:
  *       - in: path
  *         name: id
@@ -507,6 +531,8 @@ router.post(':id/:groupId/admins/:userId', auth.verifyAuthorization,controller.a
  * /groups/{id}/{groupId}/admins/{userId}:
  *   delete:
  *     summary: Remove and admin from a group. 
+ *     tags:
+ *       - Group Admins
  *     parameters:
  *       - in: path
  *         name: id

@@ -9,6 +9,8 @@ const router = express.Router()
  * /news:
  *   get:
  *     summary: Fetch news about FEUP and its environment
+ *     tags:
+ *       - News
  *     parameters:
  *     responses:
  *       200:
@@ -55,6 +57,8 @@ router.get('/', controller.get)
  * /news/url:
  *   get:
  *     summary: Fetch URL news about FEUP and its environment
+ *     tags:
+ *       - News
  *     parameters:
  *     responses:
  *       200:

@@ -11,6 +11,8 @@ const router = express.Router()
  * /services/{serviceNumber}:
  *   get:
  *     summary: Fetch service's information for service with serviceNumber
+ *     tags:
+ *       - Services
  *     parameters:
  *       - in: path
  *         name: serviceNumber
@@ -68,6 +70,8 @@ router.get('/:id', controller.getServices)
  * /services/{serviceNumber}/url:
  *   get:
  *     summary: Fetch URL of service's information for service with serviceNumber
+ *     tags:
+ *       - Services
  *     parameters:
  *     responses:
  *       200:
