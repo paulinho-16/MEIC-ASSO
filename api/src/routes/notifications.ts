@@ -9,7 +9,6 @@ const router = express.Router()
  * @swagger
  * paths:
  *
- *
  *   /notification/{user}:
  *     post:
  *       tags:

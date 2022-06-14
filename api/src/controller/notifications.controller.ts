@@ -48,7 +48,7 @@ async function deleteTopic(req: Request, res: Response) {
 
 async function createNotification(req: Request, res: Response) {
     const userID = req.params.user;
-    const {topicTokenId, title, content} = req.body
+    const {topicTokenId, title, content, date} = req.body
 
     let answer
 
@@ -65,7 +65,7 @@ async function createNotification(req: Request, res: Response) {
                 }
                 await db.createErrorLog("10", "error creating notification,check the userId and topic_identification_token");
             } else {
-                await sendNotification(title, content, device_token)
+                await sendNotification(title, content, device_token,date)
             }
         } else {
             answer = {
@@ -172,23 +172,40 @@ export default {
     stopIgnoreTopics,
 }
 
-async function sendNotification(title:string, content:string, device_token:string){
+async function sendNotification(title:string, content:string, device_token:string,date :string){
     console.log(title,content,device_token)
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "key=AAAArP_sy-s:APA91bFbcwvy_mjJtt94nZZ9rd7CDWNI2wykQ_t9hYQejRVj7IkN2VyRor1ZGM-p8jx5VoU_Uuwgk22fsWhMaixcUIw3JaNpmgdzxtJXxnACIxc8TFzhiAXiimlLjq-TwDngrman-G3f");
     myHeaders.append("Content-Type", "application/json");
 
-    const raw = JSON.stringify({
-        "to": device_token,
-        "notification": {
-            "body": content,
-            "title": title
-        },
-        "data": {
-            "body": content,
-            "title": title,
-        }
-    });
+    let raw
+    if (date == null){
+        raw = JSON.stringify({
+            "to": device_token,
+            "notification": {
+                "body": content,
+                "title": title
+            },
+            "data": {
+                "body": content,
+                "title": title
+            }
+        });
+    }else{
+        raw = JSON.stringify({
+            "to": device_token,
+            "notification": {
+                "body": content,
+                "title": title
+            },
+            "data": {
+                "body": content,
+                "title": title,
+                "isScheduled" : "true",
+                "scheduledTime" : date
+            }
+        });
+    }
 
     fetch("https://fcm.googleapis.com/fcm/send", {
         method: 'POST',
