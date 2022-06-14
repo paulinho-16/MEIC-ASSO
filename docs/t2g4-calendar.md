@@ -5,7 +5,7 @@
 ### GET `/calendar`
 
 This route was created to retrieve the calendar events, it will return a response with a status code of:
-- 201 if the request was made successfully
+- 200 if the request was made successfully
 - 500 if there was an unexpected error
 
 All of the responses will also include a message with their description.
@@ -21,7 +21,7 @@ All of the parameters are optional, with the exception of the studentCode if the
 
 This route requires authentication.
 
-### POST `/calendar/create`
+### POST `/calendar/event`
 
 This route was created to add an event to a calendar, it requires seven parameters to add an event:
 - `summary` - the title of the event. Required string
