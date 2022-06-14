@@ -1,5 +1,62 @@
-# Notifications design and architecture
+# Notifications
 
+
+## Endpoints
+
+> For more detailed information about each endpoint please refer to swagger in the notification and notification preferences tags: https://uni4all.servehttp.com/api-docs/ 
+### POST `/notification/:user`
+
+With this route you can create a notification for a user.
+If the notification is successfully created or the user is ignoring the topic specified the answer status will be "ok". Otherwise the status will be "error" and the error description will be sent along with the answer.
+
+It requires three parameters in the request body:
+- topicTokenId 
+- title
+- content
+
+And another optional parameter, also in the body:
+- date (YYYY-MM-DD HH:MM:SS)
+
+If a date is provided, the notification will be scheduled to the specified date.
+
+### GET `/notification/:user/all`
+With this route you may obtain all notifications sent to a certain user. 
+
+It requires a parameter in the body:
+- userID
+
+### POST `/user/:deviceToken`
+This route allows to associate a device token to a userID. This configuration is needed in order to create notifications.
+
+It requires a parameter in the body:
+- userID
+
+### POST `/topic/:topic`
+This route allows to create a notification topic. Notifications must have topics, which are unique. Upon successful creation, a token specific to that topic will be sent back in the answer in the "token" parameter. Future notifications for that topic must use that token.
+
+### DELETE `/topic/:topic`
+This route allows to delete a notification topic.
+Besides the topic name in the url, for security measures it also requires the topic token in the body.
+
+As such, it requires 1 parameter in the body:
+- identification_token
+### GET `/config/all`
+This route allows to obtain all existing topic names.  
+### GET `/config/blocked/:user`
+This route allows to obtain the topics that are being ignored by a certain user.
+### POST `/config/:user`
+This route is used so that a user can ignore notification topics.
+
+It requires 1 parameter in the body:
+- topics - An array of strings that are topic names the user intends on ignoring.
+
+### PATCH `/config/:user`
+This route is used so that a user stops ignoring notification topics.
+
+It requires 1 parameter in the body:
+- topics - An array of strings that are topic names.
+
+# Design
 ## Error Report
 
 ### Context
