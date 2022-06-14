@@ -17,7 +17,7 @@ It requires three parameters in the request body:
 And another optional parameter, also in the body:
 - date (YYYY-MM-DD HH:MM:SS)
 
-If a date is provided, the notification will be scheduled to the specified date.
+If a date is provided, the notification could be scheduled to the specified date. This endpoint is fully implemented in the backend. However, to schedule the notification, adicional functionalities are required. The group suggests the following implementation: https://www.freecodecamp.org/news/how-to-schedule-a-task-with-firebase-cloud-functions/. As can be seen, this implementation requires firebase, which is used for frontend development. As such, the group considered that this feature does not belong in the our scope of responsibilities for this project.
 
 ### GET `/notification/:user/all`
 With this route you may obtain all notifications sent to a certain user. 
