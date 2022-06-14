@@ -88,7 +88,7 @@ In this section we describe the API endpoints that were implemented, along with 
 
 ### GET `/calendar`
 
-This was shared with `T2G4` and more detailed API specification can be found at [their calendar documentation](https://github.com/FEUP-ASSO-2021-22/uni4all/blob/docs/t1g2/docs/t2g4-calendar.md).
+This was shared with `T2G4` and more detailed API specification can be found at [their calendar documentation](./t2g4-calendar.md).
 
 Our focus was mainly to integrate events from SIGARRA with the custom user events that follow the previously described architecture and design.
 
