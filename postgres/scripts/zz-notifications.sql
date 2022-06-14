@@ -1,19 +1,26 @@
 DROP TABLE IF EXISTS Topic;
 DROP TABLE IF EXISTS User_Device;
+DROP TABLE IF EXISTS Notification_Error_Log;
+DROP TABLE IF EXISTS Notification_Ignore;
 DROP TABLE IF EXISTS Notifications;
-
 
 -- Table: Topic
 CREATE TABLE Topic(
     id                      SERIAL PRIMARY KEY,
-    name                    varchar(100) NOT NULL,
+    name                    varchar(100) NOT NULL UNIQUE,
     tokenId                 varchar(100) NOT NULL UNIQUE
 );
 
 -- Table: User_Device
 CREATE TABLE User_Device(
     userId          varchar(100) NOT NULL,
-    deviceToken     varchar(100) NOT NULL
+    deviceToken     varchar(1000) NOT NULL
+);
+
+-- Table: Notification_Ignore
+CREATE TABLE Notification_Ignore(
+    userId          varchar(100) NOT NULL,
+    topicName       varchar(100) NOT NULL
 );
 
 -- Table: Notifications
@@ -22,14 +29,11 @@ CREATE TABLE Notifications (
     content         TEXT NOT NULL,
     title           TEXT NOT NULL,
     topicTokenId    varchar(100) NOT NULL,
-    userID          INTEGER NOT NULL,
-    foreign key (topicTokenId) references Topic(tokenId)
+    userID          INTEGER NOT NULL
 );
 
-
-INSERT INTO Topic (id, "name", tokenId) VALUES (1, 'Guns', 'c372a3ba-db47-11ec-9d64-0242ac120002');
-
-INSERT INTO User_Device (userId, deviceToken) VALUES (1, 'c372a3ba-db47-11ec-9d64-0242ac120002');
-
-INSERT INTO Notifications (id, content, title, topicTokenId, userID)
-Values (1, 'My description 1', 'James Bond 1', 'c372a3ba-db47-11ec-9d64-0242ac120002', 1);
+CREATE TABLE Notification_Error_Log (
+    id              SERIAL PRIMARY KEY,
+    code            INTEGER NOT NULL,
+    description     TEXT
+);
