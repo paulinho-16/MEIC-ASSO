@@ -1,4 +1,51 @@
-# Notifications design and architecture
+# Notifications
+
+
+## Endpoints
+### POST `/notification/:user`
+
+With this route you can create a notification for a user.
+If the notification is successfully created or the user is ignoring the topic specified the answer status will be "ok". Otherwise the status will be "error" and the error description will be sent along with the answer.
+
+It requires three parameters in the request body:
+- topicTokenId 
+- title
+- content
+
+And another optional parameter, also in the body:
+- date (YYYY-MM-DD HH:MM:SS)
+
+If a date is provided, the notification will be scheduled to the specified date.
+
+### GET `/notification/:user/all`
+With this route you may obtain all notifications sent to a certain user. 
+
+It requires a parameter in the body:
+- userID
+
+### POST `/user/:deviceToken`
+This route allows to associate a device token to a userID. This configuration is needed in order to create notifications.
+
+It requires a parameter in the body:
+- userID
+
+### POST `/topic/:topic`
+This route allows to create a notification topic. Notifications must have topics, which are unique. Upon successful creation, a token specific to that topic will be sent back in the answer in the "token" parameter. Future notifications for that topic must use that token.
+
+### DELETE `/topic/:topic`
+This route allows to delete a notification topic.
+Besides the topic name in the url, for security measures it also requires the topic token in the body.
+
+As such, it requires 1 parameter in the body:
+- identification_token
+### GET `/config/all`
+
+### GET `/config/blocked/:user`
+
+### GET `/config/:user`
+
+### PATCH `/config/:user`
+
 
 ## Error Report
 
