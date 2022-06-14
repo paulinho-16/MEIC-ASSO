@@ -207,7 +207,7 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
     - **T2G4**
     - **T1G2**
 - **T2G5** Group Making
-- **T2G2** Feedback
+- **T2G2** [Feedback](./feedback.md)
     - canteen/bar meals (reviews)
     - classes/professors (reviews)
     - pedagogical surveys
