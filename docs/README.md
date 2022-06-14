@@ -192,25 +192,25 @@ There are a few quality attributes defined for this project:
 
 ## High-level architecture
 
-_Instructions: Information about **Components**, **Activities** and **Infrastructure** (respectively, use UML Component, Activity and Deployment diagrams. Provide higher-level views over these three types of elements using _Package_ diagrams, if appropriate._
+<!--_Instructions: Information about **Components**, **Activities** and **Infrastructure** (respectively, use UML Component, Activity and Deployment diagrams. Provide higher-level views over these three types of elements using _Package_ diagrams, if appropriate._-->
 
 ### Components
 
 - **T1G4** [Scraping](./scraping.md)
 - **T2G1** [Authentication](./authentication.md)
 - **T1G3** [Chat](./chat.md)
-- **T1G2** Jobs
 - **T1G1** [Payments](./payments.md)
 - Notifications
 - External API / Services
-- [Calendar](./calendar.md)
-    - **T2G4**
-    - **T1G2**
+- Calendar
+    - [**T1G2**](./t1g2-calendar.md)
+    - [**T2G4**](./t2g4-calendar.md)
 - **T2G5** Group Making
 - **T2G2** [Feedback](./feedback.md)
     - canteen/bar meals (reviews)
     - classes/professors (reviews)
     - pedagogical surveys
+- **T1G2** [Jobs](./jobs.md)
 - Registrations
 
 ## Technologies
@@ -248,7 +248,9 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 ### Database
 
 - redis: for session storage
-- postgres: to store the credentials (email and password) of the user
+- postgres: 
+    - Credentials (email and password) of the user
+    - User calendar events
     - Cache
 - MongoDB
     - Default
@@ -257,7 +259,7 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 
 ## Design and architecture
 
-_Instructions: Document design and architecture problems and solutions, preferably using pattern instances. Justify all design and architectural choices, preferably based on operational data.<br><br>
+<!--_Instructions: Document design and architecture problems and solutions, preferably using pattern instances. Justify all design and architectural choices, preferably based on operational data.<br><br>
 Documenting pattern instances is important because it will help other developers
 to better understand the resulting concrete classes, attributes and methods,
 and the underneath design decisions. <br>
@@ -270,15 +272,15 @@ In general terms, this results in better communication within the development te
 To more formally document a pattern instance we must describe the design context, to justify the selection of the
 pattern, to explain how the pattern roles, operations and associations were mapped to the concrete design classes,
 and to state the benefits and liabilities of instantiating the pattern, eventually in comparison with other alternatives.<br><br>
-It is expected that you start this section with system-wide patterns, but you should link to component-specific pages for describing the design of individual components. <ins>For each pattern instance</ins> that you would like to document, use the following template:_
+It is expected that you start this section with system-wide patterns, but you should link to component-specific pages for describing the design of individual components. <ins>For each pattern instance</ins> that you would like to document, use the following template:_-->
 
-### _name the goal that you would like to achieve, or problem to solve_
+<!--### _name the goal that you would like to achieve, or problem to solve_
 
 **Context**: _Describe the design context that justifies the selection of the pattern. Link to your best reference of the pattern, if available._
 
 **Mapping**: _Explain how are mapped the pattern's roles, operations and associations to the concrete design classes. Something that works well is to annotate UML structural diagrams with pattern roles, as is done in  [JUnit A Cook's Tour](http://junit.sourceforge.net/doc/cookstour/cookstour.htm), for example. Link to the appropriate files in the repository._
 
-**Consequences**: _Explain the pros and cons of instantiating the pattern, eventually in comparison with other alternatives._
+**Consequences**: _Explain the pros and cons of instantiating the pattern, eventually in comparison with other alternatives._-->
 
 
 
@@ -289,11 +291,47 @@ For Design and Arquitecture documentation related to the **Groups Making** modul
 
 ## Operation
 
-_Instructions: Information about how to set up a production environment, how to build and package the system for deployment, how to deploy the system to production, how to operate the system (where the logs are, how to access monitoring tools, etc.), and how to run and access architectural fitness functions and use them to decide (or not) to the intended quality attributes._
+<!--_Instructions: Information about how to set up a production environment, how to build and package the system for deployment, how to deploy the system to production, how to operate the system (where the logs are, how to access monitoring tools, etc.), and how to run and access architectural fitness functions and use them to decide (or not) to the intended quality attributes._-->
+
+### Monitoring
+
+To add new hosts and endpoints to be monitored you can either extend the `uni4all.cfg` configuration file with new services or create a new one. If you create a new configuration file you need to update the `nagios.cfg` file with its path as exemplified for the `uni4all.cfg` and `monitoring.cfg` files.
+
+The Naxios-based monitoring was set up and initially configured by group **T1G2**. It was then passed to João Araújo.
+
+#### How to run
+
+```
+cd monitoring
+docker build -t asso-monitoring .
+docker run -p 80:80 asso-monitoring
+```
+
+#### How to access
+
+```
+locally: http://localhost:80/nagios/
+
+production: http://34.125.165.109/nagios/
+
+username: nagiosadmin
+password: jv=M-%#vx:KKpW_)7<*5
+```
+
+### Project
+
+#### How to run
+
+The project can be built and deployed with docker.
+
+```
+docker-compose build
+docker-compose up
+```
 
 ## Usage
 
-_Instructions: Information about how the product can be used from the standpoint of its users (e.g., API endpoints and how to use them). The API documention should be usable, accurate and up-to-date._
+<!--_Instructions: Information about how the product can be used from the standpoint of its users (e.g., API endpoints and how to use them). The API documention should be usable, accurate and up-to-date._-->
 
 Information about the usage of the product can be found at the following link:
 
@@ -303,5 +341,16 @@ It includes all the API endpoins and respective usages.
 
 ## Contributing
 
-_Instructions: Information about setting up the development environment, running the system in development, running the tests. Also, should include documentation on all the API endpoints (including internal ones) and how to use them. The API documention should be usable, accurate and up-to-date.
+<!--_Instructions: Information about setting up the development environment, running the system in development, running the tests. Also, should include documentation on all the API endpoints (including internal ones) and how to use them. The API documention should be usable, accurate and up-to-date.-->
+
+Information about the API endpoints can be found at the following link:
+
+- [uni4all.servehttp.com/api-docs/](https://uni4all.servehttp.com/api-docs/)
+
+### Setting up the development environment
+
+```
+docker-compose -f docker-compose.dev build
+docker-compose -f docker-compose.dev up
+```
 
