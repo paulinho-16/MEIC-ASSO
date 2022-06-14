@@ -2,6 +2,8 @@
 
 
 ## Endpoints
+
+> For more detailed information about each endpoint please refer to swagger in the notification and notification preferences tags: https://uni4all.servehttp.com/api-docs/ 
 ### POST `/notification/:user`
 
 With this route you can create a notification for a user.
