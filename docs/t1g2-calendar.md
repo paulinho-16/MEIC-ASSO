@@ -156,9 +156,11 @@ An user can update an event if:
 ## Future considerations
 
 **Cloud Adoption Patterns**
+
 By scaling in the amount of users, we could implement a stronger [Microservices Architecture](https://kgb1001001.github.io/cloudadoptionpatterns/Microservices/Microservices-Architecture/), which would be easier to scale, for example by replicating in-demand services. With this, we could also take advantage of [Polyglot Development](https://kgb1001001.github.io/cloudadoptionpatterns/Microservices/Polyglot-Development/), for example, for using Python for scraping from SIGARRA.
 
 **Microservice API patterns**
+
 [Backend Integration](https://microservice-api-patterns.org/patterns/foundation/BackendIntegration) - with the adoption of microservices, we could specify the communication between two or more backends ([Solution Internal API](https://microservice-api-patterns.org/patterns/foundation/SolutionInternalAPI)), being it message-based or event-driven.
 
 As said in more detail during the API endpoints specification above, we could improve the user's interaction with the API by implementing, in the endpoints where it is appropriate, the [Conditional Request](https://microservice-api-patterns.org/patterns/quality/dataTransferParsimony/ConditionalRequest) and [Request Bundle](https://microservice-api-patterns.org/patterns/quality/dataTransferParsimony/RequestBundle) patterns.
