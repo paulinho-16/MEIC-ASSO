@@ -196,7 +196,7 @@ _Instructions: Information about **Components**, **Activities** and **Infrastruc
 
 ### Components
 
-- **T1G4** [Scraping]("./scraping.md")
+- **T1G4** [Scraping](./scraping.md)
 - **T2G1** [Authentication](./authentication.md)
 - **T1G3** [Chat](./chat.md)
 - **T1G2** Jobs
