@@ -1,5 +1,26 @@
 # Calendar Events
 
+## Features
+- Retrieve all events
+  - The user can retrieve all of the events related to him - i.e. events created by him and the ones coming from it's SIGARRA account.
+- Custom user events
+  -  The user can create custom events - i.e. events that were created by him and don't come from SIGARRA.
+- Google calendar events
+  -  The user can create an authentication token with google account and then export the events created in google calendar to the uni4all account.
+
+## Technologies
+
+<!--_Instructions: Tools and rationale for choosing them (programming languages, frameworks, libraries, database engines, message queues)._-->
+
+Same stack used in the global uni4all application (Express framework with TypeScript).
+
+- API's
+    - [Google API](https://cloud.google.com/apis/docs/overview): to handle connection between uni4all and google calendar events.
+- Database
+    - [Postgres](https://www.postgresql.org/): to store all of the calendar events (including custom user-defined events and Google calendar events), as they all have similar structure.
+- Authentication
+    - [OAuth2.0](https://oauth.net/2/): Industry-standard protocol for authorization in google API.
+
 ## Endpoints
 
 ### GET `/calendar`
