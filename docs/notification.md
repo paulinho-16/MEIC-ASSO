@@ -39,14 +39,22 @@ Besides the topic name in the url, for security measures it also requires the to
 As such, it requires 1 parameter in the body:
 - identification_token
 ### GET `/config/all`
-
+This route allows to obtain all existing topic names.  
 ### GET `/config/blocked/:user`
+This route allows to obtain the topics that are being ignored by a certain user.
+### POST `/config/:user`
+This route is used so that a user can ignore notification topics.
 
-### GET `/config/:user`
+It requires 1 parameter in the body:
+- topicArray - An array of strings that are topic names the user intends on ignoring.
 
 ### PATCH `/config/:user`
+This route is used so that a user stops ignoring notification topics.
 
+It requires 1 parameter in the body:
+- topicArray - An array of strings that are topic names.
 
+# Design
 ## Error Report
 
 ### Context
