@@ -14,7 +14,7 @@ CREATE TABLE Topic(
 -- Table: User_Device
 CREATE TABLE User_Device(
     userId          varchar(100) NOT NULL,
-    deviceToken     varchar(100) NOT NULL
+    deviceToken     varchar(1000) NOT NULL
 );
 
 -- Table: Notification_Ignore
