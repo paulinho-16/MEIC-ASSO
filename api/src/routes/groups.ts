@@ -1,4 +1,5 @@
 import express from 'express'
+import auth from '@/middleware/auth'
 
 import controller from '../controller/groups.controller'
 
@@ -132,17 +133,22 @@ router.get('/:id', controller.getGroup)
  *         description: Unexpected error.
  *      
 */
-router.post('/', controller.createGroup)
+router.post('/',auth.verifySessionToken,controller.createGroup)
 
 
 /**
  * @swagger
- * /groups/{id}:
+ * /groups/{id}/{groupId}:
  *   delete:
  *     summary: Delete a group.
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
+ *         type: int
+ *         description: Id of the user who requested the deletion.
+ *       - in: path
+ *         name: groupId
  *         required: true
  *         type: int
  *         description: Id of the group to delete.
@@ -154,7 +160,7 @@ router.post('/', controller.createGroup)
  *       500:
  *         description: Unexpected error.
 */
-router.delete('/:id', controller.deleteGroup)
+router.delete('/:id/:groupId',auth.verifyAuthorization, controller.deleteGroup)
 
 
 /**
@@ -188,20 +194,25 @@ router.delete('/:id', controller.deleteGroup)
  *       500:
  *         description: Unexpected error.
 */
-router.get('/myGroups/:userId', controller.getMyGroups);
+router.get('/myGroups/:id', auth.verifyAuthorization ,controller.getMyGroups)
 
 
 /**
  * @swagger
- * /groups:
+ * /groups/{id}/{groupId}:
  *   patch:
  *     summary: Edit information on an existing group.
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         type: int
- *         description: Id of the group to edit.
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        type: int
+ *        description: Id of the user who wants to edit the group.
+ *      - in: path
+ *        name: groupId
+ *        required: true
+ *        type: int
+ *        description: Id of the group to edit.
  *     requestBody:
  *       description: Group information.
  *       required: true
@@ -240,7 +251,7 @@ router.get('/myGroups/:userId', controller.getMyGroups);
  *         description: Unexpected error.
  *      
 */
-router.patch('/:id',controller.editGroup);
+router.patch('/:id/:groupId',auth.verifyAuthorization,controller.editGroup)
 
 
 
@@ -254,7 +265,7 @@ router.patch('/:id',controller.editGroup);
 
 /**
  * @swagger
- * /groups/{groupId}/members:
+ * /groups/{id}/{groupId}/members:
  *   get:
  *     summary: Get a list of group's members. 
  *     parameters:
@@ -263,6 +274,11 @@ router.patch('/:id',controller.editGroup);
  *         required: true
  *         type: int
  *         description: Group for which to return its members.
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         type: int
+ *         description: User who issued the request.
  *       - in: query
  *         name: offset
  *         required: false
@@ -293,15 +309,20 @@ router.patch('/:id',controller.editGroup);
  *       500:
  *         description: Unexpected error.
 */
-router.get('/:id/members', controller.getGroupMembers)
+router.get('/:id/:groupId/members', auth.verifyAuthorization, controller.getGroupMembers)
 
 
 /**
  * @swagger
- * /groups/{groupId}/members/{memberId}:
+ * /groups/{id}/{groupId}/members/{memberId}:
  *   get:
  *     summary: Get information of a single group. 
  *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         type: int
+ *         description: Id of user who issued the request.
  *       - in: path
  *         name: groupId
  *         required: true
@@ -330,15 +351,20 @@ router.get('/:id/members', controller.getGroupMembers)
  *       500:
  *         description: Unexpected error.
 */
-router.get('/:id/members/:userId', controller.getGroupMember)
+router.get('/:id/:groupId/members/:userId',  auth.verifyAuthorization, controller.getGroupMember)
 
 
 /**
  * @swagger
- * /groups/{groupId}/members/{memberId}:
+ * /groups/{id}/{groupId}/members/{memberId}:
  *   post:
  *     summary: Join a group. 
  *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         type: int
+ *         description: Id of user who issued the request.
  *       - in: path
  *         name: groupId
  *         required: true
@@ -357,15 +383,20 @@ router.get('/:id/members/:userId', controller.getGroupMember)
  *       500:
  *         description: Unexpected error.
 */
-router.post('/:id/members/:userId', controller.createGroupMember)
+router.post('/:id/:groupId/members/:userId',  auth.verifyAuthorization, controller.createGroupMember)
 
 
 /**
  * @swagger
- * /groups/{groupId}/members/{memberId}:
+ * /groups/{id}/{groupId}/members/{memberId}:
  *   delete:
  *     summary: Unjoin a group. 
  *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         type: int
+ *         description: Id of user who issued the request.
  *       - in: path
  *         name: groupId
  *         required: true
@@ -384,7 +415,7 @@ router.post('/:id/members/:userId', controller.createGroupMember)
  *       500:
  *         description: Unexpected error.
 */
-router.delete('/:id/members/:userId', controller.deleteGroupMember)
+router.delete('/:id/:groupId/members/:userId', auth.verifyAuthorization, controller.deleteGroupMember)
 
 
 
@@ -402,10 +433,15 @@ router.delete('/:id/members/:userId', controller.deleteGroupMember)
 
 /**
  * @swagger
- * /groups/{id}/admins:
+ * /groups/{id}/{groupId}/admins:
  *   get:
  *     summary: Get a list of group's admins. 
  *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         type: int
+ *         description: Id of user who issued the request.
  *       - in: path
  *         name: groupId
  *         required: true
@@ -431,17 +467,22 @@ router.delete('/:id/members/:userId', controller.deleteGroupMember)
  *       500:
  *         description: Unexpected error.
 */
-router.get('/:id/admins', controller.getGroupAdmins)
+router.get(':id/:groupId/admins', auth.verifyAuthorization, controller.getGroupAdmins)
 
 
 /**
  * @swagger
- * /groups/{id}/members/{userId}:
+ * /groups/{id}/{groupId}/members/{userId}:
  *   post:
  *     summary: Join a group. 
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
+ *         type: int
+ *         description: Id of user who issued the request.
+ *       - in: path
+ *         name: groupId
  *         required: true
  *         type: int
  *         description: Id of the group for which admin to add.
@@ -458,17 +499,22 @@ router.get('/:id/admins', controller.getGroupAdmins)
  *       500:
  *         description: Unexpected error.
 */
-router.post('/:id/admins/:userId', controller.addGroupAdmin)
+router.post(':id/:groupId/admins/:userId', auth.verifyAuthorization,controller.addGroupAdmin)
 
 
 /**
  * @swagger
- * /groups/{id}/admins/{userId}:
+ * /groups/{id}/{groupId}/admins/{userId}:
  *   delete:
  *     summary: Remove and admin from a group. 
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
+ *         type: int
+ *         description: Id of user who issued the request.
+ *       - in: path
+ *         name: groupId
  *         required: true
  *         type: int
  *         description: Id of the group for which admin to delete.
@@ -485,7 +531,7 @@ router.post('/:id/admins/:userId', controller.addGroupAdmin)
  *       500:
  *         description: Unexpected error.
 */
-router.delete('/:id/admins/:userId', controller.deleteGroupAdmin)
+router.delete(':id/:groupId/admins/:userId', auth.verifyAuthorization, controller.deleteGroupAdmin)
 
 
 
