@@ -15,7 +15,7 @@ const router = express.Router()
  *         - Notifications
  *       summary: Creates a notification for a user
  *       operationId: createNotification
- *       description: Adds a notification to the system
+ *       description: Adds a notification to the system, if a string date is also sent in the body, the notification will be scheduled for that date instead of being sent instantaneously.
  *       parameters:
  *         - in: path
  *           name: user
@@ -26,18 +26,21 @@ const router = express.Router()
  *       requestBody:
  *         required: true
  *         content:
- *           application/x-www-form-urlencoded:
+ *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 topic_identification_token:
+ *                 topicTokenId:
  *                   type: string
  *                 title:
  *                   type: string
  *                 content:
  *                   type: string
+ *                 date:
+ *                   type: string
+ *                   description: Optional, must be in the format "YYYY-MM-DD HH:MM:SS"
  *               required:
- *                 - topic_identification_token
+ *                 - topicTokenId
  *                 - title
  *                 - content
  *         description: Parameters to create the notification and topic token for security reasons
@@ -64,7 +67,7 @@ const router = express.Router()
  *                   summary: Example of an error response
  *                   value:
  *                     status: "error"
- *                     error: "error creating notification, check the userId and topic_identification_token"
+ *                     error: "error creating notification, check the userId and topicTokenId"
  *
  *   /notification/{user}/all:
  *     get:
@@ -271,7 +274,7 @@ const router = express.Router()
  *       requestBody:
  *         required: true
  *         content:
- *           application/x-www-form-urlencoded:
+ *           application/json:
  *             schema:
  *               type: object
  *               properties:
@@ -318,7 +321,7 @@ const router = express.Router()
  *
  *     patch:
  *       tags:
- *         - Notifications
+ *         - Notifications Preferences
  *       summary: Removes topics from the user's ignored topics list.
  *       operationId: stopIgnoreTopics
  *       description: Removes topics from the user's ignored topics list.
@@ -332,7 +335,7 @@ const router = express.Router()
  *       requestBody:
  *         required: true
  *         content:
- *           application/x-www-form-urlencoded:
+ *           application/json:
  *             schema:
  *               type: object
  *               properties:
@@ -394,7 +397,7 @@ const router = express.Router()
  *       requestBody:
  *         required: true
  *         content:
- *           application/x-www-form-urlencoded:
+ *           application/json:
  *             schema:
  *               type: object
  *               properties:
@@ -492,7 +495,7 @@ router.get('/config/blocked/:user', controller.getBlockedTopics)
 
 
 router.post('/config/:user', controller.ignoreTopics)
-router.delete('/config/:user', controller.stopIgnoreTopics)
+router.patch('/config/:user', controller.stopIgnoreTopics)
 
 router.post('/notification/:user', controller.createNotification)
 
