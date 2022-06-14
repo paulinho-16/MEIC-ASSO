@@ -10,9 +10,14 @@ This route was created to retrieve the calendar events, it will return a respons
 
 All of the responses will also include a message with their description.
 
-This route may receive two parameters (both optional):
-- `startDate` in format YYYY-MM-DD. Defaults to today
-- `endDate` in format YYYY-MM-DD. Defaults to null (retrieves all future events)
+This route may receive these query parameters:
+- `wishlist` an array of strings that describes the type of events the user wants to receive. Supported types of events are TIMETABLE (from the SIGARRA schedule), CUSTOM (created by the user) and EXAM (from the user's SIGARRA exam calendar). Defaults to all types. Example: `?wishlist=EXAM&wishlist=TIMETABLE`.
+- `eventWishlist` an array of strings that contains the fields of each event the user wants to receive. Supported types of events are: id, summary, description, location, date, starttime, endtime, recurrence and type. Defaults to all fields. Example: `?eventWishlist=summary&eventWishlist=date&eventWishlist=location`.
+- `startDate` in format YYYY-MM-DD. Defaults to today.
+- `endDate` in format YYYY-MM-DD. Defaults to null (retrieves all future events).
+- `studentCode` SIGARRA code of the student, without 'up'. Example: 20180XXXX.
+
+All of the parameters are optional, with the exception of the studentCode if the user wishes to obtain timetable or exams events.
 
 This route requires authentication.
 
