@@ -55,6 +55,7 @@ _Cloud Adoption Pattern_
 **Context**: We get timetable and exams event data by scraping from SIGARRA. As this is a time and resource consuming task, both on our end and on SIGARRA's end, we should have a way of keeping older results for a certain amount of time before they expire, so that repeated requests can benefit from the same data.
 
 **Mapping**:
+
 ![](https://i.imgur.com/y0Zwrql.jpg)
 
 **Consequences**:
