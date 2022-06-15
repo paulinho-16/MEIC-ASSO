@@ -12,28 +12,25 @@ type Group = {
 }
 
 function location(req: Request, res: Response) {
-  return res.status(200).json({ url: 'http://uni4all.servehttp.com:8082/' }) // TODO concrete location, not this
+  return res.status(200).json({ url: 'http://uni4all.servehttp.com:8082/' })
 }
 
 async function _getGroup(group: string) {
   // use this method when you know that all parameters are correct
   // requests the mongo chat
-  const groupObject: Group = await axios.get(`http://mongo_chat_server:3000/group/${group}`) // TODO concrete location
+  const groupObject: Group = await axios.get(`http://mongo_chat_server:3000/group/${group}`)
 
   return groupObject
 }
 
 async function groupMessage(req: Request, res: Response) {
-  // TODO document
-
   const errors = []
 
   // we receive
   //   a group
   //   a page (for pagination)
 
-  const group = req.params.group
-  let { page } = req.body
+  const group = req.params.groupID
 
   // dealing with group
   //  group is not null
@@ -44,20 +41,8 @@ async function groupMessage(req: Request, res: Response) {
     errors.push('group is not a string')
   }
 
-  // dealing with page
-  //  page is a positive integer
-  //  if page is null it defaults to 0
-  if (!page) {
-    page = 0
-  } else if (typeof page !== 'number') {
-    errors.push('page must be a number')
-  } else if (page < 0) {
-    errors.push('page must be a non negative number')
-  }
-
   // if there are errors, return them
   if (errors.length > 0) {
-    // TODO use library for the HTTP status codes
     return res.status(400).json({ errors })
   }
 
@@ -87,9 +72,6 @@ async function groupMessage(req: Request, res: Response) {
 async function message(req: Request, res: Response) {
   const errors = []
 
-  // we receive
-  //   a page (for pagination)
-
   const { userUp } = req.body
 
   // dealing with userId
@@ -100,12 +82,10 @@ async function message(req: Request, res: Response) {
 
   // if there are errors, return them
   if (errors.length > 0) {
-    // TODO use library for the HTTP status codes
     return res.status(400).json({ errors })
   }
 
-  // TODO get the groups of this user
-  const response = await axios.get(`http://mongo_chat_server:3000/group/user/${userUp}`) // TODO concrete location
+  const response = await axios.get(`http://mongo_chat_server:3000/group/user/${userUp}`)
   const groups = response.data
 
   // for each group get the messages
@@ -115,7 +95,6 @@ async function message(req: Request, res: Response) {
     messages.set(group._id, group.messages)
   })
 
-  // TODO this JSON prettier
   return res.status(200).json({ messages: [...messages] })
 }
 
@@ -139,7 +118,7 @@ async function createGroup(req: Request, res: Response) {
     const response = await axios.post(`http://mongo_chat_server:3000/group`, {
       name,
       userNumbers,
-    }) // TODO concrete location
+    })
 
     return res.status(200).json(response.data)
   } catch (error) {
@@ -165,7 +144,7 @@ async function addToGroup(req: Request, res: Response) {
   try {
     const response = await axios.post(`http://mongo_chat_server:3000/${groupID}/`, {
       userNumber: userUp,
-    }) // TODO concrete location
+    })
 
     return res.status(200).json(response.data)
   } catch (error) {
@@ -192,7 +171,7 @@ async function removeFromGroup(req: Request, res: Response) {
       data: {
         userNumber: userUp,
       },
-    }) // TODO concrete location
+    })
 
     return res.status(200).json(response.data)
   } catch (error) {
@@ -213,7 +192,7 @@ async function getGroups(req: Request, res: Response) {
     })
 
   try {
-    const response = await axios.get(`http://mongo_chat_server:3000/group/user/${userUp}`) // TODO concrete location
+    const response = await axios.get(`http://mongo_chat_server:3000/group/user/${userUp}`)
 
     return res.status(200).json(response.data)
   } catch (error) {
@@ -245,7 +224,7 @@ async function getGroupMessages(req: Request, res: Response) {
         page,
         perPage,
       },
-    }) // TODO concrete location
+    })
 
     return res.status(200).json(response.data)
   } catch (error) {
