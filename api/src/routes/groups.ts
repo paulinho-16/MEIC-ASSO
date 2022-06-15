@@ -24,17 +24,17 @@ router.use(express.json())
  *       - in: query
  *         name: limit
  *         required: false
- *         type: int
+ *         type: integer
  *         description: Ammount of information to return.
  *       - in: query
  *         name: offset
  *         required: false
- *         type: int
+ *         type: integer
  *         description: Page of information to return.
  *       - in: query
  *         name: classId
  *         required: false
- *         type: int
+ *         type: integer
  *         description: Filter groups by a single class by specifing its ID.
  *     responses:
  *       200:
@@ -46,13 +46,20 @@ router.use(express.json())
  *               items:
  *                  type: object
  *                  properties:
- *                      id: int
- *                      typename: string
- *                      title: string
- *                      description: string
- *                      mlimit: int
- *                      autoaccept: bool
- *                      classId: int
+ *                      id: 
+ *                        type: integer
+ *                      typename: 
+ *                        type: string
+ *                      title: 
+ *                        type: string
+ *                      description: 
+ *                        type: string
+ *                      mlimit: 
+ *                        type: integer
+ *                      autoaccept: 
+ *                        type: boolean
+ *                      classId: 
+ *                        type: integer
  *       500:
  *         description: Unexpected error.
 */
@@ -71,7 +78,7 @@ router.get('/', controller.getGroups)
  *       - in: path
  *         name: groupId
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of the group to return.
  *     responses:
  *       200:
@@ -81,13 +88,20 @@ router.get('/', controller.getGroups)
  *             schema:
  *               type: object
  *               properties:
- *                      id: int
- *                      typename: string
- *                      title: string
- *                      description: string
- *                      mlimit: int
- *                      autoaccept: bool
- *                      classId: int
+ *                      id:
+ *                        type: integer
+ *                      typename:
+ *                        type: string
+ *                      title:
+ *                        type: string
+ *                      description:
+ *                        type: string
+ *                      mlimit:
+ *                        type: integer
+ *                      autoaccept:
+ *                        type: boolean
+ *                      classId:
+ *                        type: integer
  *       500:
  *         description: Unexpected error.
 */
@@ -110,7 +124,7 @@ router.get('/:id', controller.getGroup)
  *             type: object
  *             properties:
  *               id:
- *                 type: int
+ *                 type: integer
  *                 example: 1
  *               typename:
  *                 type: string
@@ -122,13 +136,13 @@ router.get('/:id', controller.getGroup)
  *                 type: string
  *                 example: "Project Group for ASSO class"
  *               mlimit:
- *                 type: int
+ *                 type: integer
  *                 example: 5
  *               autoaccept:
- *                 type: bool
+ *                 type: boolean
  *                 example: true
  *               classId:
- *                 type: int
+ *                 type: integer
  *                 example: 1
  *     responses:
  *       200:
@@ -153,12 +167,12 @@ router.post('/',auth.verifySessionToken,controller.createGroup)
  *       - in: path
  *         name: id
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of the user who requested the deletion.
  *       - in: path
  *         name: groupId
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of the group to delete.
  *     responses:
  *       200:
@@ -182,7 +196,7 @@ router.delete('/:id/:groupId',auth.verifyAuthorization, controller.deleteGroup)
  *       - in: path
  *         name: userId
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of the user from whom to return groups.
  *     responses:
  *       200:
@@ -194,13 +208,20 @@ router.delete('/:id/:groupId',auth.verifyAuthorization, controller.deleteGroup)
  *               items:
  *                  type: object
  *                  properties:
- *                      id: int
- *                      typename: string
- *                      title: string
- *                      description: string
- *                      mlimit: int
- *                      autoaccept: bool
- *                      classId: int
+ *                      id:
+ *                        type: integer
+ *                      typename:
+ *                        type: string
+ *                      title:
+ *                        type: string
+ *                      description:
+ *                        type: string
+ *                      mlimit:
+ *                        type: integer
+ *                      autoaccept:
+ *                        type: boolean
+ *                      classId:
+ *                        type: integer
  *       500:
  *         description: Unexpected error.
 */
@@ -218,12 +239,12 @@ router.get('/myGroups/:id', auth.verifyAuthorization ,controller.getMyGroups)
  *      - in: path
  *        name: id
  *        required: true
- *        type: int
+ *        type: integer
  *        description: Id of the user who wants to edit the group.
  *      - in: path
  *        name: groupId
  *        required: true
- *        type: int
+ *        type: integer
  *        description: Id of the group to edit.
  *     requestBody:
  *       description: Group information.
@@ -234,7 +255,7 @@ router.get('/myGroups/:id', auth.verifyAuthorization ,controller.getMyGroups)
  *             type: object
  *             properties:
  *               id:
- *                 type: int
+ *                 type: integer
  *                 example: 1
  *               typename:
  *                 type: string
@@ -246,13 +267,13 @@ router.get('/myGroups/:id', auth.verifyAuthorization ,controller.getMyGroups)
  *                 type: string
  *                 example: "Project Group for ASSO class"
  *               mlimit:
- *                 type: int
+ *                 type: integer
  *                 example: 5
  *               autoaccept:
- *                 type: bool
+ *                 type: boolean
  *                 example: true
  *               classId:
- *                 type: int
+ *                 type: integer
  *                 example: 1
  *     responses:
  *       200:
@@ -286,22 +307,22 @@ router.patch('/:id/:groupId',auth.verifyAuthorization,controller.editGroup)
  *       - in: path
  *         name: groupId
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Group for which to return its members.
  *       - in: path
  *         name: id
  *         required: true
- *         type: int
+ *         type: integer
  *         description: User who issued the request.
  *       - in: query
  *         name: offset
  *         required: false
- *         type: int
+ *         type: integer
  *         description: Page of information to return.
  *       - in: query
  *         name: limit
  *         required: false
- *         type: int
+ *         type: integer
  *         description: Ammount of groups to return.
  *     responses:
  *       200:
@@ -313,11 +334,16 @@ router.patch('/:id/:groupId',auth.verifyAuthorization,controller.editGroup)
  *               items:
  *                  type: object
  *                  properties:
- *                      id: int
- *                      groupid: int
- *                      studentid: int
- *                      isadmin: bool
- *                      isaccepted: bool
+ *                    id: 
+ *                      type: integer
+ *                    groupid: 
+ *                      type: integer
+ *                    studentid: 
+ *                      type: integer
+ *                    isadmin: 
+ *                      type: boolean
+ *                    isaccepted: 
+ *                      type: boolean
  *       400:
  *         description: Request body is not valid.
  *       500:
@@ -337,17 +363,17 @@ router.get('/:id/:groupId/members', auth.verifyAuthorization, controller.getGrou
  *       - in: path
  *         name: id
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of user who issued the request.
  *       - in: path
  *         name: groupId
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of the group for which member to return.
  *       - in: path
  *         name: memberId
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of the member to return.
  *     responses:
  *       200:
@@ -357,11 +383,16 @@ router.get('/:id/:groupId/members', auth.verifyAuthorization, controller.getGrou
  *             schema:
  *               type: object
  *               properties:
- *                  id: int
- *                  groupid: int
- *                  studentid: int
- *                  isadmin: bool
- *                  isaccepted: bool
+ *                  id: 
+ *                    type: integer
+ *                  groupid: 
+ *                    type: integer
+ *                  studentid: 
+ *                    type: integer
+ *                  isadmin: 
+ *                    type: boolean
+ *                  isaccepted: 
+ *                    type: boolean
  *       400:
  *         description: Request body is not valid.
  *       500:
@@ -381,17 +412,17 @@ router.get('/:id/:groupId/members/:userId',  auth.verifyAuthorization, controlle
  *       - in: path
  *         name: id
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of user who issued the request.
  *       - in: path
  *         name: groupId
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of the group for which member to return.
  *       - in: path
  *         name: memberId
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of the member to return.
  *     responses:
  *       204:
@@ -415,17 +446,17 @@ router.post('/:id/:groupId/members/:userId',  auth.verifyAuthorization, controll
  *       - in: path
  *         name: id
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of user who issued the request.
  *       - in: path
  *         name: groupId
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of the group for which member to return.
  *       - in: path
  *         name: memberId
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of the member to return.
  *     responses:
  *       204:
@@ -462,12 +493,12 @@ router.delete('/:id/:groupId/members/:userId', auth.verifyAuthorization, control
  *       - in: path
  *         name: id
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of user who issued the request.
  *       - in: path
  *         name: groupId
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Group for which to return its members.
  *     responses:
  *       200:
@@ -479,11 +510,16 @@ router.delete('/:id/:groupId/members/:userId', auth.verifyAuthorization, control
  *               items:
  *                  type: object
  *                  properties:
- *                      id: int
- *                      groupid: int
- *                      studentid: int
- *                      isadmin: bool
- *                      isaccepted: bool
+ *                      id:
+ *                        type: integer
+ *                      groupid:
+ *                        type: integer
+ *                      studentid:
+ *                        type: integer
+ *                      isadmin:
+ *                        type: boolean
+ *                      isaccepted:
+ *                        type: boolean
  *       400:
  *         description: Request body is not valid.
  *       500:
@@ -503,17 +539,17 @@ router.get(':id/:groupId/admins', auth.verifyAuthorization, controller.getGroupA
  *       - in: path
  *         name: id
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of user who issued the request.
  *       - in: path
  *         name: groupId
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of the group for which admin to add.
  *       - in: path
  *         name: userId
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of the admin to add.
  *     responses:
  *       204:
@@ -537,17 +573,17 @@ router.post(':id/:groupId/admins/:userId', auth.verifyAuthorization,controller.a
  *       - in: path
  *         name: id
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of user who issued the request.
  *       - in: path
  *         name: groupId
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of the group for which admin to delete.
  *       - in: path
  *         name: userId
  *         required: true
- *         type: int
+ *         type: integer
  *         description: Id of the admin to delete.
  *     responses:
  *       204:

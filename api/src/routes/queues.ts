@@ -30,7 +30,7 @@ const router = express.Router()
  *                 - value
  *               properties:
  *                 restaurant:
- *                   type: int
+ *                   type: integer
  *                   example: 6
  *                   description: ID code of the restaurant, one of [2,4,5,6,7,8]
  *                 author:
@@ -38,7 +38,7 @@ const router = express.Router()
  *                   example: "Filipe"
  *                   description: Name of the author, must be unique for each author
  *                 value:
- *                   type: int
+ *                   type: integer
  *                   example: 2
  *                   description: Value between 0 and 5. 0 -> no queue; 5 -> don't even try to go on this queue
  *         description: Queue information to be added
@@ -73,7 +73,7 @@ router.post('/', controller.postQueue)
  *                     type: float
  *                     example: 4.33
  *                   last_entry_value:
- *                     type: int
+ *                     type: integer
  *                     example: 5
  *                   last_entry_timestamp:
  *                     type: string

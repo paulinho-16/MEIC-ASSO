@@ -55,7 +55,7 @@ const router = express.Router()
  *                 type: object
  *                 properties:
  *                   id:
- *                     type: int
+ *                     type: integer
  *                     example: "1"
  *                   summary:
  *                     type: string
@@ -386,7 +386,7 @@ router.put('/event/:id', auth.verifySessionToken, controller.updateCalendarEvent
  *                   type: string
  *                   example: "Bearer"
  *                 expiry date:
- *                   type: int
+ *                   type: integer
 */
 router.get('/google-calendar-token', auth.verifySessionToken, controller.getGCToken)
 
