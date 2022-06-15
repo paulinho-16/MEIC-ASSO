@@ -11,6 +11,8 @@ const router = express.Router()
  * /library:
  *   get:
  *     summary: Get library ocupation.
+ *     tags:
+ *       - Library
  *     description: Get library current and maximum ocupation for each floor.
  *     responses:
  *       200:

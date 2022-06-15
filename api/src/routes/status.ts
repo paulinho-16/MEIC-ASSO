@@ -9,7 +9,20 @@ const router = express.Router()
  * @swagger
  * /status:
  *  get:
- *    summary:Get server uptime
+ *    summary: Get server uptime
+ *    tags:
+ *       - Status
+ *    responses:
+ *       200:
+ *         description: The amount of time it has been up
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "I've been up for: XX:XX:XX"
 */
 router.get('/', controller.get)
 

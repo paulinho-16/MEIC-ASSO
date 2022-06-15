@@ -11,6 +11,8 @@ const router = express.Router()
  * /exams-calendar/{courseID}:
  *   get:
  *     summary: Retrieve courseID exams calendar
+ *     tags:
+ *         - Exams Calendar
  *     parameters:
  *       - in: path
  *         name: courseID
@@ -91,7 +93,13 @@ router.get('/:id', controller.get)
  * /exams-calendar/{courseID}/url:
  *   get:
  *     summary: Fetch URL necessary to retrieve courseID exams calendar
+ *     tags:
+ *         - Exams Calendar
  *     parameters:
+ *       - in: path
+ *         name: courseID
+ *         required: true
+ *         description: course ID
  *     responses:
  *       200:
  *         description: The URL necessary to retrieve courseID exams calendar

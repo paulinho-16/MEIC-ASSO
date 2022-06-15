@@ -11,6 +11,8 @@ const router = express.Router()
  * /student-exams/{studentNumber}:
  *   get:
  *     summary: Fetch all information about the exams of a given student
+ *     tags:
+ *       - Student Exams
  *     parameters:
  *       - in: path
  *         name: studentNumber
@@ -79,7 +81,14 @@ router.get('/:studentNumber', controller.getStudentExams)
  * /student-exams/{studentNumber}/url:
  *   get:
  *     summary: Fetch URL of necessary information to retrieve the exams of a given student
+ *     tags:
+ *       - Student Exams
  *     parameters:
+ *       - in: path
+ *         name: studentNumber
+ *         required: true
+ *         type: string
+ *         description: Student number
  *     responses:
  *       200:
  *         description: The URL of necessary information to retrieve the exams of a given student

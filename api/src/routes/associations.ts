@@ -11,6 +11,8 @@ const router = express.Router()
  * /associations:
  *   get:
  *     summary: Fetch information about the student associations
+ *     tags:
+ *       - Associations
  *     parameters:
  *     responses:
  *       200:
@@ -62,6 +64,8 @@ router.get('/', controller.getAssociations)
  * /associations/url:
  *   get:
  *     summary: Fetch URL necessary to retrieve information about the student associations
+ *     tags:
+ *       - Associations
  *     parameters:
  *     responses:
  *       200:

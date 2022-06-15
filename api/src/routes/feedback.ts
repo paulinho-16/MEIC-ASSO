@@ -12,7 +12,7 @@ const router = express.Router()
  * /feedback/meal:
  *     post:
  *       tags:
- *         - feedback
+ *         - Feedback
  *       summary: Creates a new meal review
  *       responses:
  *         '200':
@@ -62,7 +62,7 @@ router.post('/meal', controller.postMealReview)
  * /feedback/teacher:
  *     post:
  *       tags:
- *         - feedback
+ *         - Feedback
  *       summary: Creates a new teacher review
  *       responses:
  *         '200':
@@ -108,7 +108,7 @@ router.post('/teacher', controller.postTeacherReview)
  * /feedback/meal:
  *     get:
  *       tags:
- *         - feedback
+ *         - Feedback
  *       summary: Returns a meal's review
  *       description: Obtain the meals' review, all the parameters are required even if their value is empty
  *       parameters:
@@ -195,7 +195,7 @@ router.get('/meal', controller.getMealReview)
  *   /feedback/teacher:
  *     get:
  *       tags:
- *         - feedback
+ *         - Feedback
  *       summary: Returns a teacher's review
  *       description: Obtain the teacher' review, all the parameters are required even if their value is empty
  *       parameters:

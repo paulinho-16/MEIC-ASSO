@@ -11,6 +11,8 @@ const router = express.Router()
  * /grades/{studentNumber}:
  *   get:
  *     summary: Fetch grades for student with studentNumber
+ *     tags:
+ *       - Grades
  *     parameters:
  *       - in: path
  *         name: studentNumber
@@ -144,7 +146,13 @@ router.get('/:studentNumber', controller.get)
  * /grades/{studentNumber}/url:
  *   get:
  *     summary: Fetch URL necessary to retrieve grades for student with studentNumber
+ *     tags:
+ *       - Grades
  *     parameters:
+ *       - in: path
+ *         name: studentNumber
+ *         required: true
+ *         description: Student ID
  *     responses:
  *       200:
  *         description: The URL necessary to retrieve grades for student with studentNumber
