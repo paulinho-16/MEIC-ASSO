@@ -75,6 +75,10 @@ router.get('/:studentNumber', controller.get)
  *     tags:
  *       - Profile
  *     parameters:
+ *       - in: path
+ *         name: studentNumber
+ *         required: true
+ *         description: student number
  *     responses:
  *       200:
  *         description: The URL necessary to retrieve studentNumber profile

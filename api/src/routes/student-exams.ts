@@ -84,6 +84,11 @@ router.get('/:studentNumber', controller.getStudentExams)
  *     tags:
  *       - Student Exams
  *     parameters:
+ *       - in: path
+ *         name: studentNumber
+ *         required: true
+ *         type: string
+ *         description: Student number
  *     responses:
  *       200:
  *         description: The URL of necessary information to retrieve the exams of a given student

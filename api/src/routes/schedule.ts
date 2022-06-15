@@ -78,6 +78,10 @@ router.get('/:studentNumber', controller.getStudentSchedule)
  *     tags:
  *       - Schedule
  *     parameters:
+ *       - in: path
+ *         name: studentNumber
+ *         required: true
+ *         description: Sigarra student ID.
  *     responses:
  *       200:
  *         description: The URL necessary to retrieve current student schedule

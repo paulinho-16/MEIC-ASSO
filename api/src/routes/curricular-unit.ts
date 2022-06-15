@@ -217,6 +217,11 @@ router.get('/:id', controller.getCurricularUnitInfo)
  *     tags:
  *         - Curricular Unit
  *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         type: string
+ *         description: Curricular Unit ID
  *     responses:
  *       200:
  *         description: The URL necessary to retrieve curricular unit information

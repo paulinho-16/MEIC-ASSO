@@ -96,6 +96,10 @@ router.get('/:id', controller.get)
  *     tags:
  *         - Exams Calendar
  *     parameters:
+ *       - in: path
+ *         name: courseID
+ *         required: true
+ *         description: course ID
  *     responses:
  *       200:
  *         description: The URL necessary to retrieve courseID exams calendar

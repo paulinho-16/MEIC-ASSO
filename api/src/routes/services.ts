@@ -73,6 +73,10 @@ router.get('/:id', controller.getServices)
  *     tags:
  *       - Services
  *     parameters:
+ *       - in: path
+ *         name: serviceNumber
+ *         required: true
+ *         description: Service ID
  *     responses:
  *       200:
  *         description: The URL necessary to retrieve service's information for service with serviceNumber
