@@ -163,7 +163,7 @@ router.delete('/:id', auth.verifyAuthorization, controller.deleteUser)
  *     - jwt: []
  *     - cookieAuth: []
  *     requestBody:
- *       description: Password
+ *       description: Email
  *       required: true
  *       content:
  *         application/json:

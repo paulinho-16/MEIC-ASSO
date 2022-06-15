@@ -14,10 +14,10 @@ const router = express.Router()
  *     tags:
  *       - Schedule
  *     parameters:
- *       - in: query
- *         name: pv_fest_id
+ *       - in: path
+ *         name: studentNumber
  *         required: true
- *         description: Sigarra student ID. It's possible that this parameter will be removed on the future, but the endpoint's behavior will not change from this removal.
+ *         description: Sigarra student ID.
  *     responses:
  *       '200':
  *         description: The student's current schedule.
@@ -31,19 +31,29 @@ const router = express.Router()
  *                   items:
  *                     type: object
  *                     properties:
- *                       dayOfTheWeek: string
- *                       startTime: string
- *                       endTime: string
- *                       curricularUnitName: string
- *                       classType: string
- *                       class: string
- *                       professors: string
- *                       room: string
+ *                       dayOfTheWeek:
+ *                         type: string
+ *                       startTime:
+ *                         type: string
+ *                       endTime:
+ *                         type: string
+ *                       curricularUnitName:
+ *                         type: string
+ *                       classType:
+ *                         type: string
+ *                       class:
+ *                         type: string
+ *                       professors:
+ *                         type: string
+ *                       room:
+ *                         type: string
  *                 weekBlock:
  *                   type: object
  *                   properties:
- *                     blockStartDate: string
- *                     blockEndDate: string
+ *                     blockStartDate:
+ *                       type: string
+ *                     blockEndDate:
+ *                       type: string
  *             example:
  *               scheduleTable:
  *                 - dayOfTheWeek: Wednesday
