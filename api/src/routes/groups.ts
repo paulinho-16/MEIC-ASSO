@@ -69,7 +69,7 @@ router.get('/', controller.getGroups)
 
 /**
  * @swagger
- * /groups:
+ * /groups/{groupId}:
  *   get:
  *     summary: Get information of a single group. 
  *     tags:
@@ -111,7 +111,7 @@ router.get('/:id', controller.getGroup)
 /**
  * @swagger
  * /groups:
- *   get:
+ *   post:
  *     summary: Create a new group.
  *     tags:
  *       - Groups
