@@ -78,37 +78,58 @@ In case the Node.js backend returns True, the middleware first needs to ensure t
 ### Mediator Pattern
 
 #### Context
+
+As we've seen before, our scraping component faces a problem from the start: access to resources that require authentication is impossible without an ad-hoc solution that is possibly insecure, as mentioned in the authentication component documentation.
+
 From the moment the authentication problem arose, we realized that it would be necessary to implement a component that would monitor the communication between the Flutter App and the Node.js backend, to avoid chaotic dependencies between objects.
 
-// TODO
-
 #### Mapping
+
+The architecture for this pattern is described in the second flow diagram presented above.
 
 #### Consequences
 
 ##### Pros
 
+- *Single Responsibility Principle*: extract the communications between various components into a single place, making it easier to comprehend and maintain.
+- *Open/Closed Principle*: introduce new mediators without having to change the actual components
+- Reduction of coupling between various components of a program
+- Reuse individual components more easily
+
 ##### Cons
 
+- Over time a mediator can evolve into a **God Object** - an object that references a large number of distinct types, has too many unrelated or uncategorized methods, or some combination of both.
+
 ##### Note
+
+- This pattern is half implemented, as we have started to develop the basic structure of this component, having managed to integrate services that do not require authentication. In the future, it will also be necessary to integrate services that require authentication, using modules developed by the group responsible for the Authentication component.
 
 ### Flutter Facade
 
-// TODO
-
 #### Context
 
+Interaction with our API requires some internal knowledge of the system which is undesirable to clients. A facade is a good solution to simplify interaction with the API.
+
 #### Mapping
+
+To ensure that frontend developers don't need to interact directly with our API, we provided a simplified facade with methods for each HTTP operation that internally deals with response logic of our API. This removes complexity that isn't of the client's responsibility, i.e. the user of the facade is not concerned with response codes or whether the operations require authentication.
 
 #### Consequences
 
 ##### Pros
 
+- Simplified interface to interact with the API on the client side
+- Isolation of the code from the complexity of a subsystem
+
 ##### Cons
+
+- Can also become a **God Object** coupled to all classes of an app
+- If you wanted to use our API outside the Flutter app, you would need to create another Facade in another environment
+- In our specific situation, the facade can be a too generic and may require the client to further implement methods on top of the facade to reduce the logic even more
 
 ##### Note
 
-### Page Cache
+### Results Cache
 
 #### Context
 Scraping is a task that can sometimes take a lot of time. Furthermore, during a time period, there could be similar requests that require the same scraping task. This problem can be addressed by implementing a cache system, that stores temporarly in fast memory the information returned by the scraping tasks.
@@ -135,3 +156,9 @@ As we can see from the diagram, the API starts by checking if the needed resourc
 
 ##### Note
 - Even though this is one of the more important patterns to implement in this component, it was not implemented due to time limitations. However, it would be a priority in a future development
+
+## References
+
+- [Refactoring Guru]
+    - https://refactoring.guru/design-patterns/mediator
+    - https://refactoring.guru/design-patterns/facade
