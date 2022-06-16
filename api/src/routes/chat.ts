@@ -25,7 +25,7 @@ const router = express.Router()
 router.get('/location', controller.location)
 
 /**
- * @swagger
+ * swagger
  * /chat/message
  *   get:
  *     tags:
@@ -66,7 +66,7 @@ router.get('/location', controller.location)
 router.get('/message', controller.message)
 
 /**
- * @swagger
+ * swagger
  * /chat/group
  *   get:
  *     tags:
@@ -103,7 +103,7 @@ router.get('/message', controller.message)
 router.get('/group', controller.getGroups)
 
 /**
- * @swagger
+ * swagger
  * /chat/group
  *   post:
  *     tags:
@@ -148,7 +148,7 @@ router.get('/group', controller.getGroups)
 router.post('/group', controller.createGroup)
 
 /**
- * @swagger
+ * swagger
  * /chat/group/{groupId}
  *   get:
  *     tags:
@@ -204,7 +204,7 @@ router.post('/group', controller.createGroup)
 router.get('/group/:groupID', controller.groupMessage)
 
 /**
- * @swagger
+ * swagger
  * /chat/group/{groupId}/messages
  *   get:
  *     tags:
@@ -253,7 +253,7 @@ router.get('/group/:groupID', controller.groupMessage)
 router.get('/group/:groupID/messages', controller.getGroupMessages)
 
 /**
- * @swagger
+ * swagger
  * /chat/group/{groupId}/members
  *   put:
  *     tags:
@@ -296,7 +296,7 @@ router.get('/group/:groupID/messages', controller.getGroupMessages)
 router.put('/group/:groupID/members', controller.addToGroup)
 
 /**
- * @swagger
+ * swagger
  * /chat/group/{groupId}/members/{userUp}
  *   delete:
  *     tags:
