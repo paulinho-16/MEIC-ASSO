@@ -25,8 +25,8 @@ const router = express.Router()
 router.get('/location', controller.location)
 
 /**
- * swagger
- * /chat/message
+ * @swagger
+ * /chat/message:
  *   get:
  *     tags:
  *       - chat
@@ -45,11 +45,11 @@ router.get('/location', controller.location)
  *           application/json:
  *             schema:
  *               type: object
- *                 properties:
- *                   messages:
- *                     type: array
- *                       items:
- *                         type: object
+ *               properties:
+ *                 messages:
+ *                   type: array
+ *                   items:
+ *                     type: object
  *       400:
  *         description: Bad request, missing or invalid parameters
  *         content:
@@ -66,12 +66,11 @@ router.get('/location', controller.location)
 router.get('/message', controller.message)
 
 /**
- * swagger
- * /chat/group
+ * @swagger
+ * /chat/group:
  *   get:
  *     tags:
  *       - chat
- *       - groups
  *     summary: Gets the groups of a user
  *     parameters:
  *       - in: query
@@ -103,12 +102,11 @@ router.get('/message', controller.message)
 router.get('/group', controller.getGroups)
 
 /**
- * swagger
- * /chat/group
+ * @swagger
+ * /chat/group:
  *   post:
  *     tags:
  *       - chat
- *       - groups
  *     summary: Creates a new group
  *     parameters:
  *       - in: query
@@ -148,12 +146,11 @@ router.get('/group', controller.getGroups)
 router.post('/group', controller.createGroup)
 
 /**
- * swagger
- * /chat/group/{groupId}
+ * @swagger
+ * /chat/group/{groupId}:
  *   get:
  *     tags:
  *       - chat
- *       - groups
  *     summary: Gets the group's information
  *     parameters:
  *       - in: path
@@ -204,12 +201,11 @@ router.post('/group', controller.createGroup)
 router.get('/group/:groupID', controller.groupMessage)
 
 /**
- * swagger
- * /chat/group/{groupId}/messages
+ * @swagger
+ * /chat/group/{groupId}/messages:
  *   get:
  *     tags:
  *       - chat
- *       - groups
  *     summary: Gets the group's messages
  *     parameters:
  *       - in: path
@@ -253,12 +249,11 @@ router.get('/group/:groupID', controller.groupMessage)
 router.get('/group/:groupID/messages', controller.getGroupMessages)
 
 /**
- * swagger
- * /chat/group/{groupId}/members
+ * @swagger
+ * /chat/group/{groupId}/members:
  *   put:
  *     tags:
  *       - chat
- *       - groups
  *     summary: Adds a user to a group
  *     parameters:
  *       - in: path
@@ -296,12 +291,11 @@ router.get('/group/:groupID/messages', controller.getGroupMessages)
 router.put('/group/:groupID/members', controller.addToGroup)
 
 /**
- * swagger
- * /chat/group/{groupId}/members/{userUp}
+ * @swagger
+ * /chat/group/{groupId}/members/{userUp}:
  *   delete:
  *     tags:
  *       - chat
- *       - groups
  *     summary: Removes a user from a group
  *     parameters:
  *       - in: path
