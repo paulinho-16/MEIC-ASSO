@@ -20,7 +20,7 @@ export default function GroupChat({data, socket}) {
     event.preventDefault()
     const content = message.trim()
     if (content) {
-      socket.emit('chat message', content, up, data.id, new Date().toLocaleString())
+      socket.emit('chat message', content, up, data._id, new Date().toLocaleString())
       setMessage('')
     }
   }
@@ -33,12 +33,12 @@ export default function GroupChat({data, socket}) {
 
   useEffect(() => {
     if (socket) {
-      socket.emit("join room", up, data.id);
+      socket.emit("join room", up, data._id);
     }
   }, [socket]);
 
   if (socket) {
-    socket.on(`${data.id} message`, (from, message, timestamp) => {
+    socket.on(`${data._id} message`, (from, message, timestamp) => {
       setMessages([...messages, { from, message, timestamp }])
     })
   }
