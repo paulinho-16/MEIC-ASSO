@@ -2,6 +2,8 @@ import express from 'express'
 
 import controller from '@/controller/exams-calendar.controller'
 
+import constants from '@/config/constants'
+
 const router = express.Router()
 
 /**
@@ -9,6 +11,8 @@ const router = express.Router()
  * /exams-calendar/{courseID}:
  *   get:
  *     summary: Retrieve courseID exams calendar
+ *     tags:
+ *         - Exams Calendar
  *     parameters:
  *       - in: path
  *         name: courseID
@@ -82,7 +86,35 @@ const router = express.Router()
  *       500:
  *         description: Unexpected error
 */
-
 router.get('/:id', controller.get)
+
+/**
+ * @swagger
+ * /exams-calendar/{courseID}/url:
+ *   get:
+ *     summary: Fetch URL necessary to retrieve courseID exams calendar
+ *     tags:
+ *         - Exams Calendar
+ *     parameters:
+ *       - in: path
+ *         name: courseID
+ *         required: true
+ *         description: course ID
+ *     responses:
+ *       200:
+ *         description: The URL necessary to retrieve courseID exams calendar
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *             example:
+ *               https://sigarra.up.pt/feup/pt/EXA_GERAL.MAPA_DE_EXAMES?p_curso_id=717
+ *       500:
+ *         description: Unexpected error
+ */
+ router.route('/:id/url')
+ .get(function (req, res) {
+     res.status(200).send(`${constants.examsCalendarUrl}?p_curso_id=${req.params.id}`);
+ });
 
 export default router

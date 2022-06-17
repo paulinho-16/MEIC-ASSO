@@ -57,10 +57,16 @@ const swaggerOptions: swaggerJsdoc.Options = {
         }
       }
     },
-    security: [{
-      jwt: [],
-      cookieAuth: []
-    }]
+    tags: [
+      {
+        name: "Authentication",
+        description: "Everything about Authentication"
+      },
+      {
+        name: "User",
+        description: "Operations related to creation, updates and deletions of users"
+      }
+    ],
   },
   apis: ['./dist/routes/*.js'],
 };
@@ -79,9 +85,11 @@ app.use('/news', routes.news)
 app.use('/status', routes.status)
 app.use('/services', routes.services)
 app.use('/profile', routes.profile)
+app.use('/payments', routes.payments)
 app.use('/groups', routes.groups)
 app.use('/user', routes.user)
 app.use('/curricular-unit', routes.curricularUnit)
+app.use('/chat', routes.chat)
 app.use('/calendar', routes.calendar)
 app.use('/exams-calendar', routes.examsCalendar)
 app.use('/schedule', routes.schedule)
@@ -89,3 +97,4 @@ app.use('/grades', routes.grades)
 app.use('/capacity', routes.capacity)
 app.use('/student-exams', routes.studentExams)
 app.use('/queue', routes.queues)
+app.use('/notifications', routes.notifications)

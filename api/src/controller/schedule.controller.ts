@@ -25,7 +25,7 @@ type ScheduleEntry = {
 async function getStudentSchedule(req: Request, res: Response) {
   const mock = true
   const api = axios.create({ responseEncoding: 'binary' })
-  const studentFestId = req.query.studentFestId
+  const studentFestId = req.params.studentNumber
 
   // TODO:
   // Implement the same method as in the grades scraping,

@@ -112,7 +112,7 @@ async function getGroup(groupId: Number) {
 
   try {
     let res = await client.query(query)
-    console.log(res)
+    
     return res.rows
   }
   catch (err) {
@@ -122,7 +122,7 @@ async function getGroup(groupId: Number) {
 
 }
 
-async function getMyGroups(userId: Number) {
+async function getMyGroups(id: Number) {
 
   console.log("Get User groups");
 
@@ -131,8 +131,8 @@ async function getMyGroups(userId: Number) {
   }
 
   const query = {
-    text: 'SELECT * FROM Groups NATURAL JOIN Group_Student  WHERE studentId = $1',
-    values: [userId],
+    text: 'SELECT * FROM Groups, Group_Student  WHERE studentId = $1 AND Groups.id = Group_Student.groupId',
+    values: [id],
   }
 
   try {
@@ -155,20 +155,33 @@ async function createGroup(group: Group){
     if(!connectDatabase()){
       return -1;
     }
-  
+    
+
+
     const query = {
-      text: 'INSERT INTO Groups(typeName, title, "description", mlimit, autoAccept) VALUES($1, $2, $3, $4, $5)',
+      text: 'INSERT INTO Groups(typeName, title, "description", mlimit, autoAccept) VALUES($1, $2, $3, $4, $5) RETURNING id;',
       values: [group.typename, group.title, group.description, group.mlimit, group.autoaccept],
     }
-  
+
+
     try{
-      let res = await client.query(query)
-      return true
+
+      let result = await client.query(query)
+
+      
+    
+      return result
     }
     catch(err){
       console.log(err);
-      return false
+      return err
     }
+
+
+
+    
+  
+    
 }
 
 async function editGroup(groupId: Number, group: Group){
@@ -232,7 +245,7 @@ async function getGroupAdmins(groupId: Number, req: Request)
 
   var query = {
     text: `SELECT * 
-           FROM Student
+           FROM UniUser
            INNER JOIN Group_Student
            ON Student.id = Group_Student.studentId
            AND isAdmin = true
@@ -248,7 +261,7 @@ async function getGroupAdmins(groupId: Number, req: Request)
 
     query = {
       text: `SELECT * 
-            FROM Student
+            FROM UniUser
             INNER JOIN Group_Student
             ON Student.id = Group_Student.studentId
             AND isAdmin = true
@@ -349,7 +362,7 @@ async function getGroupMembers(groupId: Number, req: Request) {
     var offsetInt = parseInt(req.query.offset.toString())
 
     query = {
-      text: 'SELECT * FROM Group_Student WHERE groupId = $1 ORDER BY Group_Student.id DESC LIMIT $2 OFFSET $3 ;',
+      text: 'SELECT groupId, email,studentId, isAdmin, isAccepted FROM Group_Student, UniUser WHERE groupId = $1 AND Group_Student.studentId = UniUser.id ORDER BY Group_Student.id DESC LIMIT $2 OFFSET $3 ;',
       values: [groupId, limitInt, offsetInt],
     }
 
@@ -398,6 +411,7 @@ async function createGroupMember(groupId: Number, userId: Number) {
     return -1;
   }
 
+  console.log("Add group member");
 
   // Check if student is already member.
   const isStudentAlreadyMember = await getGroupStudentRelation(groupId, userId)
@@ -505,7 +519,7 @@ async function getStudent(userId: Number) {
   }
 
   const query = {
-    text: 'SELECT * FROM Student WHERE id = $1',
+    text: 'SELECT * FROM UniUser WHERE id = $1',
     values: [userId],
   }
 

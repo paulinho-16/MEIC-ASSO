@@ -17,7 +17,7 @@ async function scrap() {
       const target2 = $(`#accordion-37-2`)
 
       const parseAssociations = (e: cheerio.Element) => {
-        const name = $(e).find('span.fusion-toggle-heading').text() ?? ''
+        const name = $(e).find('span.fusion-toggle-heading').text().trim() ?? ''
         const body = $(e).find('div.panel-body').html()
 
         if (!name || !body) return

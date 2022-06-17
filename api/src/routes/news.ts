@@ -9,10 +9,12 @@ const router = express.Router()
  * /news:
  *   get:
  *     summary: Fetch news about FEUP and its environment
+ *     tags:
+ *       - News
  *     parameters:
  *     responses:
  *       200:
- *         description: The grades for every course the student has been enrolled in
+ *         description: The news about FEUP and its environment
  *         content:
  *           application/json:
  *             schema:
@@ -49,5 +51,30 @@ const router = express.Router()
  *         description: Unexpected error
  */
 router.get('/', controller.get)
+
+/**
+ * @swagger
+ * /news/url:
+ *   get:
+ *     summary: Fetch URL news about FEUP and its environment
+ *     tags:
+ *       - News
+ *     parameters:
+ *     responses:
+ *       200:
+ *         description: The URL necessary to retrieve news about FEUP and its environment
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *             example:
+ *               https://sigarra.up.pt/feup/pt/noticias_geral.lista_noticias
+ *       500:
+ *         description: Unexpected error
+ */
+router.route('/url')
+    .get(function (req, res) {
+        res.status(200).send(`https://sigarra.up.pt/feup/pt/noticias_geral.lista_noticias`);
+    });
 
 export default router

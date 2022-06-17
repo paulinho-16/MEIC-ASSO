@@ -9,13 +9,13 @@ const router = express.Router()
  * @swagger
  * paths:
  *
- *   /{user}:
+ *   /notification/{user}:
  *     post:
  *       tags:
- *         - notifications
+ *         - Notifications
  *       summary: Creates a notification for a user
  *       operationId: createNotification
- *       description: Adds a notification to the system
+ *       description: Adds a notification to the system, if a string date is also sent in the body, the notification will be scheduled for that date instead of being sent instantaneously.
  *       parameters:
  *         - in: path
  *           name: user
@@ -26,18 +26,21 @@ const router = express.Router()
  *       requestBody:
  *         required: true
  *         content:
- *           application/x-www-form-urlencoded:
+ *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 topic_identification_token:
+ *                 topicTokenId:
  *                   type: string
  *                 title:
  *                   type: string
  *                 content:
  *                   type: string
+ *                 date:
+ *                   type: string
+ *                   description: Optional, must be in the format "YYYY-MM-DD HH:MM:SS"
  *               required:
- *                 - topic_identification_token
+ *                 - topicTokenId
  *                 - title
  *                 - content
  *         description: Parameters to create the notification and topic token for security reasons
@@ -48,12 +51,13 @@ const router = express.Router()
  *             application/json:
  *               schema:
  *                 type: object
- *                 items:
- *                   properties:
- *                     status:
- *                       type: string
- *                     error:
- *                       type: string
+ *                 properties:
+ *                   status:
+ *                     type: string
+ *                     description: Status message
+ *                   error:
+ *                     type: string
+ *                     description: Error description message
  *               examples:
  *                 success:
  *                     summary: Example of a successful response
@@ -63,12 +67,12 @@ const router = express.Router()
  *                   summary: Example of an error response
  *                   value:
  *                     status: "error"
- *                     error: "error creating notification, check the userId and topic_identification_token"
+ *                     error: "error creating notification, check the userId and topicTokenId"
  *
- *   /{user}/all:
+ *   /notification/{user}/all:
  *     get:
  *       tags:
- *         - notifications
+ *         - Notifications
  *       summary: searches all notifications of a certain user
  *       operationId: getAllNotifications
  *       description: Obtains all the notifications for the specific user
@@ -86,22 +90,32 @@ const router = express.Router()
  *             application/json:
  *               schema:
  *                 type: object
- *                 items:
- *                   properties:
- *                     status:
- *                       type: string
- *                     error:
- *                       type: string
- *                     notifications:
- *                       type: array
- *                       items:
- *                         $ref: '#/components/schemas/Notification'
+ *                 properties:
+ *                   status:
+ *                     type: string
+ *                     description: Status message
+ *                   error:
+ *                     type: string
+ *                     description: Error description message
+ *                   notifications:
+ *                     type: array
+ *                     items:
+ *                       $ref: '#/components/schemas/Notification'
+ *                     description: Array containing the user's notifications
  *               examples:
  *                 success:
  *                     summary: Example of a successful response
  *                     value:
  *                       status: "ok"
- *                       notifications: [{title,content,topic,userID}, {title:"example_title",content:"example_content",topic:"example_topic",userID:"example_id"}]
+ *                       notifications:
+ *                           - title: "Payment Received"
+ *                             content: "Your payment with id <xxxxx> has been succesfully processed"
+ *                             topic: "Current Account"
+ *                             userID: "Example userID"
+ *                           - title: "Payment Awaiting"
+ *                             content: "Your payment with id <xxxxx> is ready"
+ *                             topic: "Current Account"
+ *                             userID: "Example userID"
  *                 error:
  *                   summary: Example of an error response
  *                   value:
@@ -111,8 +125,8 @@ const router = express.Router()
  *   /topic/{topic}:
  *     post:
  *       tags:
- *         - notifications
- *       summary: adds a notification topic
+ *         - Notifications
+ *       summary: Creates a notification topic
  *       operationId: createTopic
  *       description: Creates a notification topic if it doesn't exist
  *       parameters:
@@ -129,14 +143,16 @@ const router = express.Router()
  *             application/json:
  *               schema:
  *                 type: object
- *                 items:
- *                   properties:
- *                     status:
- *                       type: string
- *                     identification_token:
- *                       type: string
- *                     error:
- *                       type: string
+ *                 properties:
+ *                   status:
+ *                     type: string
+ *                     description: Status message
+ *                   identification_token:
+ *                     type: string
+ *                     description: Token required for future posting of notifications to that specific topic
+ *                   error:
+ *                     type: string
+ *                     description: Error description message
  *               examples:
  *                 success:
  *                     summary: Example of a successful response
@@ -150,7 +166,7 @@ const router = express.Router()
  *                     error: "topic already exists"
  *     delete:
  *       tags:
- *         - notifications
+ *         - Notifications
  *       summary: deletes a notification topic
  *       operationId: deleteTopic
  *       description: Deletes a notification topic from the system
@@ -168,12 +184,13 @@ const router = express.Router()
  *             application/json:
  *                 schema:
  *                   type: object
- *                   items:
- *                     properties:
- *                       status:
- *                         type: string
- *                       error:
- *                         type: string
+ *                   properties:
+ *                     status:
+ *                       type: string
+ *                       description: Status message
+ *                     error:
+ *                       type: string
+ *                       description: Error description message
  *                 examples:
  *                   success:
  *                       summary: Example of a successful response
@@ -184,11 +201,189 @@ const router = express.Router()
  *                     value:
  *                       status: "error"
  *                       error: "topic missing"
+ *   /config/all:
+ *     get:
+ *       tags:
+ *         - Notifications Preferences
+ *       summary: Obtains all notification topics
+ *       operationId: getTopics
+ *       description: Obtains all existing notification topics
+ *       responses:
+ *         '200':
+ *           description: Returns all existing notification topics
+ *   /config/blocked/{user}:
+ *     get:
+ *       tags:
+ *         - Notifications Preferences
+ *       summary: Obtains all topics that a certain user is ignoring
+ *       operationId: getBlockedTopics
+ *       description: Obtains all topics that a certain user is ignoring
+ *       parameters:
+ *         - in: path
+ *           name: user
+ *           required: true
+ *           schema:
+ *             type: string
+ *           description: The user device identifying token
+ *       responses:
+ *         '200':
+ *           description: If status OK, returns all the user's currently ignored topic. If not, returns error message
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   status:
+ *                     type: string
+ *                     description: Status message
+ *                   error:
+ *                     type: string
+ *                     description: Error description message
+ *                   blocked_topics:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                     description: Array containing the topic identifying strings
+ *               examples:
+ *                 success:
+ *                     summary: Example of a successful response
+ *                     value:
+ *                       status: "ok"
+ *                       blocked_topics:
+ *                           - "topic_example_1"
+ *                           - "topic_example_2"
+ *                 error:
+ *                   summary: Example of an error response
+ *                   value:
+ *                     status: "error"
+ *                     error: "user does not exist"
+ *   /config/{user}:
+ *     post:
+ *       tags:
+ *         - Notifications Preferences
+ *       summary: Adds topics to the list of ignored topic of that user.
+ *       operationId: ignoreTopics
+ *       description: Adds topics to the list of ignored topic of that user.
+ *       parameters:
+ *         - in: path
+ *           name: user
+ *           required: true
+ *           schema:
+ *             type: string
+ *           description: The unique device token
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 topics:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                     description: Topic name
+ *                   description: Array of topic names
+ *               required:
+ *                 - topicArray
+ *       responses:
+ *         '200':
+ *           description: If status OK, returns all the user's currently ignored topic. If not, returns error message
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   status:
+ *                     type: string
+ *                     description: Status message
+ *                   error:
+ *                     type: string
+ *                     description: Error description message
+ *                   blocked_topics:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                     description: Array containing the topic identifying strings
+ *               examples:
+ *                 success:
+ *                     summary: Example of a successful response
+ *                     value:
+ *                       status: "ok"
+ *                       blocked_topics:
+ *                           - "topic_example_1"
+ *                           - "topic_example_2"
+ *                 error:
+ *                   summary: Example of an error response
+ *                   value:
+ *                     status: "error"
+ *                     error: "user does not exist"
+ *
+ *     patch:
+ *       tags:
+ *         - Notifications Preferences
+ *       summary: Removes topics from the user's ignored topics list.
+ *       operationId: stopIgnoreTopics
+ *       description: Removes topics from the user's ignored topics list.
+ *       parameters:
+ *         - in: path
+ *           name: user
+ *           required: true
+ *           schema:
+ *             type: string
+ *           description: The unique device token
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 topics:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                     description: Topic name
+ *                   description: Array of topic names
+ *               required:
+ *                 - topicArray
+ *       responses:
+ *         '200':
+ *           description: If status OK, returns all the user's currently ignored topic. If not, returns error message
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   status:
+ *                     type: string
+ *                     description: Status message
+ *                   error:
+ *                     type: string
+ *                     description: Error description message
+ *                   blocked_topics:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                     description: Array containing the topic identifying strings
+ *               examples:
+ *                 success:
+ *                     summary: Example of a successful response
+ *                     value:
+ *                       status: "ok"
+ *                       blocked_topics:
+ *                           - "topic_example_1"
+ *                           - "topic_example_2"
+ *                 error:
+ *                   summary: Example of an error response
+ *                   value:
+ *                     status: "error"
+ *                     error: "user does not exist"
  *
  *   /user/{deviceToken}:
  *     post:
  *       tags:
- *         - notifications
+ *         - Notifications
  *       summary: Associates a device token to the user
  *       operationId: addDeviceToken
  *       description: The system needs a device token to push new notifications to the device. This allows a device to specify it.
@@ -202,7 +397,7 @@ const router = express.Router()
  *       requestBody:
  *         required: true
  *         content:
- *           application/x-www-form-urlencoded:
+ *           application/json:
  *             schema:
  *               type: object
  *               properties:
@@ -218,10 +413,10 @@ const router = express.Router()
  *             application/json:
  *               schema:
  *                 type: object
- *                 items:
- *                   properties:
- *                     status:
- *                       type: string
+ *                 properties:
+ *                   status:
+ *                     type: string
+ *                     description: Status message
  *               examples:
  *                 success:
  *                     summary: Example of a successful response
@@ -229,7 +424,7 @@ const router = express.Router()
  *                       status: "ok"
  *     delete:
  *       tags:
- *         - notifications
+ *         - Notifications
  *       summary: Removes a device token from the user
  *       operationId: removeDeviceToken
  *       description: The system needs a device token to push new notifications to the device. This allows a device to remove it and no longer be bothered.
@@ -240,18 +435,12 @@ const router = express.Router()
  *           schema:
  *             type: string
  *           description: The unique device token
- *       requestBody:
- *         required: true
- *         content:
- *           application/x-www-form-urlencoded:
- *             schema:
- *               type: object
- *               properties:
- *                 userID:
- *                   type: string
- *                   description: "userId of the user"
- *               required:
- *                 - userID
+ *         - in: query
+ *           name: userID
+ *           required: true
+ *           schema:
+ *             type: string
+ *           description: userID of the user
  *       responses:
  *         '200':
  *           description: Return ok
@@ -259,16 +448,52 @@ const router = express.Router()
  *             application/json:
  *               schema:
  *                 type: object
- *                 items:
- *                   properties:
- *                     status:
- *                       type: string
+ *                 properties:
+ *                   status:
+ *                     type: string
+ *                     description: Status message
  *               examples:
  *                 success:
  *                     summary: Example of a successful response
  *                     value:
  *                       status: "ok"
  *
+ * delete:
+ *     tags:
+ *       - Notifications
+ *     summary: Removes a device token from the user
+ *     operationId: removeDeviceToken
+ *     description: The system needs a device token to push new notifications to the device. This allows a device to remove it and no longer be bothered.
+ *     parameters:
+ *       - in: path
+ *         name: deviceToken
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique device token
+ *       - in: query
+ *         name: userID
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: userID of the user
+ *     responses:
+ *       '200':
+ *         description: Return ok
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: Status message
+ *             examples:
+ *               success:
+ *                   summary: Example of a successful response
+ *                   value:
+ *                     status: "ok"
+ * 
  * components:
  *   schemas:
  *     Notification:
@@ -281,14 +506,16 @@ const router = express.Router()
  *       properties:
  *         title:
  *           type: string
- *           example:
- *               "d"
+ *           example: "Payment Received"
  *         content:
  *           type: string
+ *           example: "Your payment with id <xxxxx> has been succesfully processed"
  *         topic:
  *           type: string
+ *           example: "Current Account"
  *         userID:
  *           type: string
+ *           example: "Example userID"
  */
 router.post("/user/:deviceToken",controller.addDeviceToken)
 
@@ -299,11 +526,22 @@ router.post('/topic/:topic', controller.createTopic)
 // Route to delete a notification topic
 router.delete('/topic/:topic', controller.deleteTopic)
 
-router.post('/:user', controller.createNotification)
+
+// notifications configuration
+router.get('/config/all', controller.getTopics)
+router.get('/config/blocked/:user', controller.getBlockedTopics)
+
+
+router.post('/config/:user', controller.ignoreTopics)
+router.patch('/config/:user', controller.stopIgnoreTopics)
+
+router.post('/notification/:user', controller.createNotification)
 
 
 // Route to get all notifications
-router.get('/:user/all', controller.getAllNotifications)
+router.get('/notification/:user/all', controller.getAllNotifications)
+
+
 
 
 export default router

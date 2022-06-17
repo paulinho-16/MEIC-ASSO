@@ -2,18 +2,22 @@ import express from 'express'
 
 import controller from '@/controller/schedule.controller'
 
+import constants from '@/config/constants'
+
 const router = express.Router()
 
 /**
  * @swagger
- * /schedule/student:
+ * /schedule/{studentNumber}:
  *   get:
  *     summary: Fetch the current student schedule.
+ *     tags:
+ *       - Schedule
  *     parameters:
- *       - in: query
- *         name: pv_fest_id
+ *       - in: path
+ *         name: studentNumber
  *         required: true
- *         description: Sigarra student ID. It's possible that this parameter will be removed on the future, but the endpoint's behavior will not change from this removal.
+ *         description: Sigarra student ID.
  *     responses:
  *       '200':
  *         description: The student's current schedule.
@@ -27,19 +31,29 @@ const router = express.Router()
  *                   items:
  *                     type: object
  *                     properties:
- *                       dayOfTheWeek: string
- *                       startTime: string
- *                       endTime: string
- *                       curricularUnitName: string
- *                       classType: string
- *                       class: string
- *                       professors: string
- *                       room: string
+ *                       dayOfTheWeek:
+ *                         type: string
+ *                       startTime:
+ *                         type: string
+ *                       endTime:
+ *                         type: string
+ *                       curricularUnitName:
+ *                         type: string
+ *                       classType:
+ *                         type: string
+ *                       class:
+ *                         type: string
+ *                       professors:
+ *                         type: string
+ *                       room:
+ *                         type: string
  *                 weekBlock:
  *                   type: object
  *                   properties:
- *                     blockStartDate: string
- *                     blockEndDate: string
+ *                     blockStartDate:
+ *                       type: string
+ *                     blockEndDate:
+ *                       type: string
  *             example:
  *               scheduleTable:
  *                 - dayOfTheWeek: Wednesday
@@ -64,6 +78,35 @@ const router = express.Router()
  *       '500':
  *         description: Unexpected error
  */
-router.get('/student', controller.getStudentSchedule)
+router.get('/:studentNumber', controller.getStudentSchedule)
+
+/**
+ * @swagger
+ * /schedule/{studentNumber}/url:
+ *   get:
+ *     summary: Fetch URL necessary to retrieve current student schedule
+ *     tags:
+ *       - Schedule
+ *     parameters:
+ *       - in: path
+ *         name: studentNumber
+ *         required: true
+ *         description: Sigarra student ID.
+ *     responses:
+ *       200:
+ *         description: The URL necessary to retrieve current student schedule
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *             example:
+ *               https://sigarra.up.pt/feup/pt/hor_geral.estudantes_view=201800000
+ *       500:
+ *         description: Unexpected error
+ */
+ router.route('/:studentNumber/url')
+ .get(function (req, res) {
+     res.status(200).send(`${constants.studentSchedulePageBaseUrl}=`+req.params.studentNumber);
+});
 
 export default router

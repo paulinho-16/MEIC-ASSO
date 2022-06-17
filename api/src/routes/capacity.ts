@@ -9,7 +9,7 @@ const router = express.Router()
  * /capacity:
  *     get:
  *       tags:
- *         - capacity
+ *         - Capacity
  *       summary: Get car parks capacity live
  *       responses:
  *         '200':
@@ -20,52 +20,52 @@ const router = express.Router()
  *                 type: object
  *                 properties:
  *                   p1lotacao:
- *                     type: int
+ *                     type: integer
  *                     example: 525
  *                   p3lotacao:
- *                     type: int
+ *                     type: integer
  *                     example: 325
  *                   p4lotacao:
- *                     type: int
+ *                     type: integer
  *                     example: 50
  *                   data:
  *                     type: string
  *                     example: "20220524"
  *                   P1in:
- *                     type: int
+ *                     type: integer
  *                     example: 395
  *                   P1out:
- *                     type: int
+ *                     type: integer
  *                     example: 525
  *                   P3in:
- *                     type: int
+ *                     type: integer
  *                     example: 47
  *                   P3out:
- *                     type: int
+ *                     type: integer
  *                     example: 41
  *                   P4in:
- *                     type: int
+ *                     type: integer
  *                     example: 525
  *                   P4out:
- *                     type: int
+ *                     type: integer
  *                     example: 235
  *                   p1ocupados:
- *                     type: int
+ *                     type: integer
  *                     example: 160
  *                   p3ocupados:
- *                     type: int
+ *                     type: integer
  *                     example: 145
  *                   p4ocupados:
- *                     type: int
+ *                     type: integer
  *                     example: 6
  *                   p1livres:
- *                     type: int
+ *                     type: integer
  *                     example: 365
  *                   p3livres:
- *                     type: int
+ *                     type: integer
  *                     example: 180
  *                   p4livres:
- *                     type: int
+ *                     type: integer
  *                     example: 44
  *         '500':
  *           description: Internal error

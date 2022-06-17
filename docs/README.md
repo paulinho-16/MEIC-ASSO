@@ -13,13 +13,11 @@ Welcome to the repository supporting the development of the uni4all project, dev
 * [Contributing](#contributing)
 
 
-## Product envisioning 
-
-_Instructions: Use this section to provide a high-level view over what the product intends to provide in terms of function and non-functional requirements. These high-level requirements will later be broken up and documented as user stories._
+## Product envisioning    
 
 ### Vision
 
-_Instructions: write a short paragraph describing the overall vision for the system._
+The product intends to improve the uni4all app developed by NIAEFEUP. It will provide features such as authentication, scraping, an integrated chat, calendar and jobs, payments, notifications, group making, feedback and registrations. In terms of non-functional requirements it is of relevance performance, operating and lifecycle quality.
 
 ### Themes
 
@@ -45,8 +43,6 @@ _Instructions: write a short paragraph describing the overall vision for the sys
     - Classrooms
 - External systems
     - GPS systems (e.g. study places)
-    - GPS systems (e.g. study places)
-    - GPS systems (e.g. study places)
     - Housing
     - External places to eat (together with meals)
 - Scheduling appointments
@@ -70,11 +66,15 @@ _Instructions: write a short paragraph describing the overall vision for the sys
 
 ### Quality attributes
 
-_Instructions: This section should give an idea of the high-level non-functional requirements._
+
+There are a few quality attributes defined for this project:
+* **performance quality** - the system needs to be reliable, secure and with a relatively small response time;
+* **operating quality** - the system needs to be available and scalable;
+* **lifecycle quality** - the system should be maintainable and portable.
+
+
 
 ### Challenges and foreseen possible solutions
-
-_Instructions: This section is responsible for identifying architectural and design challenges, as well as the solutions that we foresee may be useful to address them. Many of these solutions can (and should) be expressed as architectural patterns._
 
 #### Data Storage
 
@@ -96,18 +96,18 @@ _Instructions: This section is responsible for identifying architectural and des
 ### Efficiency when dealing with scrapped data
 
 - Scraping on demand can be slow
-    - e.g. user profiles: information can be scrapped once a day, and user can force refresh, action that triggers a new scrapping
+    - e.g. user profiles: information can be scrapped once a day, and the user can force refresh, an action that triggers a new scrapping
 - Scrap periodically and store data in a server (outdated data and privacy concerns)
 
-**Patterns**: (something related with caching)
+**Patterns**: (something related to caching)
 
 ### Data combination from different sources
 
-- How should data submitted by user be combined with scrapped data
+- How should data submitted by users be combined with scrapped data
 
-**Examples**: personal calendars have information that come from different Sigarra pages, endpoints, and possibly external services
+**Examples**: personal calendars have information that comes from different Sigarra pages, endpoints, and possibly external services
 
-**Patterns**: Shared repository, Microkernel (why? 😕)
+**Patterns**: Shared repository, Microkernel
 
 ### Real-time communication in chats
 
@@ -115,12 +115,6 @@ _Instructions: This section is responsible for identifying architectural and des
 - Some users might not be online at the time the messages are created
 
 **Patterns**: Broker, Publisher-Subscriber
-
-### Multiple authentication strategies
-
-(what does this mean? we need Sigarra credentials anyway)
-
-**Patterns**: None
 
 ### Security in payments
 
@@ -138,9 +132,9 @@ _Instructions: This section is responsible for identifying architectural and des
 
 ### Notifications
 
-- Most of the applications will need to use a notification/alert system to give users relevant information (for example, chat notifications, car sharing notifications, Sigarra notifications, etc.)
+- Most of the applications will need to use a notification/alert system to give users relevant information (for example, chat notifications, car-sharing notifications, Sigarra notifications, etc.)
 - We have 2 problems:
-    1. **Notifications** - sent in real-time, similar to the the real-time communication in chats problem
+    1. **Notifications** - sent in real-time, similar to the real-time communication in chats problem
     2. **Alert** - sent at a reasonable time that would be most effective to your users (for example, some type of notifications will only be sent at some specific hour, taking into account the user's local timezone)
 - The user should be able to **subscribe** to what type of information wishes to be notified about, based on their preferences.
 
@@ -163,7 +157,7 @@ _Instructions: This section is responsible for identifying architectural and des
 - Provide CRUD functionality
     - [Information Holder Resource](https://microservice-api-patterns.org/patterns/responsibility/endpointRoles/InformationHolderResource)
         - map each endpoint to an entity (and expose CRUD operations over that entity)
-- ??
+- Retrieve information from a service provider
     - [Retrieval Operation](https://microservice-api-patterns.org/patterns/responsibility/operationResponsibilities/RetrievalOperation)
 - Let clients exchange data
     - [Data Transfer Resource](https://microservice-api-patterns.org/patterns/responsibility/informationHolderEndpointTypes/DataTransferResource)
@@ -198,29 +192,31 @@ _Instructions: This section is responsible for identifying architectural and des
 
 ## High-level architecture
 
-_Instructions: Information about **Components**, **Activities** and **Infrastructure** (respectivelly, use UML Component, Activity and Deployment diagrams. Provide higher-level views over these three types of elements using _Package_ diagrams, if appropriate._
+<!--_Instructions: Information about **Components**, **Activities** and **Infrastructure** (respectively, use UML Component, Activity and Deployment diagrams. Provide higher-level views over these three types of elements using _Package_ diagrams, if appropriate._-->
 
 ### Components
 
-- **T1G4** Scraping
-- Authentication
-- **T1G3** Chat
-- **T1G2** Calendar and Jobs
-- **T1G1** Payments
+- **T1G4** [Scraping](./scraping.md)
+- **T2G1** [Authentication](./authentication.md)
+- **T1G3** [Chat](./chat.md)
+- **T1G1** [Payments](./payments.md)
 - Notifications
 - External API / Services
-- Group Making
-- **T2G2** Feedback
+- Calendar
+    - [**T1G2**](./t1g2-calendar.md)
+    - [**T2G4**](./t2g4-calendar.md)
+- **T2G5** Group Making
+- **T2G2** [Feedback](./feedback.md)
     - canteen/bar meals (reviews)
     - classes/professors (reviews)
-    - pedagogical surveys (?)
+    - pedagogical surveys
+- **T1G2** [Jobs](./jobs.md)
 - Registrations
 
 ## Technologies
 
-_Instructions: Tools and rationale for choosing them (programming languages, frameworks, libraries, database engines, message queues)._
-
 ### Backend Framework
+
 - Node.js
     - **Express ✔**
         - Can integrate with swagger using [swagger-node-express](https://www.npmjs.com/package/swagger-node-express) ❌ or [swagger-ui-express](https://www.npmjs.com/package/swagger-ui-express) ✔️.
@@ -228,14 +224,19 @@ _Instructions: Tools and rationale for choosing them (programming languages, fra
     - Sails
     - Meteor
     - Loopback
+    - Cheerio
+    - Axios
+    - Puppeteer
+    - Playwright
+    - nodemailer: to send the password recover email
+    - Socket.IO: enables real-time, bi-directional communication between web clients and servers
+    - [mongoose](https://mongoosejs.com/): an ODM library for MongoDB and Node 
 - Python
     - If microservices are added in the future
-    - Scrapping
+    - [beautifulsoup4](https://pypi.org/project/beautifulsoup4/)
+    - [selenium](https://www.selenium.dev/)
 
-["The Best NodeJS Frameworks for 2021"](https://rapidapi.com/blog/best-nodejs-frameworks/)
-![](https://i.imgur.com/NrBnTJj.png)
-
-### Miscellaneous
+### Development Environment
 
 - TypeScript
 - EsLint
@@ -246,113 +247,110 @@ _Instructions: Tools and rationale for choosing them (programming languages, fra
 
 ### Database
 
-- PostgreSQL or MariaDB
-- Redis
+- redis: for session storage
+- postgres: 
+    - Credentials (email and password) of the user
+    - User calendar events
     - Cache
-- **MongoDB**
+- MongoDB
     - Default
     - Information on Sigarra is not structured
     - New structured data may grow fast
-- Neo4j
-
-### Scrapping
-
-- Node.js
-    - Cheerio + axios
-    - Puppeteer
-    - Playwright
-- Python
-    - [beautifulsoup4](https://pypi.org/project/beautifulsoup4/)
-    - [selenium](https://www.selenium.dev/)
 
 ## Design and architecture
 
-_Instructions: Document design and architecture problems and solutions, preferably using pattern instances. Justify all design and architectural choices, preferably based on operational data.<br><br>
-Documenting pattern instances is important because it will help other developers 
-to better understand the resulting concrete classes, attributes and methods, 
+<!--_Instructions: Document design and architecture problems and solutions, preferably using pattern instances. Justify all design and architectural choices, preferably based on operational data.<br><br>
+Documenting pattern instances is important because it will help other developers
+to better understand the resulting concrete classes, attributes and methods,
 and the underneath design decisions. <br>
-This provides a level of abstraction higher than the class/component level, 
-highlighting the commonalities of the system and thus promoting the understandability, 
+This provides a level of abstraction higher than the class/component level,
+highlighting the commonalities of the system and thus promoting the understandability,
 conciseness and consistency of the documentation.  <br>
-At the same time, the documentation of pattern instances will help the designer instantiating a pattern, 
+At the same time, the documentation of pattern instances will help the designer instantiating a pattern,
 to certify himself that he is taking the right decision.  <br>
 In general terms, this results in better communication within the development team, and consequently on less bugs.
-To more formally document a pattern instance we must describe the design context, to justify the selection of the 
-pattern, to explain how the pattern roles, operations and associations were mapped to the concrete design classes, 
+To more formally document a pattern instance we must describe the design context, to justify the selection of the
+pattern, to explain how the pattern roles, operations and associations were mapped to the concrete design classes,
 and to state the benefits and liabilities of instantiating the pattern, eventually in comparison with other alternatives.<br><br>
-It is expected that you start this section with system-wide patterns, but you should link to component-specific pages for describing the design of individual components. <ins>For each pattern instance</ins> that you would like to document, use the following template:_
+It is expected that you start this section with system-wide patterns, but you should link to component-specific pages for describing the design of individual components. <ins>For each pattern instance</ins> that you would like to document, use the following template:_-->
 
-### _name the goal that you would like to achieve, or problem to solve_
+<!--### _name the goal that you would like to achieve, or problem to solve_
 
 **Context**: _Describe the design context that justifies the selection of the pattern. Link to your best reference of the pattern, if available._
 
 **Mapping**: _Explain how are mapped the pattern's roles, operations and associations to the concrete design classes. Something that works well is to annotate UML structural diagrams with pattern roles, as is done in  [JUnit A Cook's Tour](http://junit.sourceforge.net/doc/cookstour/cookstour.htm), for example. Link to the appropriate files in the repository._
 
-**Consequences**: _Explain the pros and cons of instantiating the pattern, eventually in comparison with other alternatives._
+**Consequences**: _Explain the pros and cons of instantiating the pattern, eventually in comparison with other alternatives._-->
 
-### Sigarra's Authentication
 
-**Context**: 
-Some of the functionalitites that Uni4all provides, such as the access to the schedule or classes, require the User to be authenticated in Sigarra. However, Sigarra does not provide any means to authenticate via an API or OAuth.
 
-For security reasons, we decided that our server should not receive Sigarra's credentials at any point. This way, if there is a crash on our Server, it won't compromise Sigarra's credentials. 
+### Groups Making
 
-The requests for pages that require authentication will be sent on the client-side directly to Sigarra. Sigarra will reply with the HTML of the requested page, which should be forwarded to the endpoint of our server that performs the scrapping of the respective HTML and returns the processed information.
-> Further details on how to proceed if you need to perform scraping of a page that requires Sigarra's authentication are available in the *Contributing* section under the subtitle [Scraping of Sigarra's protected pages](#Scraping-of-Sigarras-protected-pages) .
+For Design and Arquitecture documentation related to the **Groups Making** module, please refer to this [document](./groupMaking.md).
 
-**Mapping**:
-> N/A: This solution does not map to a pattern
-
-**Consequences**: 
-**Pros**: 
-- Security: By adopting this solution, the credentials will only be sent to our server. Therefore, a crash or attack to our server will not reveal sensitive information that could indirectly affect Sigarra.
-
-**Cons**: 
-- Latency: the number of requests/responses leads to an increase in latency.
 
 ## Operation
 
-_Instructions: Information about how to set up a production environment, how to build and package the system for deployment, how to deploy the system to production, how to operate the system (where the logs are, how to access monitoring tools, etc.), and how to run and access architectural fitness functions and use them to decide (or not) to the intended quality attributes._
+<!--_Instructions: Information about how to set up a production environment, how to build and package the system for deployment, how to deploy the system to production, how to operate the system (where the logs are, how to access monitoring tools, etc.), and how to run and access architectural fitness functions and use them to decide (or not) to the intended quality attributes._-->
+
+### Monitoring
+
+To add new hosts and endpoints to be monitored you can either extend the `uni4all.cfg` configuration file with new services or create a new one. If you create a new configuration file you need to update the `nagios.cfg` file with its path as exemplified for the `uni4all.cfg` and `monitoring.cfg` files.
+
+The Naxios-based monitoring was set up and initially configured by group **T1G2**. It was then passed to João Araújo.
+
+#### How to run
+
+```
+cd monitoring
+docker build -t asso-monitoring .
+docker run -p 80:80 asso-monitoring
+```
+
+#### How to access
+
+```
+locally: http://localhost:80/nagios/
+
+production: http://34.125.159.222/nagios/
+
+username: nagiosadmin
+password: jv=M-%#vx:KKpW_)7<*5
+```
+
+### Project
+
+#### How to run
+
+The project can be built and deployed with docker.
+
+```
+docker-compose build
+docker-compose up
+```
 
 ## Usage
 
-_Instructions: Information about how the product can be used from the standpoint of its users (e.g., API endpoints and how to use them). The API documention should be usable, accurate and up-to-date._
+<!--_Instructions: Information about how the product can be used from the standpoint of its users (e.g., API endpoints and how to use them). The API documention should be usable, accurate and up-to-date._-->
 
-The following endpoints are work in progress:
+Information about the usage of the product can be found at the following link:
 
-### Turma 1
+- [uni4all.servehttp.com/api-docs/](https://uni4all.servehttp.com/api-docs/)
 
-- Cantine / Menus
-- Library current capacity
-- News
-- Jobs
-
-### Turma 2
-
-- Student Associations
-- Group formation - project groups, study groups and class
-- Feedback
+It includes all the API endpoins and respective usages.
 
 ## Contributing
 
-_Instructions: Information about setting up the development environment, running the system in development, running the tests. Also, should include documentation on all the API endpoints (including internal ones) and how to use them. The API documention should be usable, accurate and up-to-date.
+<!--_Instructions: Information about setting up the development environment, running the system in development, running the tests. Also, should include documentation on all the API endpoints (including internal ones) and how to use them. The API documention should be usable, accurate and up-to-date.-->
 
-### Scraping of Sigarra's protected pages
+Information about the API endpoints can be found at the following link:
 
-**Target Audience**: 
-Developers/Teams that need to perform scraping of a page that needs the User to be authenticated *e.g.* scraping the schedule
+- [uni4all.servehttp.com/api-docs/](https://uni4all.servehttp.com/api-docs/)
 
-**Request's Flow**:
-- The authentication in Sigarra is made on the client-side by directly making the authentication POST request to sigarra's URL with the password and username as parameters of the request body or using a session token - *so you don't need to worry about this step*;
-- When the user wants to access a service that requires authentication, it makes a request to the endpoint of our API that is responsible for returning as a response the URL that contains the requested information;
-    > *e.g.* If the user wants to access his profile then he must access the URL `https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=<up_identifier>` 
-- At the client-side, a request will be sent to the URL that we provided. That request will return the HTML of the page, which must be sent to the endpoint of our API that performs the scraping of the HTML and returns the processed data;
-    > *e.g.* The HTML that is returned by the request made to the URL of Sigarra that contains the schedule is received in the endpoint that is responsible for scraping that information. The schedule data must be returned as response to the request
+### Setting up the development environment
 
-**Endpoints**:
-At least two endpoints are required if you must do the scraping of a page that required authentication:
-1. Returns the URL of Sigarra that contains the information that you need to scrape;
-2. Receives the HTML of the page that contains the data, performs the scraping and returns the processed information.
+```
+docker-compose -f docker-compose.dev build
+docker-compose -f docker-compose.dev up
+```
 
-**Additional Notes**:
-- The access to most of the User's confidential data requires a special user id (`pv_fest_id`). Therefore, the teams may need to get this id before performing the steps described above. This can be done by requesting the front-end to provide the HTML of the profile page of the User:`https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=<up_identifier>`. The `pv_fest_id` is available in the link to the Academic pathway. Other ways to get this id are probably available. After getting this id, the server may proceed normally with the steps descriped above by adding this query parameter.
