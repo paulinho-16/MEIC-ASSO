@@ -14,8 +14,8 @@
 
 ### GET `/authentication`
 
-This example route was created in order to test the authentication. It will return a json response with a message field whose value will depend on the status code. On success, the id of the authenticated user is returned, otherwise an error message is returned.
-The following responses may be returned:
+This example route was created in order to test the authentication. It will return a json response with a message field whose value will depend on the status code. On success, the response will include the id of the authenticated user, otherwise an error message is returned.
+The following responses may occur:
 - 200 if the request was made with a valid token
     - The message returns the id of the authenticated user (i.e: 1 )
 - 403 if no token was provided
@@ -30,7 +30,7 @@ The following responses may be returned:
 
 ### POST `/authentication/login`
 
-The login route requires two parameters for the account creation:
+This route must be used in order to authenticate and it requires two parameters:
 - `email`
 - `password`
 
@@ -58,20 +58,27 @@ This token should be included in all subsequent requests that require the user t
 
 ### POST `/authentication/logout`
 
-This is the logout route, it requires no parameters, but there must be a logged in user, in which case the cookies related to the login will be deleted, otherwise the same error codes as in the authentication testing route will appear in the response.
-
-authentication - 200
+The logout route doesn't require any parameters. It requires the user to be authenticated and it is responsible for deleting the session cookie and for invalidating the session of the user. 
+A request sent to this endpoint will result in one of the following responses:
 - 200 if the logout was successful
-    - 'Logout with success'
+    - Logout with success
+- 403 if no token was provided
+    - Access token is required for authentication
+- 401 if the token or session is not valid:
+    - Invalid Token
+    - Invalid session
+    - The user does not exist
+- 500 if an internal error occurs
+    - Get user failed with error: ${err}
+    - Could not process session
 
 ### POST `/authentication/register`
 
-This is the register route, it requires two parameters for the account creation:
+This route enables the user to create an account. It requires two parameters, namely:
 - `email`
 - `password`
 
 It will return a response with a status code of:
-
 - 201
     - Registered with success
 - 400
@@ -85,57 +92,63 @@ It will return a response with a status code of:
     - Insert user failed
     - Insert user failed with error: ${err}
 
-All of the responses will also include a message with their description.
+The json response includes a message with the description of the status of the request.
 
 ### DELETE `/user/:id`
 
-This is the route for account deletion, it requires one parameter for the account deletion:
-- `password`
+This route allows the user to delete his account. It requires the user to be authenticated and also to provide his `password` for greater security.
 
-But there must be a logged in user, otherwise the same error codes as in the authentication testing route will appear in the response. Other status codes for responses that can be returned are:
-
-authorization errors - 200 +
-- 401
-    - Unauthorized action
+The status codes that can be returned in the response are the following:
+- 204
+    - Account deleted with success
 - 400
     - Password is required
     - The user does not exist
     - Invalid password
-- 500
+- 401 Unauthorized
+    - Unauthorized action (if the user is not the owner of the account he is trying to delete)
+    - Invalid Token
+    - Invalid session
+    - The user does not exist
+- 403 if no token was provided
+    - Access token is required for authentication
+- 500 if an internal error occurs
     - Get user failed with error: ${err}
+    - Could not process session
     - Account deletion failed
-- 204
-    - Account deleted with success
 
 All of the responses will also include a message with their description.
 
 ### PUT `/user/update-password/:id`
 
-This is the route for password changes, it requires two parameters for the password update:
+This route may be used to update the password of the user. It requires two parameters, namely:
 - `oldPassword`
 - `newPassword`
 
-But there must be a logged in user, otherwise the same error codes as in the authentication testing route will appear in the response. Other status codes for responses that can be returned are:
-
-authorization errors - 200 +
+In order to use this route the user must be authenticated.
+A request sent to this endpoint may return one of the following status codes:
 - 200
     - Update password with success
 - 400
     - New and old passwords are required
     - Invalid current password
     - The new password is not strong enough: ${passwordErrors}
-- 401
-    - Unauthorized action
+- 401 Unauthorized
+    - Invalid Token
+    - Invalid session
     - The user does not exist
-- 500
+    - Unauthorized action (if the user tries to update the password of another user)
+- 403 if no token was provided
+    - Access token is required for authentication
+- 500 if an internal error occurs
     - Get user failed with error: ${err}
+    - Could not process session
     - Update password failed
 
+### POST `/user/forgot-password`
 
-### `POST /user/forgot-password`
-
-Send a token via email that can be used to change the password when a user forgets it
-
+This route can be used by a user that does not remember his password. By proving the `email` as parameter, the user can get a token via email, which can then be used to change the password to a new one.
+The possible responses returned by this route are the following:
 - 200
     - Email sent with success
 - 400
@@ -144,12 +157,12 @@ Send a token via email that can be used to change the password when a user forge
     - The user does not exist
 - 500
     - Get user failed with error: ${err}
-    - ||Algum erro de envio do email, não faço ideia de como ele pode aparacer||
+    - Failed to send email
 
-### `POST /user/reset-password`
+### POST `/user/reset-password`
 
-Update an user's password without knowing the previous password using a token
-
+This endpoint must be used after making a request to the previous endpoint (`/user/forgot-password`). It allows the user to insert the `token` received by email and a new password. If the token is valid and the password is strong enough then the password of the user will be updated.
+This endpoint may result in one of the following responses:
 - 200
     - Update password with success
 - 400
@@ -159,7 +172,7 @@ Update an user's password without knowing the previous password using a token
     - Invalid Token
     - The user does not exist
 - 403
-    - A token is required for authentication
+    - A token is required to reset your password
 - 500
     - Get user failed with error: ${err}
     - Update password failed
@@ -170,7 +183,7 @@ Update an user's password without knowing the previous password using a token
 - redis: for session storage
 - postgres: to store the credentials (email and password) of the user
 
-## Patterns
+## Design and architecture
 
 ### Access Token
 

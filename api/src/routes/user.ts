@@ -78,13 +78,24 @@ const router = express.Router()
  *                     message: Unauthorized action
  *                 invalid_token:
  *                   value:
- *                     message: Get user failed
+ *                     message: Invalid token
  *                 invalid_session:
  *                   value:
- *                     message: Error creating session
+ *                     message: Invalid session
  *                 user_not_exist:
  *                   value:
  *                     message: The user does not exist
+ *         403:
+ *           description: No token was provided
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *               example:
+ *                 message: Access token is required for authentication
  *         500:
  *           description: Server error
  *           content:
@@ -101,6 +112,9 @@ const router = express.Router()
  *                 get_user:
  *                   value:
  *                     message: Get User Failed
+ *                 invalid_session:
+ *                   value:
+ *                     message: Could not process session
  */
 router.delete('/:id', auth.verifyAuthorization, controller.deleteUser)
 
@@ -120,21 +134,18 @@ router.delete('/:id', auth.verifyAuthorization, controller.deleteUser)
  *           schema:
  *             type: string
  *       requestBody:
- *         description: Email and passwords
+ *         description: New and old password
  *         required: true
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 email:
- *                   type: string
  *                 oldPassword:
  *                   type: string
  *                 newPassword:
  *                   type: string
  *             example:
- *               email: example@email.com
  *               oldPassword: Password123
  *               newPassword: newPassword123
  *       responses:
@@ -148,7 +159,7 @@ router.delete('/:id', auth.verifyAuthorization, controller.deleteUser)
  *                   message:
  *                     type: string
  *               example:
- *                     message: Account Deleted with success
+ *                     message: Update passsword with success
  *         400:
  *           description: Invalid Parameters
  *           content:
@@ -168,15 +179,6 @@ router.delete('/:id', auth.verifyAuthorization, controller.deleteUser)
  *                 passord_not_strong_enough:
  *                   value:
  *                     message: The new password is not strong enough
- *                 invalid_token:
- *                   value:
- *                     message: Get user failed
- *                 invalid_session:
- *                   value:
- *                     message: Error creating session
- *                 user_not_exist:
- *                   value:
- *                     message: The user does not exist
  *         401:
  *           description: Unauthorized Action
  *           content:
@@ -193,6 +195,15 @@ router.delete('/:id', auth.verifyAuthorization, controller.deleteUser)
  *                 unauthorized_action:
  *                   value:
  *                     message: Unauthorized action
+ *                 invalid_token:
+ *                   value:
+ *                     message: Invalid token
+ *                 invalid_session:
+ *                   value:
+ *                     message: Invalid session
+ *                 user_token:
+ *                   value:
+ *                     message: The user does not exist
  *         500:
  *           description: Server Error
  *           content:
@@ -209,6 +220,9 @@ router.delete('/:id', auth.verifyAuthorization, controller.deleteUser)
  *                 update_password_failed:
  *                   value:
  *                     message: Update password failed
+ *                 session_error:
+ *                   value:
+ *                     message: Could not process session
  */
  router.put('/update-password/:id', auth.verifyAuthorization, controller.updatePassword)
 
@@ -280,7 +294,7 @@ router.delete('/:id', auth.verifyAuthorization, controller.deleteUser)
  *                     message: Get user failed
  *                 server_error:
  *                   value:
- *                     message: string
+ *                     message: Failed to send email
  */
 router.post('/forgot-password', controller.forgotPassword)
 
@@ -317,7 +331,7 @@ router.post('/forgot-password', controller.forgotPassword)
  *                   message:
  *                     type: string
  *               example:
- *                     message: Email sent with success
+ *                     message: Update password with success
  *         400:
  *           description: Invalid Parameters
  *           content:
@@ -360,7 +374,7 @@ router.post('/forgot-password', controller.forgotPassword)
  *                   message:
  *                     type: string
  *               example:
- *                     message: A token is required for authentication
+ *                     message: A token is required to reset your password
  *         500:
  *           description: Server Error
  *           content:

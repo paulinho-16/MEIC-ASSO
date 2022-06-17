@@ -28,7 +28,7 @@ const router = express.Router()
  *               example:
  *                 message: 1
  *         401:
- *           description: The provided token is invalid
+ *           description: Invalid token or session
  *           content:
  *             application/json:
  *               schema:
@@ -39,10 +39,10 @@ const router = express.Router()
  *               examples:
  *                 invalid_token:
  *                   value:
- *                     message: Get user failed
+ *                     message: Invalid token
  *                 invalid_session:
  *                   value:
- *                     message: Error creating session
+ *                     message: Invalid session
  *                 user_token:
  *                   value:
  *                     message: The user does not exist

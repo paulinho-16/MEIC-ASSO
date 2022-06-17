@@ -84,7 +84,7 @@ async function verifyPasswordResetToken(req: Request, res: Response, next: NextF
   const token = req.body.token
 
   if (!token) {
-    return res.status(403).json({ message: 'A token is required for authentication' })
+    return res.status(403).json({ message: 'A token is required to reset your password' })
   }
 
   jwt.verify(token, process.env.JWT_PASS_RESET_KEY, async (err: Error | null, decoded: { id: number }) => {
