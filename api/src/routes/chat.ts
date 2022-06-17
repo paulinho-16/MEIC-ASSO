@@ -8,7 +8,7 @@ const router = express.Router()
  * /chat/location:
  *   get:
  *     tags:
- *       - chat
+ *       - Chat
  *     summary: Get the URL where the chat server will listen for incoming messages
  *     responses:
  *       200:
@@ -29,7 +29,7 @@ router.get('/location', controller.location)
  * /chat/message:
  *   get:
  *     tags:
- *       - chat
+ *       - Chat
  *     summary: Get the messages of a user
  *     parameters:
  *       - in: query
@@ -70,7 +70,7 @@ router.get('/message', controller.message)
  * /chat/group:
  *   get:
  *     tags:
- *       - chat
+ *       - Chat
  *     summary: Gets the groups of a user
  *     parameters:
  *       - in: query
@@ -106,7 +106,7 @@ router.get('/group', controller.getGroups)
  * /chat/group:
  *   post:
  *     tags:
- *       - chat
+ *       - Chat
  *     summary: Creates a new group
  *     parameters:
  *       - in: query
@@ -150,7 +150,7 @@ router.post('/group', controller.createGroup)
  * /chat/group/{groupId}:
  *   get:
  *     tags:
- *       - chat
+ *       - Chat
  *     summary: Gets the group's information
  *     parameters:
  *       - in: path
@@ -205,7 +205,7 @@ router.get('/group/:groupID', controller.groupMessage)
  * /chat/group/{groupId}/messages:
  *   get:
  *     tags:
- *       - chat
+ *       - Chat
  *     summary: Gets the group's messages
  *     parameters:
  *       - in: path
@@ -253,7 +253,7 @@ router.get('/group/:groupID/messages', controller.getGroupMessages)
  * /chat/group/{groupId}/members:
  *   put:
  *     tags:
- *       - chat
+ *       - Chat
  *     summary: Adds a user to a group
  *     parameters:
  *       - in: path
@@ -295,7 +295,7 @@ router.put('/group/:groupID/members', controller.addToGroup)
  * /chat/group/{groupId}/members/{userUp}:
  *   delete:
  *     tags:
- *       - chat
+ *       - Chat
  *     summary: Removes a user from a group
  *     parameters:
  *       - in: path
