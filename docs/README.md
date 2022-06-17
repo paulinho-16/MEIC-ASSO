@@ -312,7 +312,7 @@ docker run -p 80:80 asso-monitoring
 ```
 locally: http://localhost:80/nagios/
 
-production: http://34.125.165.109/nagios/
+production: http://34.125.159.222/nagios/
 
 username: nagiosadmin
 password: jv=M-%#vx:KKpW_)7<*5
