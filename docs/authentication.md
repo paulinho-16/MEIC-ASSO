@@ -168,7 +168,7 @@ When exchanging information with a client, our server needs to be able to keep s
 
 #### Mapping
 
-![](https://i.imgur.com/KfzTZcm.png)
+![](https://i.imgur.com/6FGB7au.png)
 
 #### Consequences
 
