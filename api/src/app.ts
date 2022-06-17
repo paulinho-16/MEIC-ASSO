@@ -57,10 +57,16 @@ const swaggerOptions: swaggerJsdoc.Options = {
         }
       }
     },
-    security: [{
-      jwt: [],
-      cookieAuth: []
-    }]
+    tags: [
+      {
+        name: "Authentication",
+        description: "Everything about Authentication"
+      },
+      {
+        name: "User",
+        description: "Operations related to creation, updates and deletions of users"
+      }
+    ],
   },
   apis: ['./dist/routes/*.js'],
 };

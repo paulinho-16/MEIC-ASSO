@@ -1,91 +1,189 @@
 # Authentication and Authorization
 
+## Features
+
+- Login
+- Password and email validation
+- Register
+- Logout
+- Update Password
+- Password Recovery
+- Delete account
+
 ## Endpoints
 
 ### GET `/authentication`
 
-This route was created for testing the authentication, it will return a response with a status code of:
+This example route was created in order to test the authentication. It will return a json response with a message field whose value will depend on the status code. On success, the response will include the id of the authenticated user, otherwise an error message is returned.
+The following responses may occur:
 - 200 if the request was made with a valid token
+    - The message returns the id of the authenticated user (i.e: 1 )
 - 403 if no token was provided
-- 401 if the provided token is invalid
-- 400 if the user associated with the token does not exist anymore
-
-All of the responses will also include a message with their description.
+    - Access token is required for authentication
+- 401 if the token or session is not valid:
+    - Invalid Token
+    - Invalid session
+    - The user does not exist
+- 500 if an internal error occurs
+    - Get user failed with error: ${err}
+    - Could not process session
 
 ### POST `/authentication/login`
 
-This is the login route, it requires two parameters for the account creation:
+This route must be used in order to authenticate and it requires two parameters:
 - `email`
 - `password`
 
-It will return a response with a status code of:
+It verifies the validity of the email and password and returns a response with a status code of:
 - 200 if the user was successfully logged in
-- 400 if something was wrong, which includes:
+- 400 if something went wrong, such as:
     - Not passing one of the parameters
     - Passing an e-mail that is not registered
     - Using a wrong password
+- 500 if an internal error occurs
+    - Get user failed with error
+    - Error creating session
 
-All of the responses will also include a message with their description.
+All of the responses will also include a message describing the success or failure of the request.
 
-The login of a user is the creation of a HttpOnly cookie, with a lifetime defined in the environment variables.
+If the login is successful, a json response is returned with a success message, the id of the user and the JWT, for example:
+```json
+{
+    "message": "Login with success",
+    "id": 11,
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImlhdCI6MTY1NTQ2NDMwOCwiZXhwIjoxNjU1NzIzNTA4fQ.Is_sAEggVqkcox_XTZAKia9fsOe_AhSaC655ikEES3E"
+}
+```
+This token should be included in all subsequent requests that require the user to be authenticated. It can be sent in the Authorization Header through the Bearer Schema or using cookies, given that our implementation supports both approaches.
 
 ### POST `/authentication/logout`
 
-This is the logout route, it requires no parameters, but there must be a logged in user, in which case the cookies related to the login will be deleted, otherwise the same error codes as in the authentication testing route will appear in the response.
+The logout route doesn't require any parameters. It requires the user to be authenticated and it is responsible for deleting the session cookie and for invalidating the session of the user. 
+A request sent to this endpoint will result in one of the following responses:
+- 200 if the logout was successful
+    - Logout with success
+- 403 if no token was provided
+    - Access token is required for authentication
+- 401 if the token or session is not valid:
+    - Invalid Token
+    - Invalid session
+    - The user does not exist
+- 500 if an internal error occurs
+    - Get user failed with error: ${err}
+    - Could not process session
 
 ### POST `/authentication/register`
 
-This is the register route, it requires two parameters for the account creation:
+This route enables the user to create an account. It requires two parameters, namely:
 - `email`
 - `password`
 
 It will return a response with a status code of:
-- 200 if the user was successfully created
-- 400 if something was wrong, which includes:
-    - Not passing one of the parameters
-    - Passing an invalid e-mail
-    - Using an e-mail that is already registered
-    - The password is too weak
-    - Some error when dealing with the database
+- 201
+    - Registered with success
+- 400
+    - Email and password are required
+    - The email '${email}' is not valid
+    - The password is not strong enough: ${passwordErrors}
+- 409
+    - This user already exists. Please Login
+- 500
+    - Get user failed with error: ${err}
+    - Insert user failed
+    - Insert user failed with error: ${err}
 
-All of the responses will also include a message with their description.
+The json response includes a message with the description of the status of the request.
 
 ### DELETE `/user/:id`
 
-This is the route for account deletion, it requires one parameter for the account deletion:
-- `password`
+This route allows the user to delete his account. It requires the user to be authenticated and also to provide his `password` for greater security.
 
-But there must be a logged in user, otherwise the same error codes as in the authentication testing route will appear in the response. Other status codes for responses that can be returned are:
-- 200 if the account is successfuly deleted
-- 400 if one of the following error happens:
-    - The parameter was not provided
-    - The password in invalid for the logged user
-    - Some error when deleting the account from the database
+The status codes that can be returned in the response are the following:
+- 204
+    - Account deleted with success
+- 400
+    - Password is required
+    - The user does not exist
+    - Invalid password
+- 401 Unauthorized
+    - Unauthorized action (if the user is not the owner of the account he is trying to delete)
+    - Invalid Token
+    - Invalid session
+    - The user does not exist
+- 403 if no token was provided
+    - Access token is required for authentication
+- 500 if an internal error occurs
+    - Get user failed with error: ${err}
+    - Could not process session
+    - Account deletion failed
+
 All of the responses will also include a message with their description.
 
 ### PUT `/user/update-password/:id`
 
-This is the route for password changes, it requires two parameters for the password update:
+This route may be used to update the password of the user. It requires two parameters, namely:
 - `oldPassword`
 - `newPassword`
 
-But there must be a logged in user, otherwise the same error codes as in the authentication testing route will appear in the response. Other status codes for responses that can be returned are:
-- 200 if the password is successfuly updated
-- 400 if one of the following error happens:
-    - One of the parameters was not provided
-    - The old password in invalid for the logged user
-    - The new password is too weak
-    - Some error when updating the account in the database
+In order to use this route the user must be authenticated.
+A request sent to this endpoint may return one of the following status codes:
+- 200
+    - Update password with success
+- 400
+    - New and old passwords are required
+    - Invalid current password
+    - The new password is not strong enough: ${passwordErrors}
+- 401 Unauthorized
+    - Invalid Token
+    - Invalid session
+    - The user does not exist
+    - Unauthorized action (if the user tries to update the password of another user)
+- 403 if no token was provided
+    - Access token is required for authentication
+- 500 if an internal error occurs
+    - Get user failed with error: ${err}
+    - Could not process session
+    - Update password failed
 
-All of the responses will also include a message with their description.
+### POST `/user/forgot-password`
 
-## Technologies 
+This route can be used by a user that does not remember his password. By proving the `email` as parameter, the user can get a token via email, which can then be used to change the password to a new one.
+The possible responses returned by this route are the following:
+- 200
+    - Email sent with success
+- 400
+    - Email is required
+- 401
+    - The user does not exist
+- 500
+    - Get user failed with error: ${err}
+    - Failed to send email
+
+### POST `/user/reset-password`
+
+This endpoint must be used after making a request to the previous endpoint (`/user/forgot-password`). It allows the user to insert the `token` received by email and a new password. If the token is valid and the password is strong enough then the password of the user will be updated.
+This endpoint may result in one of the following responses:
+- 200
+    - Update password with success
+- 400
+    - New password is required
+    - The password is not strong enough: ${passwordErrors}
+- 401
+    - Invalid Token
+    - The user does not exist
+- 403
+    - A token is required to reset your password
+- 500
+    - Get user failed with error: ${err}
+    - Update password failed
+
+## Technologies
 
 - nodemailer: to send the password recover email
 - redis: for session storage
 - postgres: to store the credentials (email and password) of the user
 
-## Patterns
+## Design and architecture
 
 ### Access Token
 
@@ -250,10 +348,13 @@ At least two endpoints are required if you must do the scraping of a page that r
 - The access to most of the User's confidential data requires a special user id (`pv_fest_id`). Therefore, the teams may need to get this id before performing the steps described above. This can be done by requesting the front-end to provide the HTML of the profile page of the User:`https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=<up_identifier>`. The `pv_fest_id` is available in the link to the Academic pathway. Other ways to get this id are probably available. After getting this id, the server may proceed normally with the steps descriped above by adding this query parameter.
 
 ### Authentication Middleware
+
 #### Context - How are we authenticating the user?
+
 In order to authenticate the user we use JWT tokens. This tokens are sent to the user upon a successful login both in the response and in a cookie. The JWT token must then be sent in every request that requires authentication and authorization. For that, the request may send the **cookie** or it can set the **Bearer Token in the Authorization header**.
 
 #### Usage of the Authentication Middleware
+
 If a service needs to authenticate the user before providing access to a resource, it can use the **authentication middleware** to do so, particularly the `verifySessionToken` middleware function.
 You just need to define your route like the one below, setting the first and third parameters with the appropriate path and handler:
 ```typescript=

@@ -23,7 +23,7 @@ async function deleteUser(req: Request, res: Response) {
   try {
     user = await userService.getUserById(req.body.id)
   } catch (err) {
-    return res.status(400).json({ message: `Get user failed with error: ${err}` })
+    return res.status(500).json({ message: `Get user failed with error: ${err}` })
   }
   if (!user) return res.status(400).json({ message: 'The user does not exist' })
 
@@ -38,9 +38,9 @@ async function deleteUser(req: Request, res: Response) {
     await redisClient.del(JSON.stringify(req.body.id));
     // Delete cookie
     res.cookie('jwt', '', { maxAge: 0 })
-    return res.status(201).json({ message: 'Account deleted with success' })
+    return res.status(204).json({ message: 'Account deleted with success' })
   } catch (err) {
-    return res.status(400).json({ message: 'Account deletion failed' })
+    return res.status(500).json({ message: 'Account deletion failed' })
   }
 }
 

@@ -25,7 +25,7 @@ async function verifySessionToken(req: Request, res: Response, next: NextFunctio
         return res.status(401).json({ message: 'Invalid session' })
       }
     } catch(err) {
-      return res.status(401).json({ message: 'Could not process session' })
+      return res.status(500).json({ message: 'Could not process session' })
     }
 
     // Verify if user exists
@@ -64,7 +64,7 @@ async function verifyAuthorization(req: Request, res: Response, next: NextFuncti
       if (!session)
         return res.status(401).json({ message: 'Invalid session' })
     } catch(err){
-      return res.status(401).json({ message: 'Couldn not process session' })
+      return res.status(500).json({ message: 'Could not process session' })
     }
 
     // Verify if user exists
@@ -84,7 +84,7 @@ async function verifyPasswordResetToken(req: Request, res: Response, next: NextF
   const token = req.body.token
 
   if (!token) {
-    return res.status(403).json({ message: 'A token is required for authentication' })
+    return res.status(403).json({ message: 'A token is required to reset your password' })
   }
 
   jwt.verify(token, process.env.JWT_PASS_RESET_KEY, async (err: Error | null, decoded: { id: number }) => {
