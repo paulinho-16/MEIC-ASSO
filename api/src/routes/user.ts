@@ -11,7 +11,7 @@ const router = express.Router()
  *     delete:
  *       security:
  *         - jwt: []
- *       summary: Deletes an User
+ *       summary: Deletes a User
  *       tags:
  *         - User
  *       parameters:
@@ -302,7 +302,7 @@ router.post('/forgot-password', controller.forgotPassword)
  * @swagger
  *   /user/reset-password:
  *     post:
- *       summary: Update an user's password without knowing the previous password using a token
+ *       summary: Update a user's password without knowing the previous password using a token
  *       tags:
  *         - User
  *       requestBody:
