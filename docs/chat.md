@@ -95,9 +95,13 @@ When the chat server sends a message to a group, it is using [socket.io's `.to(r
 
 ---
 
+Besides the developed backend we also implemented a simple UI, _Chat Client_, that displays the specified user's groups and chat, providing an easier and more interactive interface to test and debug the chat features. Functionally, it behaves as a client that connects to a socket on _Chat Server_ and emits events on users connections and messages.
+
+---
+
 ## Contributing
 
-The only requirement to set up the development enviroment is having [Docker](https://www.docker.com/) installed.
+The only requirement to set up the development environment is having [Docker](https://www.docker.com/) installed.
 
 For the chat to be operational it needs three containers working: mongo-chat, mongo-chat-server and chat-server. The order by whitch they must go up can be seen and set up in the docker-compose, using _depends_on_: mongo-chat goes first to launch the mongo service, then mongo-chat-server that depends on mongo-chat, creating a server to use the mongo database, and lastly chat-server that depends on mongo-chat-server, creating the chat server for communication with the client.
 
