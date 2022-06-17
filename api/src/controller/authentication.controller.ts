@@ -43,7 +43,7 @@ async function register(req: Request, res: Response) {
     const oldUser = await userService.existsUserByEmail(email)
     if (oldUser) return res.status(409).json({ message: 'This user already exists. Please Login' })
   } catch (err) {
-    return res.status(400).json({ message: `Get user failed with error: ${err}` })
+    return res.status(500).json({ message: `Get user failed with error: ${err}` })
   }
 
   // Check if password has errors
@@ -104,7 +104,7 @@ async function login(req: Request, res: Response) {
   try {
     await redisClient.set(JSON.stringify(id), JSON.stringify(user), { EX: constants.tokenLifetime })
   } catch (err) {
-    return res.status(400).json({ message: 'Error creating session' })
+    return res.status(500).json({ message: 'Error creating session' })
   }
 
   // Set cookie

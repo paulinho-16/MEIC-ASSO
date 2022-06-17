@@ -25,7 +25,7 @@ async function verifySessionToken(req: Request, res: Response, next: NextFunctio
         return res.status(401).json({ message: 'Invalid session' })
       }
     } catch(err) {
-      return res.status(401).json({ message: 'Could not process session' })
+      return res.status(500).json({ message: 'Could not process session' })
     }
 
     // Verify if user exists
@@ -64,7 +64,7 @@ async function verifyAuthorization(req: Request, res: Response, next: NextFuncti
       if (!session)
         return res.status(401).json({ message: 'Invalid session' })
     } catch(err){
-      return res.status(401).json({ message: 'Couldn not process session' })
+      return res.status(500).json({ message: 'Could not process session' })
     }
 
     // Verify if user exists
