@@ -252,6 +252,7 @@ There are a few quality attributes defined for this project:
     - Credentials (email and password) of the user
     - User calendar events
     - Cache
+    - Groups
 - MongoDB
     - Default
     - Information on Sigarra is not structured
