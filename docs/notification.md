@@ -60,11 +60,11 @@ It requires 1 parameter in the body:
 ## Error Report
 
 ### Context
-Our group agreed it was good practice to log errors generated upon answering request so it was easier to find problems in the code and the system overall.
+Our group agreed it was good practice to log errors generated upon answering request so it was easier to find problems in the code and the system overall. This information is stored properly in the notifications database but should also be able to flow to the clients (whomever uses the API) reliably even though there was a failure in the system. Because this is not a public API, a description of the error might help the developer making use of it to solve the error by correcting his implementation if that is the case.
 
-### Maping
-![something](https://prnt.sc/6_5qJtKckGws)
-
+### Mapping
+![database](https://prnt.sc/6_5qJtKckGws)  
+![architecture](./notifications_mapping_errorReport.png)
 ### Consequences
 
 #### Pros
@@ -73,6 +73,8 @@ Our group agreed it was good practice to log errors generated upon answering req
 
 #### Cons
 - Due to the nature of our component the error logs aren't extremely deatailed so there may be some difficulties 
+- Depending on the implementation of the developer the error might reach the user.
+- The description of errors might unwantingly reveal implementation details.
 
 
 
@@ -81,12 +83,11 @@ Our group agreed it was good practice to log errors generated upon answering req
 
 
 
-## Token
+## API Key 
 
 ### Context
-After a topic is created there is the need to identify its creator to prevent others from posting to it
-### Maping
-![something](https://prnt.sc/6_5qJtKckGws)
+After a topic is created there is the need to identify its creator to prevent others from posting to it. Therefore an implementation of a key is necessary### Maping
+![something](notifications_key.png)
 
 ### Consequences
 
