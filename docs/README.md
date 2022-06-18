@@ -205,7 +205,7 @@ There are a few quality attributes defined for this project:
 - Calendar
     - [**T1G2**](./t1g2-calendar.md)
     - [**T2G4**](./t2g4-calendar.md)
-- **T2G5** Group Making
+- **T2G5** [Group Making](./groupMaking.md)
 - **T2G2** [Feedback](./feedback.md)
     - canteen/bar meals (reviews)
     - classes/professors (reviews)
@@ -281,12 +281,6 @@ It is expected that you start this section with system-wide patterns, but you sh
 **Mapping**: _Explain how are mapped the pattern's roles, operations and associations to the concrete design classes. Something that works well is to annotate UML structural diagrams with pattern roles, as is done in  [JUnit A Cook's Tour](http://junit.sourceforge.net/doc/cookstour/cookstour.htm), for example. Link to the appropriate files in the repository._
 
 **Consequences**: _Explain the pros and cons of instantiating the pattern, eventually in comparison with other alternatives._-->
-
-
-
-### Groups Making
-
-For Design and Arquitecture documentation related to the **Groups Making** module, please refer to this [document](./groupMaking.md).
 
 
 ## Operation
