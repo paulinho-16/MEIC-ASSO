@@ -60,7 +60,7 @@ Each one of these challenges are addressed one by one in the documentation of th
 ### Components
 
 - [Authentication](./authentication.md), **T2G1** 
-- [Scraping](./scraping.md), **T1G4** 
+- [Scraping](./scraping.md), **T1G4** , **T1G3** (meals)
 - [Chat](./chat.md), **T1G3**
 
 In the chat component, users can chat with their academic social circles. The main features allow users to view their groups and messages per group, create and join a group and send and receive messages in real time.
