@@ -1,13 +1,12 @@
 # uni4all
 
-Welcome to the repository supporting the development of the uni4all project, developed as part of the practical classes of the FEUP/M.EIC/ASSO/2021-22 course.
+Welcome to the repository supporting the development of the backend for the uni4all project, developed as part of the practical classes of the FEUP/M.EIC/ASSO/2021-22 course.
 
 ## Contents
 
 * [Product envisioning](#product-envisioning)
 * [High-level architecture](#high-level-architecture)
 * [Technologies](#technologies)
-* [Design and architecture](#design-and-architecture)
 * [Operation](#operation)
 * [Usage](#usage)
 * [Contributing](#contributing)
@@ -17,64 +16,137 @@ Welcome to the repository supporting the development of the uni4all project, dev
 
 ### Vision
 
-The product intends to improve the uni4all app developed by NIAEFEUP. It will provide features such as authentication, scraping, an integrated chat, calendar and jobs, payments, notifications, group making, feedback and registrations. In terms of non-functional requirements it is of relevance performance, operating and lifecycle quality.
+The uni4all backend aims to support the uni4all app developed by NIAEFEUP, with several services for authentication, scraping of web pages, integrated chat, calendar and jobs, notifications, groups management, feedback and registrations. In terms of non-functional requirements it is very relevant the performance, operating and lifecycle quality.
 
 ### Themes
 
-- Car sharing
-- Authentication
-- User profiles
-- Meals
-    - Cantine
-    - Bares
-    - Grill
-    - SASUP
-- Schedule management
-    - Algorithm to optimize schedule, synchronization
-    - Exams schedule
-    - Other events
-    - Personal schedule
-    - Services (e.g. Library schedule)
-- FEUP Classrooms
-- Group formation - project groups, study groups and class
-- Library
-    - Book reservation (and delivery dates)
-    - Capacity
-    - Classrooms
-- External systems
-    - GPS systems (e.g. study places)
-    - Housing
-    - External places to eat (together with meals)
-- Scheduling appointments
-    - Psychologist
-- Registering for stuff: Pick classes, UCs, register for 2nd call exams
-- Presence in practical classes
-- Feedback (about everything)
-    - Trouble tickets
-- News
-- Job listings management
-- Printing system
-- Appliances system (Projeto Integrador)
-- Student Associations
-- Chat (class groups)
-- Notifications
-    - Calendar (deliveries, exams, tests...)
-- Queues / Crowd Sourcing
-- Mentoring app (Erasmus students also)
-- Accio with comments
-- Payments (Balance)
+The services requested by UNI and perceived as highly valuable are numerous and diverse, and can be grouped into the following categories:
+
+* Users, groups, and social: authentication, authorization, user profiles, project groups, study groups and classes, messaging (chat with class groups)
+* Time management: schedule optimization, synchronisation, exams schedule, personal schedule, services schedule (e.g. Library schedule), services appointments (e.g. psychologist); calendars
+* Classes: assiduity, feedback (about everything),
+* Spaces: classrooms, study spaces
+* Housing:
+* Library: book reservation (and delivery dates), capacity, study rooms;
+* Registering for stuff: pick classes, UCs, register for 2nd call exams
+* Trouble tickets, Printing system, News, Job listings management
+* Notifications on everything
+* Queue management
+* Eating: cantines, snack-bars, restaurants (Grill, SASUP, others), 
+* Mentoring app (Erasmus students also)
+* Mobility: car sharing;
+* Accio with comments
 
 ### Quality attributes
 
-
-There are a few quality attributes defined for this project:
+There are a few quality attributes defined for the uni4all backend as a whole:
 * **performance quality** - the system needs to be reliable, secure and with a relatively small response time;
 * **operating quality** - the system needs to be available and scalable;
 * **lifecycle quality** - the system should be maintainable and portable.
 
+### Challenges and possible solutions
+
+In concrete, the services to be provided by the backend pose several challenges in terms of: data storage, privacy, efficiency, data interoperability, real-time performance, security, maintainability, evolvability, and extensibility.
+
+In addition, the services will be provided through an API that should be well designed to be concise and easy to extend at the same time.
+
+Each one of these challenges are addressed one by one in the documentation of the respective components.
 
 
-### Challenges and foreseen possible solutions
+## High-level architecture
+
+<!--_Instructions: Information about **Components**, **Activities** and **Infrastructure** (respectively, use UML Component, Activity and Deployment diagrams. Provide higher-level views over these three types of elements using _Package_ diagrams, if appropriate._-->
+
+### Components
+
+- [Authentication](./authentication.md), **T2G1** 
+- [Scraping](./scraping.md), **T1G4** 
+- [Chat](./chat.md), **T1G3** 
+- [Payments](./payments.md), **T1G1** 
+- Notifications
+- External API / Services
+- Calendar: [T1G2](./t1g2-calendar.md), **T1G2**; [T2G4](./t2g4-calendar.md), **T2G4**; 
+- [Group Making](./groupMaking.md), **T2G5** 
+- [Feedback](./feedback.md), **T2G2**: canteen/bar meals (reviews), classes/professors (reviews), pedagogical surveys
+- [Jobs](./jobs.md), **T1G2** 
+- Registrations
+
+## Technologies
+For the implementation of all the services, several technologies were used, namely: node.js and several libraries, python, redis, postgres, mongodb, etc.
+
+
+
+## Operation
+
+<!--_Instructions: Information about how to set up a production environment, how to build and package the system for deployment, how to deploy the system to production, how to operate the system (where the logs are, how to access monitoring tools, etc.), and how to run and access architectural fitness functions and use them to decide (or not) to the intended quality attributes._-->
+
+### Monitoring
+
+To add new hosts and endpoints to be monitored you can either extend the `uni4all.cfg` configuration file with new services or create a new one. If you create a new configuration file you need to update the `nagios.cfg` file with its path as exemplified for the `uni4all.cfg` and `monitoring.cfg` files.
+
+The Naxios-based monitoring was set up and initially configured by group **T1G2**. It was then passed to João Araújo.
+
+#### How to run
+
+```
+cd monitoring
+docker build -t asso-monitoring .
+docker run -p 80:80 asso-monitoring
+```
+
+#### How to access
+
+```
+locally: http://localhost:80/nagios/
+
+production: http://34.125.159.222/nagios/
+
+username: nagiosadmin
+password: jv=M-%#vx:KKpW_)7<*5
+```
+
+### Project
+
+#### How to run
+
+The project can be built and deployed with docker.
+
+```
+docker-compose build
+docker-compose up
+```
+
+## Usage
+
+<!--_Instructions: Information about how the product can be used from the standpoint of its users (e.g., API endpoints and how to use them). The API documention should be usable, accurate and up-to-date._-->
+
+Information about the usage of the product can be found at the following link:
+
+- [uni4all.servehttp.com/api-docs/](https://uni4all.servehttp.com/api-docs/)
+
+It includes all the API endpoins and respective usages.
+
+## Contributing
+
+<!--_Instructions: Information about setting up the development environment, running the system in development, running the tests. Also, should include documentation on all the API endpoints (including internal ones) and how to use them. The API documention should be usable, accurate and up-to-date.-->
+
+Information about the API endpoints can be found at the following link:
+
+- [uni4all.servehttp.com/api-docs/](https://uni4all.servehttp.com/api-docs/)
+
+### Setting up the development environment
+
+```
+docker-compose -f docker-compose.dev build
+docker-compose -f docker-compose.dev up
+```
+
+
+
+
+
+# -----------------
+# Text to be refactored up in the file or to be moved to specific component files
 
 #### Data Storage
 
@@ -189,32 +261,7 @@ There are a few quality attributes defined for this project:
 - Maintain several versions of API endpoints and their operations
     - [Two in Production](https://microservice-api-patterns.org/patterns/evolution/TwoInProduction)
 
-
-## High-level architecture
-
-<!--_Instructions: Information about **Components**, **Activities** and **Infrastructure** (respectively, use UML Component, Activity and Deployment diagrams. Provide higher-level views over these three types of elements using _Package_ diagrams, if appropriate._-->
-
-### Components
-
-- **T1G4** [Scraping](./scraping.md)
-- **T2G1** [Authentication](./authentication.md)
-- **T1G3** [Chat](./chat.md)
-- **T1G1** [Payments](./payments.md)
-- Notifications
-- External API / Services
-- Calendar
-    - [**T1G2**](./t1g2-calendar.md)
-    - [**T2G4**](./t2g4-calendar.md)
-- **T2G5** [Group Making](./groupMaking.md)
-- **T2G2** [Feedback](./feedback.md)
-    - canteen/bar meals (reviews)
-    - classes/professors (reviews)
-    - pedagogical surveys
-- **T1G2** [Jobs](./jobs.md)
-- Registrations
-
-## Technologies
-
+<!--
 ### Backend Framework
 
 - Node.js
@@ -258,6 +305,8 @@ There are a few quality attributes defined for this project:
     - Information on Sigarra is not structured
     - New structured data may grow fast
 
+
+
 ## Design and architecture
 
 <!--_Instructions: Document design and architecture problems and solutions, preferably using pattern instances. Justify all design and architectural choices, preferably based on operational data.<br><br>
@@ -279,73 +328,7 @@ It is expected that you start this section with system-wide patterns, but you sh
 
 **Context**: _Describe the design context that justifies the selection of the pattern. Link to your best reference of the pattern, if available._
 
-**Mapping**: _Explain how are mapped the pattern's roles, operations and associations to the concrete design classes. Something that works well is to annotate UML structural diagrams with pattern roles, as is done in  [JUnit A Cook's Tour](http://junit.sourceforge.net/doc/cookstour/cookstour.htm), for example. Link to the appropriate files in the repository._
+**Mapping**: _Explain how the pattern's roles are mapped, operations and associations to the concrete design classes. Something that works well is to annotate UML structural diagrams with pattern roles, as is done in  [JUnit A Cook's Tour](http://junit.sourceforge.net/doc/cookstour/cookstour.htm), for example. Link to the appropriate files in the repository._
 
 **Consequences**: _Explain the pros and cons of instantiating the pattern, eventually in comparison with other alternatives._-->
-
-
-## Operation
-
-<!--_Instructions: Information about how to set up a production environment, how to build and package the system for deployment, how to deploy the system to production, how to operate the system (where the logs are, how to access monitoring tools, etc.), and how to run and access architectural fitness functions and use them to decide (or not) to the intended quality attributes._-->
-
-### Monitoring
-
-To add new hosts and endpoints to be monitored you can either extend the `uni4all.cfg` configuration file with new services or create a new one. If you create a new configuration file you need to update the `nagios.cfg` file with its path as exemplified for the `uni4all.cfg` and `monitoring.cfg` files.
-
-The Naxios-based monitoring was set up and initially configured by group **T1G2**. It was then passed to João Araújo.
-
-#### How to run
-
-```
-cd monitoring
-docker build -t asso-monitoring .
-docker run -p 80:80 asso-monitoring
-```
-
-#### How to access
-
-```
-locally: http://localhost:80/nagios/
-
-production: http://34.125.159.222/nagios/
-
-username: nagiosadmin
-password: jv=M-%#vx:KKpW_)7<*5
-```
-
-### Project
-
-#### How to run
-
-The project can be built and deployed with docker.
-
-```
-docker-compose build
-docker-compose up
-```
-
-## Usage
-
-<!--_Instructions: Information about how the product can be used from the standpoint of its users (e.g., API endpoints and how to use them). The API documention should be usable, accurate and up-to-date._-->
-
-Information about the usage of the product can be found at the following link:
-
-- [uni4all.servehttp.com/api-docs/](https://uni4all.servehttp.com/api-docs/)
-
-It includes all the API endpoins and respective usages.
-
-## Contributing
-
-<!--_Instructions: Information about setting up the development environment, running the system in development, running the tests. Also, should include documentation on all the API endpoints (including internal ones) and how to use them. The API documention should be usable, accurate and up-to-date.-->
-
-Information about the API endpoints can be found at the following link:
-
-- [uni4all.servehttp.com/api-docs/](https://uni4all.servehttp.com/api-docs/)
-
-### Setting up the development environment
-
-```
-docker-compose -f docker-compose.dev build
-docker-compose -f docker-compose.dev up
-```
 
