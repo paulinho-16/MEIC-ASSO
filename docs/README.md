@@ -24,15 +24,17 @@ The services requested by UNI and perceived as highly valuable are numerous and 
 
 * Users, groups, and social: authentication, authorization, user profiles, project groups, study groups and classes, messaging (chat with class groups)
 * Time management: schedule optimization, synchronisation, exams schedule, personal schedule, services schedule (e.g. Library schedule), services appointments (e.g. psychologist); calendars
-* Classes: assiduity, feedback (about everything),
+* Classes: assiduity
 * Spaces: classrooms, study spaces
-* Housing:
-* Library: book reservation (and delivery dates), capacity, study rooms;
+* Housing
+* Library: book reservation (and delivery dates), capacity, study rooms
 * Registering for stuff: pick classes, UCs, register for 2nd call exams
 * Trouble tickets, Printing system, News, Job listings management
 * Notifications on everything
-* Queue management
-* Eating: cantines, snack-bars, restaurants (Grill, SASUP, others), 
+* Feedback about meals and teachers/classes
+* Capacity at each parking lot in FEUP
+* Queues from each restaurant/canteen in FEUP
+* Eating: cantines, snack-bars, restaurants (Grill, SASUP, others)
 * Mentoring app (Erasmus students also)
 * Mobility: car sharing;
 * Accio with comments
@@ -63,15 +65,15 @@ Each one of these challenges are addressed one by one in the documentation of th
 This component allows users to register, login, and manage their accounts in uni4all, particularly by updating or recovering the password or even by deleting the account. It also provides a solution for the authorization process that can be used by other components to control the access to certain resources that require the user to be authenticated.
 - [Scraping](./scraping.md), **T1G4** , **T1G3** (meals)
 - [Chat](./chat.md), **T1G3**
-
 In the chat component, users can chat with their academic social circles. The main features allow users to view their groups and messages per group, create and join a group and send and receive messages in real time.
-
 - [Payments](./payments.md), **T1G1** 
 - Notifications
 - External API / Services
 - Calendar: [T1G2](./t1g2-calendar.md), **T1G2**; [T2G4](./t2g4-calendar.md), **T2G4**; 
 - [Group Making](./groupMaking.md), **T2G5** 
-- [Feedback](./feedback.md), **T2G2**: canteen/bar meals (reviews), classes/professors (reviews), pedagogical surveys
+- [Feedback](./feedback.md), **T2G2**: canteen/bar meals, classes/teachers
+- [Capacity](./capacity.md), **T2G2**: capacity at each parking lot in FEUP
+- [Queues](./queues.md), **T2G2**: queues in each canteen/bar at FEUP
 - [Jobs](./jobs.md), **T1G2** 
 - Registrations
 
