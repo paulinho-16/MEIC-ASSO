@@ -64,7 +64,7 @@ Each one of these challenges are addressed one by one in the documentation of th
 - [Authentication](./authentication.md), **T2G1**  
 This component allows users to register, login, and manage their accounts in uni4all, particularly by updating or recovering the password or even by deleting the account. It also provides a solution for the authorization process that can be used by other components to control the access to certain resources that require the user to be authenticated.
 - [Scraping](./scraping.md), **T1G4** , **T1G3** (meals)
-- [Chat](./chat.md), **T1G3**
+- [Chat](./chat.md), **T1G3**  
 In the chat component, users can chat with their academic social circles. The main features allow users to view their groups and messages per group, create and join a group and send and receive messages in real time.
 - [Payments](./payments.md), **T1G1** 
 - Notifications
