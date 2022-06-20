@@ -62,8 +62,23 @@ Receives no parameters.
       "p4livres": 44
     }
     ```
-    
-The information is acquired through a [Retrieval Operation](https://microservice-api-patterns.org/patterns/responsibility/operationResponsibilities/RetrievalOperation), where the user performs a read-only operation to request a report that contains a machine-readable representation of the requested information.
+## Design and architecture
+
+### Scrapping  
+
+#### **Context**:  
+We want to scrape the contents provided by a sigarra link. We use the [Retrieval Operation Pattern](https://microservice-api-patterns.org/patterns/responsibility/operationResponsibilities/RetrievalOperation), where the user performs a read-only operation to request a report that contains a machine-readable representation of the requested information.
+
+#### **Mapping**:  
+![Retrieval Operation Mapping](https://user-images.githubusercontent.com/29897562/174668575-6f9e2eda-e626-4500-b19c-e876b7597234.png)  
+This image represents how the user uses the API to send a GET Capacity request and the Retrieval Operation scrapes the information from the sigarra link.
+
+#### **Consequences**:
+##### Pros
+- Workload management: Due to their read-only nature, Retrieval Operations can scale by replicating data.
+- Networking efficiency vs. data parsimony (message sizes): Retrieval Operations can make full use of identifiers, can fetch, cache, and optimize local data on demand (note: there is no need for all of this data to appear in the request).
+##### Cons:
+- May become a performance bottleneck if user information needs and query capabilities do not match.
 
 ## Future Work
 
