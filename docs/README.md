@@ -128,7 +128,7 @@ The product is available at:
 
 - [uni4all.servehttp.com/](https://uni4all.servehttp.com/)
 
-At the endpoint [/status](https://uni4all.servehttp.com/status) it is possible to check the process uptime.
+At the endpoint [/status](https://uni4all.servehttp.com/status) is available the process uptime.
 
 Information about the usage of the product can be found at the following link:
 
