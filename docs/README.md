@@ -124,11 +124,17 @@ docker-compose up
 
 <!--_Instructions: Information about how the product can be used from the standpoint of its users (e.g., API endpoints and how to use them). The API documention should be usable, accurate and up-to-date._-->
 
+The product is available at:
+
+- [uni4all.servehttp.com/](https://uni4all.servehttp.com/)
+
+At the endpoint [/status](https://uni4all.servehttp.com/status) it is possible to check the process uptime.
+
 Information about the usage of the product can be found at the following link:
 
 - [uni4all.servehttp.com/api-docs/](https://uni4all.servehttp.com/api-docs/)
 
-It includes all the API endpoins and respective usages.
+It includes all the API endpoints and respective usages.
 
 ## Contributing
 
