@@ -21,8 +21,9 @@
 - Delete account
 
 ## High-level architecture
+![](https://i.imgur.com/QhYpUy5.png)
 
-IN PROGRESS
+TODO: describe architecture, improve diagram
 
 ## Technologies
 
@@ -103,7 +104,6 @@ TODO - improve
 
 In Uni4all API there multiple services that need to authenticate the User in order to verify his identity and authorize the access to protected resources. In order to provide a single interface that can be reused by each of these services, the **Access Token** pattern was used. 
 
-
 #### Mapping
 
 ![](https://i.imgur.com/c3rHVIS.png)
@@ -116,7 +116,6 @@ TODO: change to UML, improve and explain mapping
 
 ##### Pros
 
-- Higher scalability and efficiency: access tokens are not stored on the server;
 - Flexibility: offers authentication and authorization for several applications or services;
 - Robust security: a secret key is required to generate and validate the token;
 - Usability: the user doesn't need to authenticate at every request, he just needs to send the access token.
@@ -159,14 +158,12 @@ TODO: change to UML, improve and explain mapping
 
 #### Context
 
-Our app services need to handle errors generated at runtime. To achieve this, our error messages have to follow a specific design that everyone agreed on.
+The authentication and user services need to report the result of its operations to the user, so that he knows if his request was successful. At the same time, the request must conform to the HTTP response format so that the client App knows how to proceed depending on the error code.
 
 #### Mapping
 
-![](https://i.imgur.com/69C1ZxW.png)
-
-The image represents what an error message would be like in the context of our application.
-TODO: change to UML and explain mapping
+![](https://i.imgur.com/QKpBwIL.png)
+A request sent to one of the authentication or user endpoints will result in a JSON response that includes the appropiate [HTTP status code](https://restfulapi.net/http-status-codes/), which classifies the fault in a simple, machine-readable way. It also includes a textual description of the error for the client - `message`.
 
 #### Consequences
 
@@ -197,7 +194,7 @@ TODO: change to UML, improve and explain mapping
 
 ##### Pros
 
-- Low Latency: validating and creating sessions is faster as it doesn't need to consult the database;
+- Low Latency: validating and creating sessions is faster as it doesn't need to consult the database to verify the credentials;
 - Increases usability for the user;
 - Supports stateless server objects with maximal clustering and failover resiliency.
 
