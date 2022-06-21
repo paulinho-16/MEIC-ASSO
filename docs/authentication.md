@@ -27,11 +27,12 @@ TODO: describe architecture, improve diagram
 
 ## Technologies
 
-TODO: add justification
-
 - nodemailer: to send the password recover email
+    - This package was chosen because it simplifies the process of sending emails and is known to be very reliable and popular. Nodemailer is also a single package with zero dependencies that focuses on security.
 - redis: for session storage
+    - Redis can function as an in-memory data store, which makes it very fast. This allows us to reduce the overhead caused by having to access the database with each request. 
 - postgres: to store the credentials (email and password) of the user
+    - Postgres is a very popular and feature-rich database, allowing us to store data that does not need to be retrieved very quickly.
 
 
 ## Usage
