@@ -224,7 +224,7 @@ We can save the session information in a database when the user logs in and remo
 ##### Cons
 
 - We need to establish connections to the database in every authenticated request, to validate the token
-- The overhead can be mitigated by using a cache database, but it is still there either way
+- The overhead can be mitigated by using a fast in-memory data store like Redis, but the overhead is still there either way
 
 
 ### Sigarra's Authentication
