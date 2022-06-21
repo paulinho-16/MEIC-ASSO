@@ -96,10 +96,12 @@ This endpoint must be used after making a request to the previous endpoint (`/us
 ## Design and architecture
 TODO - improve
 ### Access Token
+> Pattern Type: Architectural Pattern  
+> Reference: [Access Token](https://learning.oreilly.com/library/view/architectural-patterns/9781787287495/2f3c5677-2687-4338-bf23-72dbb77828f8.xhtml)
 
 #### Context
 
-Our application makes use of a Microservices architecture and therefore, there are multiple services that must authenticate the User to verify his identity and authorize the access to specific resources. In order to provide a single interface that can be reused by each of the services, the Access Token pattern is used to authenticate the user.
+In Uni4all API there multiple services that need to authenticate the User in order to verify his identity and authorize the access to protected resources. In order to provide a single interface that can be reused by each of these services, the **Access Token** pattern was used. 
 
 
 #### Mapping
@@ -107,6 +109,8 @@ Our application makes use of a Microservices architecture and therefore, there a
 ![](https://i.imgur.com/c3rHVIS.png)
 
 Based on this diagram, the Flutter App would be the client, which would send an Access Token to the API endpoints that require authentication or authorization. Our Authentication service, in particular the middleware, intercepts the requests to verify if the user is authenticated and authorized to access the resource.
+
+TODO: change to UML, improve and explain mapping
 
 #### Consequences
 
@@ -124,6 +128,8 @@ Based on this diagram, the Flutter App would be the client, which would send an 
 - Shorter lifespan: access tokens have a short lifespan which could lead to a worse UX.
 
 ### API Key
+> Pattern Type: API Pattern  
+> Reference: [API Key](https://microservice-api-patterns.org/patterns/quality/qualityManagementAndGovernance/APIKey)
 
 #### Context
 
@@ -134,6 +140,8 @@ Some of the services offered by our API will return different data depending on 
 ![](https://i.imgur.com/zVXqqR0.png)
 
 Based on this diagram, the client is the Flutter App, which requires authentication to obtain certain information. Our backend offers the API that receives the token.
+
+TODO: change to UML, improve and explain mapping
 
 #### Consequences
 
@@ -146,6 +154,8 @@ Based on this diagram, the client is the Flutter App, which requires authenticat
 - Sending the token in every request increases the network traffic.
 
 ### Error Report
+> Pattern Type: API Pattern  
+> Reference: [Error Report](https://microservice-api-patterns.org/patterns/quality/qualityManagementAndGovernance/ErrorReport)
 
 #### Context
 
@@ -156,6 +166,7 @@ Our app services need to handle errors generated at runtime. To achieve this, ou
 ![](https://i.imgur.com/69C1ZxW.png)
 
 The image represents what an error message would be like in the context of our application.
+TODO: change to UML and explain mapping
 
 #### Consequences
 
@@ -169,6 +180,8 @@ The image represents what an error message would be like in the context of our a
 - Having a very detailed explanation may expose sensitive data and other details related to provider side implementation.
 
 ### Client Session State
+> Pattern Type: Enterprise Pattern  
+> Reference: [Client Session State](https://www.martinfowler.com/eaaCatalog/clientSessionState.html)
 
 #### Context
 
@@ -177,6 +190,8 @@ When exchanging information with a client, our server needs to be able to keep s
 #### Mapping
 
 ![](https://i.imgur.com/6FGB7au.png)
+
+TODO: change to UML, improve and explain mapping
 
 #### Consequences
 
