@@ -1,9 +1,27 @@
 # Notifications
 
+## Current Features
 
-## Endpoints
+- Notifications
+    - associate and remove device tokens
+    - create notification (schedulable)
+    - obtain past notifications
+    - create, delete topics
+- Config
+    - obtain existing topics
+    - obtain currently ignored topics by user
+    - ignore and stop ignoring topics
+## Usage
 
-> For more detailed information about each endpoint please refer to swagger in the notification and notification preferences tags: https://uni4all.servehttp.com/api-docs/ 
+To use this component there is some configuration needed. 
+- A device token should be setup by the frontend using the route POST `/user/:deviceToken`. This a unique identifying token provided by properly setting up the firebase. This token isn't constant, but firebase notifies the app when it changes so reconfiguring it is necessary from time to time.
+- Components that want to post notifications must first create a topic. Notifications must have topics and only the creator of each topic can post to it. When creating a topic, the answer to the request will contain a token that should be used to identify the topic. This is the token that should be used be other components when creating notifications with that specific topic
+
+> For more detailed information about each endpoint please refer to the Swagger-based API documentation: 
+
+> - https://uni4all.servehttp.com/api-docs/#/Notifications
+
+> - https://uni4all.servehttp.com/api-docs/#/Notifications%20Preferences
 ### POST `/notification/:user`
 
 With this route you can create a notification for a user.
@@ -56,16 +74,24 @@ This route is used so that a user stops ignoring notification topics.
 It requires 1 parameter in the body:
 - topics - An array of strings that are topic names.
 
-# Design
-## Error Report
+## High-level Architecture
+## Technologies
+- postgres -> to store notifications, topics, user devices and configuration settings.
+> We chose postgres in order not to add to the complexity of this api. When deciding what database we were going to use we realized this component did would make very basic use of databse capabilities. As such we did not require any specific type of databse nor any special capabilities so we went with what was already being used by other components.
 
-### Context
+
+
+
+## Design and Architecture
+### Error Report
+
+#### Context
 Our group agreed it was good practice to log errors generated upon answering request so it was easier to find problems in the code and the system overall.
 
-### Maping
+#### Maping
 ![something](https://prnt.sc/6_5qJtKckGws)
 
-### Consequences
+#### Consequences
 
 #### Pros
 - Error logs allow the both the user and the system's maintainers to understand what the problem is and where it is being generated.
@@ -81,14 +107,14 @@ Our group agreed it was good practice to log errors generated upon answering req
 
 
 
-## Token
+### Token
 
-### Context
+#### Context
 After a topic is created there is the need to identify its creator to prevent others from posting to it
-### Maping
+#### Maping
 ![something](https://prnt.sc/6_5qJtKckGws)
 
-### Consequences
+#### Consequences
 
 #### Pros
 - The retrieval of the token can be optimized on the database to allow for fast queries and checks on the permissions of the token

@@ -67,7 +67,7 @@ This component allows users to register, login, and manage their accounts in uni
 - [Chat](./chat.md), **T1G3**  
 In the chat component, users can chat with their academic social circles. The main features allow users to view their groups and messages per group, create and join a group and send and receive messages in real time.
 - [Payments](./payments.md), **T1G1** 
-- Notifications
+- [Notifications](./notification.md) **T2G3**
 - External API / Services
 - Calendar: [T1G2](./t1g2-calendar.md), **T1G2**; [T2G4](./t2g4-calendar.md), **T2G4**; 
 - [Group Making](./groupMaking.md), **T2G5** 
