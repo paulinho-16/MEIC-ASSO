@@ -1,5 +1,15 @@
 # Authentication and Authorization
 
+## Contents
+* [Features](#features)
+* [Technologies](#technologies)
+* [High-level architecture](#high-level-architecture)
+* [Design and architecture](#design-and-architecture)
+* [Usage](#usage)
+    * [Authentication Endpoints](#authentication-endpoints)
+    * [User Endpoints](#user-endpoints)
+* [Contributing](#contributing)
+
 ## Features
 
 - Login
@@ -10,43 +20,34 @@
 - Password Recovery
 - Delete account
 
-## Endpoints
+## High-level architecture
 
-### GET `/authentication`
+IN PROGRESS
+
+## Technologies
+
+TODO: add justification
+
+- nodemailer: to send the password recover email
+- redis: for session storage
+- postgres: to store the credentials (email and password) of the user
+
+
+## Usage
+
+### Authentication Endpoints
+
+Detailed information about these endpoints can be found in swagger's API documentation: https://uni4all.servehttp.com/api-docs/#/Authentication.
+
+#### GET `/authentication`
 
 This example route was created in order to test the authentication. It will return a json response with a message field whose value will depend on the status code. On success, the response will include the id of the authenticated user, otherwise an error message is returned.
-The following responses may occur:
-- 200 if the request was made with a valid token
-    - The message returns the id of the authenticated user (i.e: 1 )
-- 403 if no token was provided
-    - Access token is required for authentication
-- 401 if the token or session is not valid:
-    - Invalid Token
-    - Invalid session
-    - The user does not exist
-- 500 if an internal error occurs
-    - Get user failed with error: ${err}
-    - Could not process session
 
-### POST `/authentication/login`
+#### POST `/authentication/login`
 
-This route must be used in order to authenticate and it requires two parameters:
-- `email`
-- `password`
+This route must be used in order to authenticate and it requires two parameters: `email` and `password`.
 
-It verifies the validity of the email and password and returns a response with a status code of:
-- 200 if the user was successfully logged in
-- 400 if something went wrong, such as:
-    - Not passing one of the parameters
-    - Passing an e-mail that is not registered
-    - Using a wrong password
-- 500 if an internal error occurs
-    - Get user failed with error
-    - Error creating session
-
-All of the responses will also include a message describing the success or failure of the request.
-
-If the login is successful, a json response is returned with a success message, the id of the user and the JWT, for example:
+It verifies the validity of the email and password and, if the login is successful, a json response is returned with a success message, the id of the user and the JWT, for example:
 ```json
 {
     "message": "Login with success",
@@ -56,126 +57,35 @@ If the login is successful, a json response is returned with a success message, 
 ```
 This token should be included in all subsequent requests that require the user to be authenticated. It can be sent in the Authorization Header through the Bearer Schema or using cookies, given that our implementation supports both approaches.
 
-### POST `/authentication/logout`
+#### POST `/authentication/logout`
 
 The logout route doesn't require any parameters. It requires the user to be authenticated and it is responsible for deleting the session cookie and for invalidating the session of the user. 
-A request sent to this endpoint will result in one of the following responses:
-- 200 if the logout was successful
-    - Logout with success
-- 403 if no token was provided
-    - Access token is required for authentication
-- 401 if the token or session is not valid:
-    - Invalid Token
-    - Invalid session
-    - The user does not exist
-- 500 if an internal error occurs
-    - Get user failed with error: ${err}
-    - Could not process session
 
-### POST `/authentication/register`
+#### POST `/authentication/register`
 
-This route enables the user to create an account. It requires two parameters, namely:
-- `email`
-- `password`
+This route enables the user to create an account by providing the `email` and `password`. It also validates the email and verifies the strength of the password.
 
-It will return a response with a status code of:
-- 201
-    - Registered with success
-- 400
-    - Email and password are required
-    - The email '${email}' is not valid
-    - The password is not strong enough: ${passwordErrors}
-- 409
-    - This user already exists. Please Login
-- 500
-    - Get user failed with error: ${err}
-    - Insert user failed
-    - Insert user failed with error: ${err}
+### User Endpoints
 
-The json response includes a message with the description of the status of the request.
+Detailed information about these endpoints can be found in swagger's API documentation: https://uni4all.servehttp.com/api-docs/#/User.
 
-### DELETE `/user/:id`
+#### DELETE `/user/:id`
 
 This route allows the user to delete his account. It requires the user to be authenticated and also to provide his `password` for greater security.
 
-The status codes that can be returned in the response are the following:
-- 204
-    - Account deleted with success
-- 400
-    - Password is required
-    - The user does not exist
-    - Invalid password
-- 401 Unauthorized
-    - Unauthorized action (if the user is not the owner of the account he is trying to delete)
-    - Invalid Token
-    - Invalid session
-    - The user does not exist
-- 403 if no token was provided
-    - Access token is required for authentication
-- 500 if an internal error occurs
-    - Get user failed with error: ${err}
-    - Could not process session
-    - Account deletion failed
+#### PUT `/user/update-password/:id`
 
-All of the responses will also include a message with their description.
-
-### PUT `/user/update-password/:id`
-
-This route may be used to update the password of the user. It requires two parameters, namely:
-- `oldPassword`
-- `newPassword`
+This route may be used to update the password of the user. It requires two parameters, namely the `oldPassword` and the `newPassword`.
 
 In order to use this route the user must be authenticated.
-A request sent to this endpoint may return one of the following status codes:
-- 200
-    - Update password with success
-- 400
-    - New and old passwords are required
-    - Invalid current password
-    - The new password is not strong enough: ${passwordErrors}
-- 401 Unauthorized
-    - Invalid Token
-    - Invalid session
-    - The user does not exist
-    - Unauthorized action (if the user tries to update the password of another user)
-- 403 if no token was provided
-    - Access token is required for authentication
-- 500 if an internal error occurs
-    - Get user failed with error: ${err}
-    - Could not process session
-    - Update password failed
 
-### POST `/user/forgot-password`
+#### POST `/user/forgot-password`
 
 This route can be used by a user that does not remember his password. By proving the `email` as parameter, the user can get a token via email, which can then be used to change the password to a new one.
-The possible responses returned by this route are the following:
-- 200
-    - Email sent with success
-- 400
-    - Email is required
-- 401
-    - The user does not exist
-- 500
-    - Get user failed with error: ${err}
-    - Failed to send email
 
-### POST `/user/reset-password`
+#### POST `/user/reset-password`
 
 This endpoint must be used after making a request to the previous endpoint (`/user/forgot-password`). It allows the user to insert the `token` received by email and a new password. If the token is valid and the password is strong enough then the password of the user will be updated.
-This endpoint may result in one of the following responses:
-- 200
-    - Update password with success
-- 400
-    - New password is required
-    - The password is not strong enough: ${passwordErrors}
-- 401
-    - Invalid Token
-    - The user does not exist
-- 403
-    - A token is required to reset your password
-- 500
-    - Get user failed with error: ${err}
-    - Update password failed
 
 ## Technologies
 
@@ -184,7 +94,7 @@ This endpoint may result in one of the following responses:
 - postgres: to store the credentials (email and password) of the user
 
 ## Design and architecture
-
+TODO - improve
 ### Access Token
 
 #### Context
@@ -326,26 +236,6 @@ The requests for pages that require authentication will be sent on the client-si
 - Latency: the number of requests/responses leads to an increase in latency.
 
 ## Contributing
-
-### Scraping of Sigarra's protected pages
-
-**Target Audience**:
-Developers/Teams that need to perform scraping of a page that needs the User to be authenticated *e.g.* scraping the schedule
-
-**Request's Flow**:
-- The authentication in Sigarra is made on the client-side by directly making the authentication POST request to sigarra's URL with the password and username as parameters of the request body or using a session token - *so you don't need to worry about this step*;
-- When the user wants to access a service that requires authentication, it makes a request to the endpoint of our API that is responsible for returning as a response the URL that contains the requested information;
-    > *e.g.* If the user wants to access his profile then he must access the URL `https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=<up_identifier>`
-- At the client-side, a request will be sent to the URL that we provided. That request will return the HTML of the page, which must be sent to the endpoint of our API that performs the scraping of the HTML and returns the processed data;
-    > *e.g.* The HTML that is returned by the request made to the URL of Sigarra that contains the schedule is received in the endpoint that is responsible for scraping that information. The schedule data must be returned as response to the request
-
-**Endpoints**:
-At least two endpoints are required if you must do the scraping of a page that required authentication:
-1. Returns the URL of Sigarra that contains the information that you need to scrape;
-2. Receives the HTML of the page that contains the data, performs the scraping and returns the processed information.
-
-**Additional Notes**:
-- The access to most of the User's confidential data requires a special user id (`pv_fest_id`). Therefore, the teams may need to get this id before performing the steps described above. This can be done by requesting the front-end to provide the HTML of the profile page of the User:`https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=<up_identifier>`. The `pv_fest_id` is available in the link to the Academic pathway. Other ways to get this id are probably available. After getting this id, the server may proceed normally with the steps descriped above by adding this query parameter.
 
 ### Authentication Middleware
 
