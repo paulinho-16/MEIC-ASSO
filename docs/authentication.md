@@ -89,12 +89,6 @@ This route can be used by a user that does not remember his password. By proving
 
 This endpoint must be used after making a request to the previous endpoint (`/user/forgot-password`). It allows the user to insert the `token` received by email and a new password. If the token is valid and the password is strong enough then the password of the user will be updated.
 
-## Technologies
-
-- nodemailer: to send the password recover email
-- redis: for session storage
-- postgres: to store the credentials (email and password) of the user
-
 ## Design and architecture
 TODO - improve
 ### Access Token
@@ -117,17 +111,18 @@ TODO: change to UML, improve and explain mapping
 
 ##### Pros
 
-- Flexibility: offers authentication and authorization for several applications or services;
-- Robust security: a secret key is required to generate and validate the token;
-- Usability: the user doesn't need to authenticate at every request, he just needs to send the access token.
+- Using an access token improves security by allowing applications and services to confirm a user's identity and checking if they are authorized to perform a certain action by analyzing the token provided with the request using a secret key (which was also used to create the token);
+- From a usability standpoint, it also removes the need to force the user to authenticate with every request sent.
+
 
 ##### Cons
 
-- Compromised access token: if the secret key or token are not stored correctly, security can be compromised;
-- Data overhead: the access token is usually bigger than a normal session token;
-- Shorter lifespan: access tokens have a short lifespan which could lead to a worse UX.
+- Despite the security benefits, there is also a downside, if the secret key that is required for token creation and validation is not stored correctly and an attacker gains access to it, they could impersonate other users and perform actions they should not be able to perform;
+- An access token also contains more information than a normal session token, this increases the amount of data that needs to be exchanged, leading to a higher network overhead;
+- Because JWTs are being used the tokens have a short lifespan, forcing the user to login again from time to time instead of being able to stay logged in indefinitely.
 
-### API Key
+
+### API Key (CONSIDER REMOVING THIS PATTERN)
 > Pattern Type: API Pattern  
 > Reference: [API Key](https://microservice-api-patterns.org/patterns/quality/qualityManagementAndGovernance/APIKey)
 
