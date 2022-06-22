@@ -190,15 +190,15 @@ TODO: change to UML, improve and explain mapping
 
 ##### Pros
 
-- Low Latency: validating and creating sessions is faster as it doesn't need to consult the database to verify the credentials;
-- Increases usability for the user;
-- Supports stateless server objects with maximal clustering and failover resiliency.
+- By using a token to keep session state, we only need to validate the token in each request instead of having to check the credentials;
+- Like previously mentioned, this allows a user to stay logged in without having to send their credentials in every request, improving usability;
+- This approach allows us to have a stateless server, by having a stateless server, it becomes easier to implement a distributed system, since any node in the cluster will be able to respond to a request instead of only the one that has the state information;
+- A stateless server also improves failover resiliency since a user's sesssion data will not be lost if a failure occurs.   
 
 ##### Cons
 
-- Sessions cannot be terminated (even though there are workarounds);
-- Logout is not possible: the session token can be dropped from the browser (in case of a cookie) or from storage, but it would still work if resubmitted, unless other workarounds are used to avoid that (which is the case).
-- Performance burden due to encryption and decryption in each request.
+- Logout is not possible: the session token can be dropped from the browser (in case of a cookie) or from storage, but it would still work if resubmitted, unless other workarounds are used to avoid that (which is the case);
+- Performance burden due to the decryption and encryption of the data in the token in each request.
 
 ### Saving User Login Information
 
