@@ -182,9 +182,9 @@ When exchanging information with a client, our server needs to be able to keep s
 
 #### Mapping
 
-![](https://i.imgur.com/6FGB7au.png)
+![](https://i.imgur.com/7AImErP.png)
 
-TODO: change to UML, improve and explain mapping
+A client makes a request with a token to the server. The server uses the token to obtain the current state of the session and responds to the request accordingly.
 
 #### Consequences
 
