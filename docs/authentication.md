@@ -101,11 +101,9 @@ In Uni4all API there multiple services that need to authenticate the User in ord
 
 #### Mapping
 
-![](https://i.imgur.com/c3rHVIS.png)
+![](https://i.imgur.com/zt8vig7.png)
 
-Based on this diagram, the Flutter App would be the client, which would send an Access Token to the API endpoints that require authentication or authorization. Our Authentication service, in particular the middleware, intercepts the requests to verify if the user is authenticated and authorized to access the resource.
-
-TODO: change to UML, improve and explain mapping
+Based on this diagram, the Flutter App would be the client, which would send an Access Token to the API endpoints that require authentication or authorization. Our Authentication service, in particular the middleware, intercepts the requests to verify if a token is present, the token is valid (authenticating the user) and the user has the authorization required to perform the desired action. Otherwise, an error message is returned.
 
 #### Consequences
 
