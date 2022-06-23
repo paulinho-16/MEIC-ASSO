@@ -21,14 +21,33 @@
 - Delete account
 
 ## High-level architecture
+
 ![](https://i.imgur.com/shrwH3B.png)
 
 This diagram describes the main components used in Uni4all to provide authentication, authorization and account management functionalities to the end user.
 Uni4all is composed of many services (**API Service**), which may or not require the user to be authenticated. One of these services is the **Authentication Service**, the main focus of this section. It provides the login, register and logout endpoints to the **client App**. This service uses a **Postgres** database to store the users' credentials (email and password) upon a successful registration. It also uses the **Redis** database to store or terminate the session of the user upon a successful login or logout, respectively.
 Another main component that will be referred in this section is the **User Service**, which exposes some endpoints that allow the user to manage his password or delete his account.
-This service also consults and modifies the User table of the Postgres database.
-Finally, our component provides the **Authentication Middleware** to any service of the App that needs to guarantee that only authenticated users can access its resources and functionalities. This middleware provides token and session verification to any endpoint that requires it. To do so, it needs to verify the validity of the token that is sent by the user by consulting Redis database.
-To better understand how the tokens are used and how the authorization process works, please refer to the next diagram.
+This service also consults and modifies the User table of the **Postgres** database.
+Finally, our component provides the **Authentication Middleware** to any service of the App that needs to guarantee that only authenticated users can access its resources and functionalities. This middleware provides token and session verification to any endpoint that requires it. To do so, it needs to verify the validity of the token that is sent by the user by consulting **Redis** database.
+To better understand how the tokens are used and how the authorization process works, please refer to the [Example Sequence Diagram](#example-sequence-diagram) section.
+
+### Example Sequence Diagram
+
+In order to authenticate the Users we decided to use Json Web Tokens for reasons that will be described in the [Design and Architecture section](#design-and-architecture), particularly in the [Access Token](#access-token) and [Client Session State](#client-session-state) patterns. 
+In order to illustrate the sequence of requests and the interaction between the components of the system that allow the user to get and use this access token, we created two sequence diagrams: 
+- The first describes the registration and login operations, which allows the user to get an access token.
+- The second shows how this token can be used in order to get access to an endpoint that requires the user to be authenticated.
+
+#### Get access token
+Upon registration, a user is created in the **Posgres** database and a success response is returned to the User.
+When the user logs in, the **Authentication Service** will get his id from **Postgres**, create a JWT for that user and store it in the **Redis** database. Finally, a successful response is returned to the client app.
+
+![](https://i.imgur.com/eqUOuMw.png)
+
+#### Use access token
+If the client App wants to access a protected service it must send a request to the respective endpoint by including the access token in the Authorization Header or in a cookie. The endpoint will then use the **Authentication Middleware** to verify the signature of the token and check if it corresponds to a valid session. If the token is valid, the code that concerns to the requested service will execute and the response is sent to the client App.
+We emphasize that if the token is invalid the user won't be able to access the protected content of the requested service and an error will be returned to the client App.
+![](https://i.imgur.com/y76bThi.png)
 
 ## Technologies
 
@@ -107,7 +126,7 @@ In Uni4all API, there are multiple services that need to authenticate the User i
 
 ![](https://i.imgur.com/N0uidLk.png)
 
-Based on this diagram, the Flutter Apps would be the client, which would send an Access Token to the API endpoints that require authentication or authorization. Our Authentication service, in particular the middleware, intercepts the requests to verify if a token is present and is valid (authenticating the user). Otherwise, an error message is returned. When authentication is successful the request is then passed on to the service which was its intended recipient.
+Based on this diagram, the Flutter Apps would be the client, which would send an Access Token, particularly a JWT, to the API endpoints that require authentication or authorization. Our Authentication service, in particular the middleware, intercepts the requests to verify if a token is present in the Authorization Header or in a cookie and if it is valid (authenticating the user). Otherwise, an error message is returned. When authentication is successful the request is then passed on to the service which was its intended recipient.
 
 #### Consequences
 
