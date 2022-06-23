@@ -101,15 +101,15 @@ In Uni4all API there multiple services that need to authenticate the User in ord
 
 #### Mapping
 
-![](https://i.imgur.com/zt8vig7.png)
+![](https://i.imgur.com/2ihs6t4.png)
 
-Based on this diagram, the Flutter App would be the client, which would send an Access Token to the API endpoints that require authentication or authorization. Our Authentication service, in particular the middleware, intercepts the requests to verify if a token is present, the token is valid (authenticating the user) and the user has the authorization required to perform the desired action. Otherwise, an error message is returned.
+Based on this diagram, the Flutter Apps would be the client, which would send an Access Token to the API endpoints that require authentication or authorization. Our Authentication service, in particular the middleware, intercepts the requests to verify if a token is present and is valid (authenticating the user). Otherwise, an error message is returned.
 
 #### Consequences
 
 ##### Pros
 
-- Using an access token improves security by allowing applications and services to confirm a user's identity and checking if they are authorized to perform a certain action by analyzing the token provided with the request using a secret key (which was also used to create the token);
+- Using an access token improves security by allowing us to confirm a user's identity by analyzing the token provided with the request using a secret key (which was also used to create the token);
 - From a usability standpoint, it also removes the need to force the user to authenticate with every request sent.
 
 
