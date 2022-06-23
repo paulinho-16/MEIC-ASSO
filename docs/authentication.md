@@ -24,20 +24,20 @@
 ![](https://i.imgur.com/shrwH3B.png)
 
 This diagram describes the main components used in Uni4all to provide authentication, authorization and account management functionalities to the end user.
-Uni4all is composed of many services (**API Service**), which may or not require the user to be authenticated. One of this services is the **Authentication Service**, the main focus of this section. It provides the login, register and logout endpoints to the **client App**. This service uses a **Postgres** database to store the users's credentials (email and password) upon a successful registration. It also uses the **Redis** database to store or terminate the session of the user upon a successful login or logout, respectively.
+Uni4all is composed of many services (**API Service**), which may or not require the user to be authenticated. One of these services is the **Authentication Service**, the main focus of this section. It provides the login, register and logout endpoints to the **client App**. This service uses a **Postgres** database to store the users' credentials (email and password) upon a successful registration. It also uses the **Redis** database to store or terminate the session of the user upon a successful login or logout, respectively.
 Another main component that will be referred in this section is the **User Service**, which exposes some endpoints that allow the user to manage his password or delete his account.
 This service also consults and modifies the User table of the Postgres database.
 Finally, our component provides the **Authentication Middleware** to any service of the App that needs to guarantee that only authenticated users can access its resources and functionalities. This middleware provides token and session verification to any endpoint that requires it. To do so, it needs to verify the validity of the token that is sent by the user by consulting Redis database.
-To better understand how the tokens are used and how the authorization process works please refer to the next diagram. 
+To better understand how the tokens are used and how the authorization process works, please refer to the next diagram.
 
 ## Technologies
 
-- nodemailer: to send the password recover email
+- Nodemailer: to send the password recover email
     - This package was chosen because it simplifies the process of sending emails and is known to be very reliable and popular. Nodemailer is also a single package with zero dependencies that focuses on security.
-- redis: for session storage
-    - Redis can function as an in-memory data store, which makes it very fast. This allows us to reduce the overhead caused by having to access the database with each request to verify the validity of the token. 
-- postgres: to store the credentials (email and password) of the user
-    - Postgres is a very popular and feature-rich database, allowing us to store data that does not need to be retrieved very quickly.
+- Redis: for session storage
+    - Redis can function as an in-memory data store, which makes it very fast. This allows us to reduce the overhead caused by having to access the database with each request to verify the validity of the token.
+- PostgreSQL: to store the credentials (email and password) of the user
+    - PostgreSQL is a very popular and feature-rich database, allowing us to store data that does not need to be retrieved very quickly.
 
 
 ## Usage
@@ -48,13 +48,13 @@ Detailed information about these endpoints can be found in swagger's API documen
 
 #### GET `/authentication`
 
-This example route was created in order to test the authentication. It will return a json response with a message field whose value will depend on the status code. On success, the response will include the id of the authenticated user, otherwise an error message is returned.
+This example route was created in order to test the authentication. It will return a JSON response with a message field whose value will depend on the status code. On success, the response will include the ID of the authenticated user, otherwise an error message is returned.
 
 #### POST `/authentication/login`
 
-This route must be used in order to authenticate and it requires two parameters: `email` and `password`.
+This route must be used in order to authenticate, and it requires two parameters: `email` and `password`.
 
-It verifies the validity of the email and password and, if the login is successful, a json response is returned with a success message, the id of the user and the JWT, for example:
+It verifies the validity of the email and password and, if the login is successful, a JSON response is returned with a success message, the ID of the user and the JWT, for example:
 ```json
 {
     "message": "Login with success",
@@ -66,7 +66,7 @@ This token should be included in all subsequent requests that require the user t
 
 #### POST `/authentication/logout`
 
-The logout route doesn't require any parameters. It requires the user to be authenticated and it is responsible for deleting the session cookie and for invalidating the session of the user. 
+The logout route doesn't require any parameters. It requires the user to be authenticated, and it is responsible for deleting the session cookie and for invalidating the session of the user.
 
 #### POST `/authentication/register`
 
@@ -84,7 +84,7 @@ This route allows the user to delete his account. It requires the user to be aut
 
 This route may be used to update the password of the user. It requires two parameters, namely the `oldPassword` and the `newPassword`.
 
-In order to use this route the user must be authenticated.
+In order to use this route, the user must be authenticated.
 
 #### POST `/user/forgot-password`
 
@@ -92,16 +92,16 @@ This route can be used by a user that does not remember his password. By proving
 
 #### POST `/user/reset-password`
 
-This endpoint must be used after making a request to the previous endpoint (`/user/forgot-password`). It allows the user to insert the `token` received by email and a new password. If the token is valid and the password is strong enough then the password of the user will be updated.
+This endpoint must be used after making a request to the previous endpoint (`/user/forgot-password`). It allows the user to insert the `token` received by email and a new password. If the token is valid and the password is strong enough, then the password of the user will be updated.
 
 ## Design and architecture
 ### Access Token
-> Pattern Type: Architectural Pattern  
+> Pattern Type: Architectural Pattern
 > Reference: [Access Token](https://learning.oreilly.com/library/view/architectural-patterns/9781787287495/2f3c5677-2687-4338-bf23-72dbb77828f8.xhtml)
 
 #### Context
 
-In Uni4all API there are multiple services that need to authenticate the User in order to verify his identity and authorize the access to protected resources. In order to provide a single interface that can be reused by each of these services, the **Access Token** pattern was used. 
+In Uni4all API, there are multiple services that need to authenticate the User in order to verify his identity and authorize the access to protected resources. In order to provide a single interface that can be reused by each of these services, the **Access Token** pattern was used.
 
 #### Mapping
 
@@ -121,12 +121,12 @@ Based on this diagram, the Flutter Apps would be the client, which would send an
 
 - Despite the security benefits, there is also a downside, if the secret key that is required for token creation and validation is not stored correctly and an attacker gains access to it, they could impersonate other users and perform actions they should not be able to perform;
 - An access token also contains more information than a normal session token, this increases the amount of data that needs to be exchanged, leading to a higher network overhead;
-- Because JWTs are being used the tokens have a short lifespan, forcing the user to login again from time to time instead of being able to stay logged in indefinitely.
+- Because JWTs are being used, the tokens have a short lifespan, forcing the user to login again from time to time instead of being able to stay logged in indefinitely.
 
 
 
 ### Error Report
-> Pattern Type: API Pattern  
+> Pattern Type: API Pattern
 > Reference: [Error Report](https://microservice-api-patterns.org/patterns/quality/qualityManagementAndGovernance/ErrorReport)
 
 #### Context
@@ -136,7 +136,7 @@ The authentication and user services need to report the result of its operations
 #### Mapping
 
 ![](https://i.imgur.com/QKpBwIL.png)
-A request sent to one of the authentication or user endpoints will result in a JSON response that includes the appropiate [HTTP status code](https://restfulapi.net/http-status-codes/), which classifies the fault in a simple, machine-readable way. It also includes a textual description of the error for the client - `message`.
+A request sent to one of the authentication or user endpoints will result in a JSON response that includes the appropriate [HTTP status code](https://restfulapi.net/http-status-codes/), which classifies the fault in a simple, machine-readable way. It also includes a textual description of the error for the client - `message`.
 
 #### Consequences
 
@@ -150,7 +150,7 @@ A request sent to one of the authentication or user endpoints will result in a J
 - Having a very detailed explanation may expose sensitive data and other details related to provider side implementation.
 
 ### Client Session State
-> Pattern Type: Enterprise Pattern  
+> Pattern Type: Enterprise Pattern
 > Reference: [Client Session State](https://www.martinfowler.com/eaaCatalog/clientSessionState.html)
 
 #### Context
@@ -161,7 +161,7 @@ When exchanging information with a client, our server needs to be able to keep s
 
 ![](https://i.imgur.com/7AImErP.png)
 
-A client, upon logging in, receives a Json Web Token which he must then send to the server on every request that requires authentication by adding it to the Authorization Header or by using the cookie that is set by the server. The server uses the token to obtain the current state of the session, identify the user and responds to the request accordingly.
+A client, upon logging in, receives a JSON Web Token which he must then send to the server on every request that requires authentication by adding it to the Authorization Header or by using the cookie that is set by the server. The server uses the token to obtain the current state of the session, identify the user, and responds to the request accordingly.
 
 #### Consequences
 
@@ -179,7 +179,7 @@ A client, upon logging in, receives a Json Web Token which he must then send to 
 
 #### Context
 
-Json Web Tokens are sent as a response to login requests, but these tokens have a specified lifetime. A priori, we have no way to invalidate it before it expires, which is necessary when the user wants to logout.
+JSON Web Tokens are sent as a response to login requests, but these tokens have a specified lifetime. A priori, we have no way to invalidate it before it expires, which is necessary when the user wants to log out.
 
 #### Mapping
 
@@ -198,22 +198,22 @@ We can save the session information in a database when the user logs in and remo
 - The overhead can be mitigated by using a fast in-memory data store like Redis, but the overhead is still there either way
 
 
-### Sigarra's Authentication
+### SIGARRA's Authentication
 
 #### Context:
-Some of the functionalitites that Uni4all provides, such as the access to the schedule or classes, require the User to be authenticated in Sigarra. However, Sigarra does not provide any means to authenticate via an API or OAuth.
+Some functionalities that Uni4all provides, such as the access to the schedule or classes, require the User to be authenticated in SIGARRA. However, SIGARRA does not provide any means to authenticate via an API or OAuth.
 
-For security reasons, we decided that our server should not receive Sigarra's credentials at any point. This way, if there is a crash on our Server, it won't compromise Sigarra's credentials.
+For security reasons, we decided that our server should not receive SIGARRA's credentials at any point. This way, if there is a crash on our Server, it won't compromise SIGARRA's credentials.
 
-The requests for pages that require authentication will be sent on the client-side directly to Sigarra. Sigarra will reply with the HTML of the requested page, which should be forwarded to the endpoint of our server that performs the scrapping of the respective HTML and returns the processed information.
-> Further details on how to proceed if you need to perform scraping of a page that requires Sigarra's authentication are available in the *Scraping* documentation under the subtitle [Scraping of Sigarra's protected pages](./scraping.md#Scraping-of-Sigarras-protected-pages) .
+The requests for pages that require authentication will be sent on the client-side directly to SIGARRA. SIGARRA will reply with the HTML of the requested page, which should be forwarded to the endpoint of our server that performs the scrapping of the respective HTML and returns the processed information.
+> Further details on how to proceed if you need to perform scraping of a page that requires SIGARRA's authentication are available in the *Scraping* documentation under the subtitle [Scraping of SIGARRA's protected pages](./scraping.md#Scraping-of-Sigarras-protected-pages) .
 
 #### Mapping:
 > N/A: This solution does not map to a pattern
 
 #### Consequences:
 ##### Pros:
-- Security: By adopting this solution, the credentials will only be sent to our server. Therefore, a crash or attack to our server will not reveal sensitive information that could indirectly affect Sigarra.
+- Security: By adopting this solution, the credentials will only be sent to our server. Therefore, a crash or attack to our server will not reveal sensitive information that could indirectly affect SIGARRA.
 
 ##### Cons:
 - Latency: the number of requests/responses leads to an increase in latency.
@@ -224,7 +224,7 @@ The requests for pages that require authentication will be sent on the client-si
 
 #### Context - How are we authenticating the user?
 
-In order to authenticate the user we use JWT tokens. This tokens are sent to the user upon a successful login both in the response and in a cookie. The JWT token must then be sent in every request that requires authentication and authorization. For that, the request may send the **cookie** or it can set the **Bearer Token in the Authorization header**.
+In order to authenticate the user, we use JWT tokens. These tokens are sent to the user upon a successful login, both in the response and in a cookie. The JWT token must then be sent in every request that requires authentication and authorization. For that, the request may send the **cookie**, or it can set the **Bearer Token in the Authorization header**.
 
 #### Usage of the Authentication Middleware
 
@@ -234,6 +234,6 @@ You just need to define your route like the one below, setting the first and thi
 import auth from '@/middleware/auth'
 router.get(PATH, auth.verifySessionToken, HANDLER)`
 ```
-If you need to know who is accessing your endpoint, you can access the id of the user, which will be set by our middleware in the request body (`req.body.id`).
+If you need to know who is accessing your endpoint, you can access the ID of the user, which will be set by our middleware in the request body (`req.body.id`).
 
-In the file that contains the authentication routes, you can find an example route (`testAuth`), which returns as a response the id of the user if a valid access token is provided. Otherwise, an error message will be returned.
+In the file that contains the authentication routes, you can find an example route (`testAuth`), which returns as a response the ID of the user if a valid access token is provided. Otherwise, an error message will be returned.
