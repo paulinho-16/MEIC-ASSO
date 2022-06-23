@@ -21,9 +21,14 @@
 - Delete account
 
 ## High-level architecture
-![](https://i.imgur.com/QhYpUy5.png)
+![](https://i.imgur.com/shrwH3B.png)
 
-TODO: describe architecture, improve diagram
+This diagram describes the main components used in Uni4all to provide authentication, authorization and account management functionalities to the end user.
+Uni4all is composed of many services (**API Service**), which may or not require the user to be authenticated. One of this services is the **Authentication Service**, the main focus of this section. It provides the login, register and logout endpoints to the **client App**. This service uses a **Postgres** database to store the users's credentials (email and password) upon a successful registration. It also uses the **Redis** database to store or terminate the session of the user upon a successful login or logout, respectively.
+Another main component that will be referred in this section is the **User Service**, which exposes some endpoints that allow the user to manage his password or delete his account.
+This service also consults and modifies the User table of the Postgres database.
+Finally, our component provides the **Authentication Middleware** to any service of the App that needs to guarantee that only authenticated users can access its resources and functionalities. This middleware provides token and session verification to any endpoint that requires it. To do so, it needs to verify the validity of the token that is sent by the user by consulting Redis database.
+To better understand how the tokens are used and how the authorization process works please refer to the next diagram. 
 
 ## Technologies
 
