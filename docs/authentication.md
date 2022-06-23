@@ -30,7 +30,7 @@ TODO: describe architecture, improve diagram
 - nodemailer: to send the password recover email
     - This package was chosen because it simplifies the process of sending emails and is known to be very reliable and popular. Nodemailer is also a single package with zero dependencies that focuses on security.
 - redis: for session storage
-    - Redis can function as an in-memory data store, which makes it very fast. This allows us to reduce the overhead caused by having to access the database with each request. 
+    - Redis can function as an in-memory data store, which makes it very fast. This allows us to reduce the overhead caused by having to access the database with each request to verify the validity of the token. 
 - postgres: to store the credentials (email and password) of the user
     - Postgres is a very popular and feature-rich database, allowing us to store data that does not need to be retrieved very quickly.
 
@@ -90,14 +90,13 @@ This route can be used by a user that does not remember his password. By proving
 This endpoint must be used after making a request to the previous endpoint (`/user/forgot-password`). It allows the user to insert the `token` received by email and a new password. If the token is valid and the password is strong enough then the password of the user will be updated.
 
 ## Design and architecture
-TODO - improve
 ### Access Token
 > Pattern Type: Architectural Pattern  
 > Reference: [Access Token](https://learning.oreilly.com/library/view/architectural-patterns/9781787287495/2f3c5677-2687-4338-bf23-72dbb77828f8.xhtml)
 
 #### Context
 
-In Uni4all API there multiple services that need to authenticate the User in order to verify his identity and authorize the access to protected resources. In order to provide a single interface that can be reused by each of these services, the **Access Token** pattern was used. 
+In Uni4all API there are multiple services that need to authenticate the User in order to verify his identity and authorize the access to protected resources. In order to provide a single interface that can be reused by each of these services, the **Access Token** pattern was used. 
 
 #### Mapping
 
@@ -151,22 +150,20 @@ A request sent to one of the authentication or user endpoints will result in a J
 
 #### Context
 
-When exchanging information with a client, our server needs to be able to keep state information. Because HTTP is a stateless protocol, we need to use tokens to be able to improve the user experience, allowing a client to stay logged in without having to keep sending their credentials. In our case, the token will be sent in the Authorization Header.
+When exchanging information with a client, our server needs to be able to keep state information. As HTTP is a stateless protocol, we need to use tokens to be able to improve the user experience, allowing a client to stay logged in without having to keep sending his credentials. In our case, the token will be sent in the Authorization Header or in a cookie.
 
 #### Mapping
 
 ![](https://i.imgur.com/7AImErP.png)
 
-A client makes a request with a token to the server. The server uses the token to obtain the current state of the session and responds to the request accordingly.
+A client, upon logging in, receives a Json Web Token which he must then send to the server on every request that requires authentication by adding it to the Authorization Header or by using the cookie that is set by the server. The server uses the token to obtain the current state of the session, identify the user and responds to the request accordingly.
 
 #### Consequences
 
 ##### Pros
 
-- By using a token to keep session state, we only need to validate the token in each request instead of having to check the credentials;
-- Like previously mentioned, this allows a user to stay logged in without having to send their credentials in every request, improving usability;
-- This approach allows us to have a stateless server, by having a stateless server, it becomes easier to implement a distributed system, since any node in the cluster will be able to respond to a request instead of only the one that has the state information;
-- A stateless server also improves failover resiliency since a user's sesssion data will not be lost if a failure occurs.   
+- By using a token to keep the session state, we only need to validate the token in each request instead of having to check the credentials;
+- Like previously mentioned, this allows a user to stay logged in without having to send his credentials in every request, improving usability;
 
 ##### Cons
 
@@ -177,7 +174,7 @@ A client makes a request with a token to the server. The server uses the token t
 
 #### Context
 
-Jwt tokens are sent as a response to login requests, but these tokens have a specified lifetime. A priori, we have no way to invalidate it before it expires, which is necessary when the user wants to logout.
+Json Web Tokens are sent as a response to login requests, but these tokens have a specified lifetime. A priori, we have no way to invalidate it before it expires, which is necessary when the user wants to logout.
 
 #### Mapping
 
@@ -204,7 +201,7 @@ Some of the functionalitites that Uni4all provides, such as the access to the sc
 For security reasons, we decided that our server should not receive Sigarra's credentials at any point. This way, if there is a crash on our Server, it won't compromise Sigarra's credentials.
 
 The requests for pages that require authentication will be sent on the client-side directly to Sigarra. Sigarra will reply with the HTML of the requested page, which should be forwarded to the endpoint of our server that performs the scrapping of the respective HTML and returns the processed information.
-> Further details on how to proceed if you need to perform scraping of a page that requires Sigarra's authentication are available in the *Contributing* section under the subtitle [Scraping of Sigarra's protected pages](#Scraping-of-Sigarras-protected-pages) .
+> Further details on how to proceed if you need to perform scraping of a page that requires Sigarra's authentication are available in the *Scraping* documentation under the subtitle [Scraping of Sigarra's protected pages](./scraping.md#Scraping-of-Sigarras-protected-pages) .
 
 #### Mapping:
 > N/A: This solution does not map to a pattern
