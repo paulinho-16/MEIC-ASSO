@@ -120,31 +120,6 @@ Based on this diagram, the Flutter Apps would be the client, which would send an
 - Because JWTs are being used the tokens have a short lifespan, forcing the user to login again from time to time instead of being able to stay logged in indefinitely.
 
 
-### API Key (CONSIDER REMOVING THIS PATTERN)
-> Pattern Type: API Pattern  
-> Reference: [API Key](https://microservice-api-patterns.org/patterns/quality/qualityManagementAndGovernance/APIKey)
-
-#### Context
-
-Some of the services offered by our API will return different data depending on the user trying to access it, therefore we need a way to identify and authenticate users.
-
-#### Mapping
-
-![](https://i.imgur.com/zVXqqR0.png)
-
-Based on this diagram, the client is the Flutter App, which requires authentication to obtain certain information. Our backend offers the API that receives the token.
-
-TODO: change to UML, improve and explain mapping
-
-#### Consequences
-
-##### Pros
-
-- Security: The token makes the service more secure by allowing us to identify the user.
-
-##### Cons
-
-- Sending the token in every request increases the network traffic.
 
 ### Error Report
 > Pattern Type: API Pattern  
