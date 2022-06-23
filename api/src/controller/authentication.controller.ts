@@ -102,7 +102,7 @@ async function login(req: Request, res: Response) {
 
   // Set session
   try {
-    await redisClient.set(JSON.stringify(id), JSON.stringify(user), { EX: constants.tokenLifetime })
+    await redisClient.set(JSON.stringify(id), JSON.stringify(token), { EX: constants.tokenLifetime })
   } catch (err) {
     return res.status(500).json({ message: 'Error creating session' })
   }

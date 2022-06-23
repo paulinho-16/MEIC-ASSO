@@ -21,7 +21,7 @@ async function verifySessionToken(req: Request, res: Response, next: NextFunctio
     let session = null
     try {
       session = await redisClient.get(JSON.stringify(req.body.id))
-      if (!session){
+      if (!session || session !== JSON.stringify(token)){
         return res.status(401).json({ message: 'Invalid session' })
       }
     } catch(err) {
@@ -55,13 +55,13 @@ async function verifyAuthorization(req: Request, res: Response, next: NextFuncti
 
     // Verify if user is authorized
     if(req.body.id.toString() !== userId)
-    return res.status(401).json({ message: 'Unauthorized action'})
+      return res.status(401).json({ message: 'Unauthorized action'})
 
     // Check if user has a valid session
     let session = null
     try {
       session = await redisClient.get(JSON.stringify(req.body.id));
-      if (!session)
+      if (!session || session !== JSON.stringify(token))
         return res.status(401).json({ message: 'Invalid session' })
     } catch(err){
       return res.status(500).json({ message: 'Could not process session' })
