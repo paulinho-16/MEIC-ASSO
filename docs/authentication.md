@@ -22,7 +22,7 @@
 
 ## High-level architecture
 
-![](https://i.imgur.com/shrwH3B.png)
+![](https://i.imgur.com/LtpWIge.png)
 
 This diagram describes the main components used in Uni4all to provide authentication, authorization and account management functionalities to the end user.
 Uni4all is composed of many services (**API Service**), which may or not require the user to be authenticated. One of these services is the **Authentication Service**, the main focus of this section. It provides the login, register and logout endpoints to the **client App**. This service uses a **Postgres** database to store the users' credentials (email and password) upon a successful registration. It also uses the **Redis** database to store or terminate the session of the user upon a successful login or logout, respectively.
