@@ -43,14 +43,14 @@ In order to illustrate the sequence of requests and the interaction between the 
 Upon registration, a user is created in the **Posgres** database and a success response is returned to the User.
 When the user logs in, the **Authentication Service** will get his id from **Postgres**, create a JWT for that user and store it in the **Redis** database. Finally, a successful response is returned to the client app.
 
-![](https://i.imgur.com/9xednVD.png)
+![](https://i.imgur.com/tl85IXN.png)
 
 #### Use access token
 
 If the client App wants to access a protected service it must send a request to the respective endpoint by including the access token in the Authorization Header or in a cookie. The endpoint will then use the **Authentication Middleware** to verify the signature of the token and check if it corresponds to a valid session. If the token is valid, the code that concerns to the requested service will execute and the response is sent to the client App.
 We emphasize that if the token is invalid the user won't be able to access the protected content of the requested service and an error will be returned to the client App.
 
-![](https://i.imgur.com/y0sUcM9.png)
+![](https://i.imgur.com/hjX0fFP.png)
 
 ## Technologies
 
