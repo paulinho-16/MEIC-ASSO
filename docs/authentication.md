@@ -110,7 +110,7 @@ In order to use this route, the user must be authenticated.
 
 #### POST `/user/forgot-password`
 
-This route can be used by a user that does not remember his password. By proving the `email` as parameter, the user can get a token via email, which can then be used to change the password to a new one.
+This route can be used by a user that does not remember his password. By providing the `email` as parameter, the user can get a token via email, which can then be used to change the password to a new one.
 
 #### POST `/user/reset-password`
 
