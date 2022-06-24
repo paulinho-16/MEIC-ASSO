@@ -235,7 +235,7 @@ The requests for pages that require authentication will be sent on the client-si
 
 #### Consequences:
 ##### Pros:
-- Security: By adopting this solution, the credentials will only be sent to our server. Therefore, a crash or attack to our server will not reveal sensitive information that could indirectly affect SIGARRA.
+- Security: By adopting this solution, the credentials will not be sent to our server. Therefore, a crash or attack to our server will not reveal sensitive information that could indirectly affect SIGARRA.
 
 ##### Cons:
 - Latency: the number of requests/responses leads to an increase in latency.
