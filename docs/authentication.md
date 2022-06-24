@@ -190,7 +190,7 @@ A client, upon logging in, receives a JSON Web Token which he must then send to 
 ##### Pros
 
 - By using a token to keep the session state, we only need to validate the token in each request instead of having to check the credentials;
-- Like previously mentioned, this allows a user to stay logged in without having to send his credentials in every request, improving usability;
+- Like previously mentioned, this allows a user to stay logged in without having to send his credentials in every request, improving usability.
 
 ##### Cons
 
@@ -211,13 +211,13 @@ We can save the session information in a database when the user logs in and remo
 
 ##### Pros
 
-- We have a way to check if the tokens are active
-- We can invalidate tokens, so that people cannot use them anymore, which is needed for the logout functionality
+- We have a way to check if the tokens are active;
+- We can invalidate tokens, so that people cannot use them anymore, which is needed for the logout functionality.
 
 ##### Cons
 
-- We need to establish connections to the database in every authenticated request, to validate the token
-- The overhead can be mitigated by using a fast in-memory data store like Redis, but the overhead is still there either way
+- We need to establish connections to the database in every authenticated request, to validate the token;
+- The overhead can be mitigated by using a fast in-memory data store like Redis, but the overhead is still there either way.
 
 
 ### SIGARRA's Authentication
