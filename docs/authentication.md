@@ -33,21 +33,24 @@ To better understand how the tokens are used and how the authorization process w
 
 ### Example Sequence Diagram
 
-In order to authenticate the Users we decided to use Json Web Tokens for reasons that will be described in the [Design and Architecture section](#design-and-architecture), particularly in the [Access Token](#access-token) and [Client Session State](#client-session-state) patterns. 
-In order to illustrate the sequence of requests and the interaction between the components of the system that allow the user to get and use this access token, we created two sequence diagrams: 
+In order to authenticate the Users we decided to use Json Web Tokens for reasons that will be described in the [Design and Architecture section](#design-and-architecture), particularly in the [Access Token](#access-token) and [Client Session State](#client-session-state) patterns.
+In order to illustrate the sequence of requests and the interaction between the components of the system that allow the user to get and use this access token, we created two sequence diagrams:
 - The first describes the registration and login operations, which allows the user to get an access token.
 - The second shows how this token can be used in order to get access to an endpoint that requires the user to be authenticated.
 
 #### Get access token
+
 Upon registration, a user is created in the **Posgres** database and a success response is returned to the User.
 When the user logs in, the **Authentication Service** will get his id from **Postgres**, create a JWT for that user and store it in the **Redis** database. Finally, a successful response is returned to the client app.
 
-![](https://i.imgur.com/eqUOuMw.png)
+![](https://i.imgur.com/9xednVD.png)
 
 #### Use access token
+
 If the client App wants to access a protected service it must send a request to the respective endpoint by including the access token in the Authorization Header or in a cookie. The endpoint will then use the **Authentication Middleware** to verify the signature of the token and check if it corresponds to a valid session. If the token is valid, the code that concerns to the requested service will execute and the response is sent to the client App.
 We emphasize that if the token is invalid the user won't be able to access the protected content of the requested service and an error will be returned to the client App.
-![](https://i.imgur.com/y76bThi.png)
+
+![](https://i.imgur.com/y0sUcM9.png)
 
 ## Technologies
 
