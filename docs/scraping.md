@@ -157,6 +157,28 @@ As we can see from the diagram, the API starts by checking if the needed resourc
 ##### Note
 - Even though this is one of the more important patterns to implement in this component, it was not implemented due to time limitations. However, it would be a priority in a future development
 
+
+
+## Scraping of Sigarra's protected pages
+
+**Target Audience**:
+Developers/Teams that need to perform scraping of a page that needs the User to be authenticated *e.g.* scraping the schedule
+
+**Request's Flow**:
+- The authentication in Sigarra is made on the client-side by directly making the authentication POST request to sigarra's URL with the password and username as parameters of the request body or using a session token - *so you don't need to worry about this step*;
+- When the user wants to access a service that requires authentication, it makes a request to the endpoint of our API that is responsible for returning as a response the URL that contains the requested information;
+    > *e.g.* If the user wants to access his profile then he must access the URL `https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=<up_identifier>`
+- At the client-side, a request will be sent to the URL that we provided. That request will return the HTML of the page, which must be sent to the endpoint of our API that performs the scraping of the HTML and returns the processed data;
+    > *e.g.* The HTML that is returned by the request made to the URL of Sigarra that contains the schedule is received in the endpoint that is responsible for scraping that information. The schedule data must be returned as response to the request
+
+**Endpoints**:
+At least two endpoints are required if you must do the scraping of a page that required authentication:
+1. Returns the URL of Sigarra that contains the information that you need to scrape;
+2. Receives the HTML of the page that contains the data, performs the scraping and returns the processed information.
+
+**Additional Notes**:
+- The access to most of the User's confidential data requires a special user id (`pv_fest_id`). Therefore, the teams may need to get this id before performing the steps described above. This can be done by requesting the front-end to provide the HTML of the profile page of the User:`https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=<up_identifier>`. The `pv_fest_id` is available in the link to the Academic pathway. Other ways to get this id are probably available. After getting this id, the server may proceed normally with the steps descriped above by adding this query parameter.
+
 ## References
 
 - [Refactoring Guru]
