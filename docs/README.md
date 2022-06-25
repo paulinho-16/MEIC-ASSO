@@ -41,23 +41,22 @@ The services requested by UNI and perceived as highly valuable are numerous and 
 
 ### Quality attributes
 
-There are a few quality attributes defined for the uni4all backend as a whole:
-* **performance quality** - the system needs to be reliable, secure and with a relatively small response time;
-* **operating quality** - the system needs to be available and scalable;
-* **lifecycle quality** - the system should be maintainable and portable.
+The services to be provided by the backend pose several challenges in terms of: data storage, privacy, efficiency, data interoperability, real-time performance, security, maintainability, evolvability, and extensibility.
 
-### Challenges and possible solutions
-
-In concrete, the services to be provided by the backend pose several challenges in terms of: data storage, privacy, efficiency, data interoperability, real-time performance, security, maintainability, evolvability, and extensibility.
-
-In addition, the services will be provided through an API that should be well designed to be concise and easy to extend at the same time.
+Different system components have different quality attributes required to its functioning. While scrapping components may need to be reliable, available and with a relatively small response time in order to give a good user experience, other components also need to ensure privacy, for example the chat component or the scrapping of authenticated pages. These kind of components either access protected pages or can have sensitive information that should not be disclosured to other people besides the user itself.
 
 Each one of these challenges are addressed one by one in the documentation of the respective components.
 
+There are also a few quality attributes defined for the uni4all backend as a whole, which are:
+* **performance quality** - the whole system needs to be reliable, secure and with a relatively small response time;
+* **operating quality** - the system needs to have high availability and to be easily scalable, in order to support any traffic load and meet its performance demands;
+* **lifecycle quality** - the system should be designed focusing on maintainability and portability so that the API can be concise and easy to extend at the same time.
 
 ## High-level architecture
 
 <!--_Instructions: Information about **Components**, **Activities** and **Infrastructure** (respectively, use UML Component, Activity and Deployment diagrams. Provide higher-level views over these three types of elements using _Package_ diagrams, if appropriate._-->
+
+![](https://i.imgur.com/GCx6ZhX.png)
 
 ### Components
 
@@ -67,15 +66,13 @@ This component allows users to register, login, and manage their accounts in uni
 - [Chat](./chat.md), **T1G3**  
 In the chat component, users can chat with their academic social circles. The main features allow users to view their groups and messages per group, create and join a group and send and receive messages in real time.
 - [Payments](./payments.md), **T1G1** 
-- Notifications
-- External API / Services
+- [Notifications](./notification.md) **T2G3**
 - Calendar: [T1G2](./t1g2-calendar.md), **T1G2**; [T2G4](./t2g4-calendar.md), **T2G4**; 
 - [Group Making](./groupMaking.md), **T2G5** 
 - [Feedback](./feedback.md), **T2G2**: canteen/bar meals, classes/teachers
 - [Capacity](./capacity.md), **T2G2**: capacity at each parking lot in FEUP
 - [Queues](./queues.md), **T2G2**: queues in each canteen/bar at FEUP
 - [Jobs](./jobs.md), **T1G2** 
-- Registrations
 
 ## Technologies
 For the implementation of all the services, several technologies were used, namely: node.js and several libraries, python, redis, postgres, mongodb, etc.
