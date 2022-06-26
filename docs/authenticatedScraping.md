@@ -1,6 +1,6 @@
 # Authenticated Scraping
 
-Our scraping services are subdivided into two categories: those that need authentication and those that do not. In this section is present the documentation for the authenticated ones. 
+Our scraping services are subdivided into two categories: those that need authentication and those that do not. This section presents the documentation for the authenticated ones. 
 
 ## Endpoints
 
@@ -24,7 +24,7 @@ This route returns the schedule of a student, given a `studentNumber`.
 
 #### GET `/payments`
 
-This route returns the student's up number, name, nif, current balance and movements tables.
+This route returns the student's up number, name, nif, current balance, and movement tables.
 
 ## Technologies
 
@@ -32,13 +32,13 @@ This route returns the student's up number, name, nif, current balance and movem
     - Cheerio is one of the most popular tools for parsing HTML and XML in Node.js
 - Axios
     - Axios is a Javascript library used to make HTTP requests from Node.js
-    - It was used to make HTTP requests to the Sigarra, so that Cheerio can scrape the returned HTML
+    - It was used to make HTTP requests to the Sigarra so that Cheerio can scrape the returned HTML
 - Flutter and Dart
     - Used to implement the client middleware to communicate between the Flutter app and the Node.js backend
 
 ## Flow Diagrams
 
-The Flutter App starts by asking the Flutter Middleware for the desired service, which then asks the Node.js backend if the service in question needs authentication.
+The Flutter app starts by asking the Flutter Middleware for the desired service, which then asks the Node.js backend if the service in question needs authentication.
 
 <figure align="center">
   <img src="https://i.imgur.com/oIl9byp.png"/>
@@ -76,7 +76,7 @@ The architecture for this pattern is described in the second flow diagram presen
 
 ##### Note
 
-- This pattern is half implemented, as we have started to develop the basic structure of this component, having managed to integrate services that do not require authentication. In the future, it will also be necessary to integrate services that require authentication, using modules developed by the group responsible for the Authentication component.
+- This pattern is half-implemented, as we have started to develop the basic structure of this component, having managed to integrate services that do not require authentication. In the future, it will also be necessary to integrate services that require authentication, using modules developed by the group responsible for the Authentication component.
 
 ### Flutter Facade
 
@@ -86,18 +86,18 @@ Interaction with our API requires some internal knowledge of the system which is
 
 #### Mapping
 
-To ensure that frontend developers don't need to interact directly with our API, we provided a simplified facade with methods for each HTTP operation that internally deals with response logic of our API. This removes complexity that isn't of the client's responsibility, i.e. the user of the facade is not concerned with response codes or whether the operations require authentication.
+To ensure that frontend developers don't need to interact directly with our API, we provided a simplified facade with methods for each HTTP operation that internally deals with the response logic of our API. This removes the complexity that isn't of the client's responsibility, i.e. the user of the facade is not concerned with response codes or whether the operations require authentication.
 
 #### Consequences
 
 ##### Pros
 
-- Simplified interface to interact with the API on the client side
+- Simplified interface to interact with the API on the client-side
 - Isolation of the code from the complexity of a subsystem
 
 ##### Cons
 
-- Can also become a **God Object** coupled to all classes of an app
+- Can also become a **God Object** coupled with all classes of an app
 - If you wanted to use our API outside the Flutter app, you would need to create another Facade in another environment
 - In our specific situation, the facade can be a too generic and may require the client to further implement methods on top of the facade to reduce the logic even more
 
@@ -106,7 +106,7 @@ To ensure that frontend developers don't need to interact directly with our API,
 ### Results Cache
 
 #### Context
-Scraping is a task that can sometimes take a lot of time. Furthermore, during a time period, there could be similar requests that require the same scraping task. This problem can be addressed by implementing a cache system, that stores temporarly in fast memory the information returned by the scraping tasks.
+Scraping is a task that can sometimes take a lot of time. Furthermore, during a time period, there could be similar requests that require the same scraping task. This problem can be addressed by implementing a cache system, that stores temporarily in fast memory the information returned by the scraping tasks.
 
 #### Mapping
 
@@ -115,7 +115,7 @@ Scraping is a task that can sometimes take a lot of time. Furthermore, during a 
   <figcaption>Figure 3. Page cache pattern.</figcaption>
 </figure>
 
-As we can see from the diagram, the API starts by checking if the needed resource is available in cache. If it is, the information is returned by Redis. Otherwise, the API needs to fetch the HTML page to scrap from Sigarra, scrap it and store its corresponding information on Redis.
+As we can see from the diagram, the API starts by checking if the needed resource is available in cache. If it is, the information is returned by Redis. Otherwise, the API needs to fetch the HTML page to scrap from Sigarra, scrap it, and store its corresponding information on Redis.
 
 #### Consequences
 
@@ -139,7 +139,7 @@ As we can see from the diagram, the API starts by checking if the needed resourc
 Developers/Teams that need to perform scraping of a page that needs the User to be authenticated *e.g.* scraping the schedule
 
 **Request's Flow**:
-- The authentication in Sigarra is made on the client-side by directly making the authentication POST request to sigarra's URL with the password and username as parameters of the request body or using a session token - *so you don't need to worry about this step*;
+- The authentication in Sigarra is made on the client-side by directly making the authentication POST request to Sigarra's URL with the password and username as parameters of the request body or using a session token - *so you don't need to worry about this step*;
 - When the user wants to access a service that requires authentication, it makes a request to the endpoint of our API that is responsible for returning as a response the URL that contains the requested information;
     > *e.g.* If the user wants to access his profile then he must access the URL `https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=<up_identifier>`
 - At the client-side, a request will be sent to the URL that we provided. That request will return the HTML of the page, which must be sent to the endpoint of our API that performs the scraping of the HTML and returns the processed data;
@@ -148,10 +148,10 @@ Developers/Teams that need to perform scraping of a page that needs the User to 
 **Endpoints**:
 At least two endpoints are required if you must do the scraping of a page that required authentication:
 1. Returns the URL of Sigarra that contains the information that you need to scrape;
-2. Receives the HTML of the page that contains the data, performs the scraping and returns the processed information.
+2. Receives the HTML of the page that contains the data, performs the scraping, and returns the processed information.
 
 **Additional Notes**:
-- The access to most of the User's confidential data requires a special user id (`pv_fest_id`). Therefore, the teams may need to get this id before performing the steps described above. This can be done by requesting the front-end to provide the HTML of the profile page of the User:`https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=<up_identifier>`. The `pv_fest_id` is available in the link to the Academic pathway. Other ways to get this id are probably available. After getting this id, the server may proceed normally with the steps descriped above by adding this query parameter.
+- The access to most of the User's confidential data requires a special user id (`pv_fest_id`). Therefore, the teams may need to get this id before performing the steps described above. This can be done by requesting the front-end to provide the HTML of the profile page of the User:`https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=<up_identifier>`. The `pv_fest_id` is available in the link to the Academic pathway. Other ways to get this id are probably available. After getting this id, the server may proceed normally with the steps described above by adding this query parameter.
 
 ## References
 
