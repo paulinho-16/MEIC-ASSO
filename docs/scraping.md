@@ -1,6 +1,6 @@
 # Scraping
 
-Our scraping services are subdivided into two categories: those that need authentication and those that do not. In this section is present the documentation for the non-authenticated ones.
+Our scraping services are subdivided into two categories: those that need authentication and those that do not. This section presents the documentation for the non-authenticated ones.
 
 ## Contents
 
@@ -24,7 +24,7 @@ Our scraping services are subdivided into two categories: those that need authen
 
 ## Endpoints
 
-This section provides some context to each of the component's endpoints. All these endpoints retreive the HTML present in the different web pages and retreive its information.
+This section provides some context to each of the component's endpoints. All these endpoints retrieve the HTML present in the different web pages and retrieve its information.
 
 ### Authentication not required
 
@@ -50,11 +50,11 @@ This route returns the information about the exams of a student, given its `stud
 
 #### GET `/library`
 
-Returns a json with information related to the total capacity of the FEUP's librarys, as well as the number of current occupied and free spaces for each floor.
+Returns a json with information related to the total capacity of the FEUP's libraries, as well as the number of current occupied and free spaces for each floor.
 
 #### GET `/jobs`
 
-This route is responsible for fetching the jobs listings present on Sigarra.
+This route is responsible for fetching the job listings present on Sigarra.
 
 #### GET `/capacity`
 
@@ -90,7 +90,7 @@ This route returns the schedule of a student, given a `studentNumber`.
 
 ### Axios
 - Axios is a Javascript library used to make HTTP requests from Node.js
-- It was used to make HTTP requests to the Sigarra so that Cheerio can scrape the returned HTML
+- It was used to make HTTP requests to the different pages so that Cheerio can scrape the returned HTML
 - By using Axios we remove the need to pass the results of the HTTP request to the ``.json()`` method. Axios already takes care of that for us and simply returns the data object in JSON format. Furthermore, the ``.catch()`` block will automatically be triggered in the event of any HTTP request error. 
 
 ### Flutter and Dart
@@ -182,13 +182,13 @@ To ensure that frontend developers don't need to interact directly with our API,
 ### Results Cache
 
 #### Context
-Scraping is a task that can sometimes take a lot of time. Furthermore, during a time period, there could be similar requests that require the same scraping task. This problem can be addressed by implementing a cache system CAP pattern, that stores temporarly in fast memory the information returned by the scraping tasks.
+Scraping is a task that can sometimes take a lot of time. Furthermore, during a time period, there could be similar requests that require the same scraping task. This problem can be addressed by implementing a cache system, that stores temporarily in fast memory the information returned by the scraping tasks.
 
 #### Mapping
 
 ![Page Cache Pattern](https://i.imgur.com/K4Hiog8.png)
 
-As we can see from the diagram, the API starts by checking if the needed resource is available in cache. If it is, the information is returned by Redis. Otherwise, the API needs to fetch the HTML page to scrap from Sigarra, scrap it and store its corresponding information on Redis.
+As we can see from the diagram, the API starts by checking if the needed resource is available in cache. If it is, the information is returned by Redis. Otherwise, the API needs to fetch the HTML page to scrap from Sigarra, scrap it, and store its corresponding information on Redis.
 
 #### Consequences
 
