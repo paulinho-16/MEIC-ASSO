@@ -70,17 +70,17 @@ The system is built with 6 separate servers:
 
 - [Authentication](./authentication.md), **T2G1**  
 This component allows users to register, login, and manage their accounts in uni4all, particularly by updating or recovering the password or even by deleting the account. It also provides a solution for the authorization process that can be used by other components to control the access to certain resources that require the user to be authenticated.
-- [Scraping](./scraping.md), **T1G4** , **T1G3** (meals)
+- [Authenticated Scraping](./authenticatedScraping.md), **T1G4**, **T1G1** (payments)   
+In this component, users can retreive useful information from authenticated SIGARRA pages. It uses a middleware to handle the authentication and successfully access the protected pages.
+- [Scraping](./scraping.md), **T1G4** , **T1G1** (library), **T1G2** (jobs) **T1G3** (meals), **T2G2** (capacity)    
+This component is responsible for scraping, parsing and returning the information available in public pages.
 - [Chat](./chat.md), **T1G3**  
 In the chat component, users can chat with their academic social circles. The main features allow users to view their groups and messages per group, create and join a group and send and receive messages in real time.
-- [Payments](./payments.md), **T1G1** 
 - [Notifications](./notification.md) **T2G3**
 - Calendar: [T1G2](./t1g2-calendar.md), **T1G2**; [T2G4](./t2g4-calendar.md), **T2G4**; 
 - [Group Making](./groupMaking.md), **T2G5** 
 - [Feedback](./feedback.md), **T2G2**: canteen/bar meals, classes/teachers
-- [Capacity](./capacity.md), **T2G2**: capacity at each parking lot in FEUP
 - [Queues](./queues.md), **T2G2**: queues in each canteen/bar at FEUP
-- [Jobs](./jobs.md), **T1G2** 
 
 ## Technologies
 For the implementation of all the services, several technologies were used, namely: node.js and several libraries, python, redis, postgres, mongodb, etc.
