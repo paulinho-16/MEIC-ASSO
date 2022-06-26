@@ -54,6 +54,10 @@ This route returns the information of a curricular unit, given its `id`.
 
 This route returns the student grades of the student with the provided student number.
 
+#### GET `/major-grades/{pvFestID}`
+
+This route returns the grades of a given student in a given course, with the corresponding pvFestID.
+
 #### GET `/profile/{studentNumber}`
 
 This route returns the personal information associated with the student, given a `studentNumber`.
@@ -113,9 +117,7 @@ From the moment the authentication problem arose, we realized that it would be n
 
 #### Mapping
 
-- The Mapping sections should explain the solution of the pattern and how each element of this implementation maps to that solution. For example, the POSA mediator pattern defines a few roles and it would be worth stating clearly what elements of your implementation are playing those roles.
-
-The architecture for this pattern is described in the second flow diagram presented above.
+The architecture for this POSA pattern is described in the second flow diagram presented above, where the Flutter middleware acts as a mediator, controlling the communication between the Flutter App (frontend) and the API backend.
 
 #### Consequences
 
@@ -124,7 +126,6 @@ The architecture for this pattern is described in the second flow diagram presen
 - *Single Responsibility Principle*: extract the communications between various components into a single place, making it easier to comprehend and maintain.
 - *Open/Closed Principle*: introduce new mediators without having to change the actual components
 - Reduction of coupling between various components of a program
-- Reuse individual components more easily
 
 ##### Cons
 
@@ -132,7 +133,7 @@ The architecture for this pattern is described in the second flow diagram presen
 
 ##### Note
 
-- This pattern is half implemented, as we have started to develop the basic structure of this component, having managed to integrate services that do not require authentication. In the future, it will also be necessary to integrate services that require authentication, using modules developed by the group responsible for the Authentication component.
+- This pattern has been fully implemented in a Flutter demo App, available on the system's repository.
 
 ### Flutter Facade
 
