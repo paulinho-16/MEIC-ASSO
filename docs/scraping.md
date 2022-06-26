@@ -1,6 +1,9 @@
 # Scraping
 
+Our scraping services are subdivided into two categories: those that need authentication and those that do not. In this section is present the documentation for the non-authenticated ones.
+
 ## Contents
+
 - [Endpoints](#Endpoints)
     - [Authentication not required](#Authentication-not-required)
     - [Authentication required](#Authentication-required)
@@ -18,9 +21,10 @@
 - [Components dependency](#Components-dependency)
 - [References](#References)
 
+
 ## Endpoints
 
-This section provides some context to each of the component's endpoints. For each one of the endpoints, there is a corresponding endpoint, with the format `{endpoint}/URL`. These endpoints are used by the Flutter middleware to get the URL necessary to retrieve the corresponding endpoint information, as the Flutter middleware is responsible for getting the Sigarra HTML pages that require authentication.
+This section provides some context to each of the component's endpoints. All these endpoints retreive the HTML present in the different web pages and retreive its information.
 
 ### Authentication not required
 
@@ -43,6 +47,18 @@ This route returns the information for a service, given its `serviceNumber`.
 #### GET `/student-exams/{studentNumber}`
 
 This route returns the information about the exams of a student, given its `studentNumber`.
+
+#### GET `/library`
+
+Returns a json with information related to the total capacity of the FEUP's librarys, as well as the number of current occupied and free spaces for each floor.
+
+#### GET `/jobs`
+
+This route is responsible for fetching the jobs listings present on Sigarra.
+
+#### GET `/capacity`
+
+Returns a json with information related to the total capacity of the FEUP's parking lots, as well as the number of current occupied and free spaces for each one (lively updated).
 
 ### Authentication required
 
@@ -111,17 +127,21 @@ In case the Node.js backend returns True, the middleware first needs to ensure t
 
 #### Context
 
-As we've seen before, our scraping component faces a problem from the start: access to resources that require authentication is impossible without an ad-hoc solution that is possibly insecure, as mentioned in the authentication component documentation.
-
-From the moment the authentication problem arose, we realized that it would be necessary to implement a component that would monitor the communication between the Flutter App and the Node.js backend, to avoid chaotic dependencies between objects.
+We want to scrape the contents provided by a sigarra link. We use the [Retrieval Operation Pattern](https://microservice-api-patterns.org/patterns/responsibility/operationResponsibilities/RetrievalOperation), where the user performs a read-only operation to request a report that contains a machine-readable representation of the requested information.
 
 #### Mapping
 
 The architecture for this POSA pattern is described in the second flow diagram presented above, where the Flutter middleware acts as a mediator, controlling the communication between the Flutter App (frontend) and the API backend.
 
+![Retrieval Operation Mapping](https://user-images.githubusercontent.com/29897562/174668575-6f9e2eda-e626-4500-b19c-e876b7597234.png)  
+
+This image represents how the user uses the API to send a GET Capacity request and the Retrieval Operation scrapes the information from the sigarra link.
+
 #### Consequences
 
 ##### Pros
+- Workload management: Due to their read-only nature, Retrieval Operations can scale by replicating data.
+- Networking efficiency vs. data parsimony (message sizes): Retrieval Operations can make full use of identifiers, can fetch, cache, and optimize local data on demand (note: there is no need for all of this data to appear in the request).
 
 - *Single Responsibility Principle*: extract the communications between various components into a single place, making it easier to comprehend and maintain.
 - *Open/Closed Principle*: introduce new mediators without having to change the actual components
@@ -157,6 +177,7 @@ To ensure that frontend developers don't need to interact directly with our API,
 - Can also become a **God Object** coupled to all classes of an app
 - If you wanted to use our API outside the Flutter app, you would need to create another Facade in another environment
 - In our specific situation, the facade can be a too generic and may require the client to further implement methods on top of the facade to reduce the logic even more
+- May become a performance bottleneck if user information needs and query capabilities do not match.
 
 ### Results Cache
 
@@ -165,10 +186,7 @@ Scraping is a task that can sometimes take a lot of time. Furthermore, during a 
 
 #### Mapping
 
-<figure align="center">
-  <img src="https://i.imgur.com/K4Hiog8.png"/>
-  <figcaption>Figure 3. Page cache pattern.</figcaption>
-</figure>
+![Page Cache Pattern](https://i.imgur.com/K4Hiog8.png)
 
 As we can see from the diagram, the API starts by checking if the needed resource is available in cache. If it is, the information is returned by Redis. Otherwise, the API needs to fetch the HTML page to scrap from Sigarra, scrap it and store its corresponding information on Redis.
 
