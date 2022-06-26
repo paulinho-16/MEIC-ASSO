@@ -1,63 +1,89 @@
 # Scraping
 
+## Contents
+- [Endpoints](#Endpoints)
+    - [Authentication not required](#Authentication-not-required)
+    - [Authentication required](#Authentication-required)
+- [Technologies](#Technologies)
+    - [Cheerio](#Cheerio)
+    - [Axios](#Axios)
+    - [Flutter and Dart](#Flutter-and-Dart)
+- [Design and Architecture](#Design-and-Architecture)
+    - [Authentication not required](#Authentication-not-required1)
+    - [Authentication required](#Authentication-required1)
+- [Patterns](#Patterns)
+    - [Mediator Pattern](#Mediator-Pattern)
+    - [Flutter Facade](#Flutter-Facade)
+    - [Results Cache](#Results-Cache)
+- [Components dependency](#Components-dependency)
+- [References](#References)
+
 ## Endpoints
 
 This section provides some context to each of the component's endpoints. For each one of the endpoints, there is a corresponding endpoint, with the format `{endpoint}/URL`. These endpoints are used by the Flutter middleware to get the URL necessary to retrieve the corresponding endpoint information, as the Flutter middleware is responsible for getting the Sigarra HTML pages that require authentication.
 
+### Authentication not required
+
 #### GET `/associations`
 
-This route returns information about the student associations. It does not require authentication.
-
-#### GET `/curricular_unit/{id}`
-
-This route returns the information of a curricular unit, given its `id`. It requires authentication.
+This route returns information about the student associations. 
 
 #### GET `/exams-calender/{courseID}`
 
-This route returns the information of the exams calendar, given a `courseID`. It does not require authentication.
-
-
-#### GET `/grades/{studentNumber}`
-
-This route returns the student grades of the student with the provided student number. It requires authentication.
-
+This route returns the information of the exams calendar, given a `courseID`.
 
 #### GET `/news`
 
-This route returns the news available on Sigarra. It does not require authentication.
-
-#### GET `/profile/{studentNumber}`
-
-This route returns the personal information associated with the student, given a `studentNumber`. It requires authentication.
-
-#### GET `/schedule/student/{studentNumber}`
-
-This route returns the schedule of a student, given a `studentNumber`. It requires authentication.
+This route returns the news available on Sigarra.
 
 #### GET `/services/{serviceNumber}`
 
-This route returns the information for a service, given its `serviceNumber`. It does not require authentication.
+This route returns the information for a service, given its `serviceNumber`.
 
 #### GET `/student-exams/{studentNumber}`
 
-This route returns the information about the exams of a student, given its `studentNumber`. It does not require authentication.
+This route returns the information about the exams of a student, given its `studentNumber`.
+
+### Authentication required
+
+#### GET `/curricular_unit/{id}`
+
+This route returns the information of a curricular unit, given its `id`. 
+
+#### GET `/grades/{studentNumber}`
+
+This route returns the student grades of the student with the provided student number.
+
+#### GET `/profile/{studentNumber}`
+
+This route returns the personal information associated with the student, given a `studentNumber`.
+
+#### GET `/schedule/student/{studentNumber}`
+
+This route returns the schedule of a student, given a `studentNumber`.
 
 ## Technologies
 
-- Cheerio
-    - Cheerio is one of the most popular tools for parsing HTML and XML in Node.js
-- Axios
-    - Axios is a Javascript library used to make HTTP requests from Node.js
-    - It was used to make HTTP requests to the Sigarra, so that Cheerio can scrape the returned HTML
-- Flutter and Dart
-    - Used to implement the client middleware to communicate between the Flutter app and the Node.js backend
+### Cheerio
+- Cheerio is one of the most popular tools for parsing HTML and XML in Node.js. 
+- We decided to use Cheerio instead of other existing tools for the same end because it is considered fast, flexible, and easy to use by the majority of the users.
 
-## Flow Diagrams
+### Axios
+- Axios is a Javascript library used to make HTTP requests from Node.js
+- It was used to make HTTP requests to the Sigarra so that Cheerio can scrape the returned HTML
+- By using Axios we remove the need to pass the results of the HTTP request to the ``.json()`` method. Axios already takes care of that for us and simply returns the data object in JSON format. Furthermore, the ``.catch()`` block will automatically be triggered in the event of any HTTP request error. 
+
+### Flutter and Dart
+- Used to implement the client middleware to communicate between the Flutter app and the Node.js backend
+- We used Flutter and Dart because it was already being used in the original app and we did not want to change the technology.
+
+## Design and Architecture
 
 Since our services are subdivided into two categories (those that need authentication and those that do not), we are faced with two different situations, represented in the following two flow diagrams.
 
-
 In both cases, the Flutter App starts by asking the Flutter Middleware for the desired service, which then asks the Node.js backend if the service in question needs authentication.
+
+### Authentication not required
 
 <figure align="center">
   <img src="https://i.imgur.com/WF8nyTo.png"/>
@@ -65,6 +91,8 @@ In both cases, the Flutter App starts by asking the Flutter Middleware for the d
 </figure>
 
 In this simplest case, where authentication is not required (the Node.js backend returns False), the middleware simply asks the service's JSON directly to the API, which, as it does not need authentication, fetches the HTML of the desired Sigarra page, processes it and finally returns the resulting JSON to the middleware, which will forward it to the Flutter App.
+
+### Authentication required
 
 <figure align="center">
   <img src="https://i.imgur.com/oIl9byp.png"/>
@@ -84,6 +112,8 @@ As we've seen before, our scraping component faces a problem from the start: acc
 From the moment the authentication problem arose, we realized that it would be necessary to implement a component that would monitor the communication between the Flutter App and the Node.js backend, to avoid chaotic dependencies between objects.
 
 #### Mapping
+
+- The Mapping sections should explain the solution of the pattern and how each element of this implementation maps to that solution. For example, the POSA mediator pattern defines a few roles and it would be worth stating clearly what elements of your implementation are playing those roles.
 
 The architecture for this pattern is described in the second flow diagram presented above.
 
@@ -108,7 +138,7 @@ The architecture for this pattern is described in the second flow diagram presen
 
 #### Context
 
-Interaction with our API requires some internal knowledge of the system which is undesirable to clients. A facade is a good solution to simplify interaction with the API.
+Interaction with our API requires some internal knowledge of the system which is undesirable to clients. A facade is POSA pattern and a good solution to simplify interaction with the API.
 
 #### Mapping
 
@@ -118,7 +148,7 @@ To ensure that frontend developers don't need to interact directly with our API,
 
 ##### Pros
 
-- Simplified interface to interact with the API on the client side
+- Simplified interface to interact with the API on the client side, because clients do not require internal knowledge of the system
 - Isolation of the code from the complexity of a subsystem
 
 ##### Cons
@@ -127,12 +157,10 @@ To ensure that frontend developers don't need to interact directly with our API,
 - If you wanted to use our API outside the Flutter app, you would need to create another Facade in another environment
 - In our specific situation, the facade can be a too generic and may require the client to further implement methods on top of the facade to reduce the logic even more
 
-##### Note
-
 ### Results Cache
 
 #### Context
-Scraping is a task that can sometimes take a lot of time. Furthermore, during a time period, there could be similar requests that require the same scraping task. This problem can be addressed by implementing a cache system, that stores temporarly in fast memory the information returned by the scraping tasks.
+Scraping is a task that can sometimes take a lot of time. Furthermore, during a time period, there could be similar requests that require the same scraping task. This problem can be addressed by implementing a cache system CAP pattern, that stores temporarly in fast memory the information returned by the scraping tasks.
 
 #### Mapping
 
@@ -157,30 +185,19 @@ As we can see from the diagram, the API starts by checking if the needed resourc
 ##### Note
 - Even though this is one of the more important patterns to implement in this component, it was not implemented due to time limitations. However, it would be a priority in a future development
 
+## Components dependency
 
+### Dependent of scraping
+Altough many components are using scraping to complete their features, not all of them are using the scraping implemented by the group T1G4. In this section, we will only describe the components that are being implemented based on the work from group T1G4.
 
-## Scraping of Sigarra's protected pages
+- **Calendar** - in this component it is used both the scraping of the exams of a student and the scraping of the student's schedule to build a calendar
 
-**Target Audience**:
-Developers/Teams that need to perform scraping of a page that needs the User to be authenticated *e.g.* scraping the schedule
+### Scraping is dependent of
 
-**Request's Flow**:
-- The authentication in Sigarra is made on the client-side by directly making the authentication POST request to sigarra's URL with the password and username as parameters of the request body or using a session token - *so you don't need to worry about this step*;
-- When the user wants to access a service that requires authentication, it makes a request to the endpoint of our API that is responsible for returning as a response the URL that contains the requested information;
-    > *e.g.* If the user wants to access his profile then he must access the URL `https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=<up_identifier>`
-- At the client-side, a request will be sent to the URL that we provided. That request will return the HTML of the page, which must be sent to the endpoint of our API that performs the scraping of the HTML and returns the processed data;
-    > *e.g.* The HTML that is returned by the request made to the URL of Sigarra that contains the schedule is received in the endpoint that is responsible for scraping that information. The schedule data must be returned as response to the request
-
-**Endpoints**:
-At least two endpoints are required if you must do the scraping of a page that required authentication:
-1. Returns the URL of Sigarra that contains the information that you need to scrape;
-2. Receives the HTML of the page that contains the data, performs the scraping and returns the processed information.
-
-**Additional Notes**:
-- The access to most of the User's confidential data requires a special user id (`pv_fest_id`). Therefore, the teams may need to get this id before performing the steps described above. This can be done by requesting the front-end to provide the HTML of the profile page of the User:`https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=<up_identifier>`. The `pv_fest_id` is available in the link to the Academic pathway. Other ways to get this id are probably available. After getting this id, the server may proceed normally with the steps descriped above by adding this query parameter.
+- **Authentication** - like it has been mentioned throughout the documentation, the scraping component, for some instances, needs the authentication component to have access to special information.
 
 ## References
 
-- [Refactoring Guru]
-    - https://refactoring.guru/design-patterns/mediator
-    - https://refactoring.guru/design-patterns/facade
+- [Refactoring Guru - Mediator Pattern](https://refactoring.guru/design-patterns/mediator)
+- [Refactoring Guru - Facade Pattern](https://refactoring.guru/design-patterns/facade)
+- [CAP - Results Cache Pattern](https://kgb1001001.github.io/cloudadoptionpatterns/Microservices/Results-Cache/)
