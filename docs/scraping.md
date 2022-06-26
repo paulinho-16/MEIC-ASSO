@@ -5,22 +5,21 @@ Our scraping services are subdivided into two categories: those that need authen
 ## Contents
 
 - [Endpoints](#Endpoints)
-    - [Authentication not required](#Authentication-not-required)
-    - [Authentication required](#Authentication-required)
+  - [Authentication not required](#Authentication-not-required)
+  - [Authentication required](#Authentication-required)
 - [Technologies](#Technologies)
-    - [Cheerio](#Cheerio)
-    - [Axios](#Axios)
-    - [Flutter and Dart](#Flutter-and-Dart)
+  - [Cheerio](#Cheerio)
+  - [Axios](#Axios)
+  - [Flutter and Dart](#Flutter-and-Dart)
 - [Design and Architecture](#Design-and-Architecture)
-    - [Authentication not required](#Authentication-not-required1)
-    - [Authentication required](#Authentication-required1)
+  - [Authentication not required](#Authentication-not-required1)
+  - [Authentication required](#Authentication-required1)
 - [Patterns](#Patterns)
-    - [Mediator Pattern](#Mediator-Pattern)
-    - [Flutter Facade](#Flutter-Facade)
-    - [Results Cache](#Results-Cache)
+  - [Mediator Pattern](#Mediator-Pattern)
+  - [Flutter Facade](#Flutter-Facade)
+  - [Results Cache](#Results-Cache)
 - [Components dependency](#Components-dependency)
 - [References](#References)
-
 
 ## Endpoints
 
@@ -30,7 +29,7 @@ This section provides some context to each of the component's endpoints. All the
 
 #### GET `/associations`
 
-This route returns information about the student associations. 
+This route returns information about the student associations.
 
 #### GET `/exams-calender/{courseID}`
 
@@ -64,7 +63,7 @@ Returns a json with information related to the total capacity of the FEUP's park
 
 #### GET `/curricular_unit/{id}`
 
-This route returns the information of a curricular unit, given its `id`. 
+This route returns the information of a curricular unit, given its `id`.
 
 #### GET `/grades/{studentNumber}`
 
@@ -85,15 +84,18 @@ This route returns the schedule of a student, given a `studentNumber`.
 ## Technologies
 
 ### Cheerio
-- Cheerio is one of the most popular tools for parsing HTML and XML in Node.js. 
+
+- Cheerio is one of the most popular tools for parsing HTML and XML in Node.js.
 - We decided to use Cheerio instead of other existing tools for the same end because it is considered fast, flexible, and easy to use by the majority of the users.
 
 ### Axios
+
 - Axios is a Javascript library used to make HTTP requests from Node.js
 - It was used to make HTTP requests to the different pages so that Cheerio can scrape the returned HTML
-- By using Axios we remove the need to pass the results of the HTTP request to the ``.json()`` method. Axios already takes care of that for us and simply returns the data object in JSON format. Furthermore, the ``.catch()`` block will automatically be triggered in the event of any HTTP request error. 
+- By using Axios we remove the need to pass the results of the HTTP request to the `.json()` method. Axios already takes care of that for us and simply returns the data object in JSON format. Furthermore, the `.catch()` block will automatically be triggered in the event of any HTTP request error.
 
 ### Flutter and Dart
+
 - Used to implement the client middleware to communicate between the Flutter app and the Node.js backend
 - We used Flutter and Dart because it was already being used in the original app and we did not want to change the technology.
 
@@ -133,18 +135,19 @@ We want to scrape the contents provided by a sigarra link. We use the [Retrieval
 
 The architecture for this POSA pattern is described in the second flow diagram presented above, where the Flutter middleware acts as a mediator, controlling the communication between the Flutter App (frontend) and the API backend.
 
-![Retrieval Operation Mapping](https://user-images.githubusercontent.com/29897562/174668575-6f9e2eda-e626-4500-b19c-e876b7597234.png)  
+![Retrieval Operation Mapping](https://user-images.githubusercontent.com/29897562/174668575-6f9e2eda-e626-4500-b19c-e876b7597234.png)
 
 This image represents how the user uses the API to send a GET Capacity request and the Retrieval Operation scrapes the information from the sigarra link.
 
 #### Consequences
 
 ##### Pros
+
 - Workload management: Due to their read-only nature, Retrieval Operations can scale by replicating data.
 - Networking efficiency vs. data parsimony (message sizes): Retrieval Operations can make full use of identifiers, can fetch, cache, and optimize local data on demand (note: there is no need for all of this data to appear in the request).
 
-- *Single Responsibility Principle*: extract the communications between various components into a single place, making it easier to comprehend and maintain.
-- *Open/Closed Principle*: introduce new mediators without having to change the actual components
+- _Single Responsibility Principle_: extract the communications between various components into a single place, making it easier to comprehend and maintain.
+- _Open/Closed Principle_: introduce new mediators without having to change the actual components
 - Reduction of coupling between various components of a program
 
 ##### Cons
@@ -182,7 +185,8 @@ To ensure that frontend developers don't need to interact directly with our API,
 ### Results Cache
 
 #### Context
-Scraping is a task that can sometimes take a lot of time. Furthermore, during a time period, there could be similar requests that require the same scraping task. This problem can be addressed by implementing a cache system, that stores temporarily in fast memory the information returned by the scraping tasks.
+
+Scraping is a task that can sometimes take a lot of time. Furthermore, during a time period, there could be similar requests that require the same scraping task. This problem can be addressed by implementing a cache system through the CAP pattern, that stores temporarily in fast memory the information returned by the scraping tasks.
 
 #### Mapping
 
@@ -193,20 +197,24 @@ As we can see from the diagram, the API starts by checking if the needed resourc
 #### Consequences
 
 ##### Pros
+
 - Reduction of the time the requests take to be precessed
 - Reduction of the network bandwidth
 - The system would still temporarily work if the Sigarra component was down
 
 ##### Cons
+
 - Increased complexity of the system
 - The cache may not be up to date with the Sigarra component
 
 ##### Note
+
 - Even though this is one of the more important patterns to implement in this component, it was not implemented due to time limitations. However, it would be a priority in a future development
 
 ## Components dependency
 
 ### Dependent of scraping
+
 Altough many components are using scraping to complete their features, not all of them are using the scraping implemented by the group T1G4. In this section, we will only describe the components that are being implemented based on the work from group T1G4.
 
 - **Calendar** - in this component it is used both the scraping of the exams of a student and the scraping of the student's schedule to build a calendar
