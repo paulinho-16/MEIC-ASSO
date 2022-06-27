@@ -159,8 +159,8 @@ Information about internal API's can be found in the corresponding components do
 Create a `.env` file in the `api` directory with the correct values, based on the `.env.example` file.
 
 ```
-docker-compose -f docker-compose.dev build
-docker-compose -f docker-compose.dev up
+docker-compose -f docker-compose.dev.yml build
+docker-compose -f docker-compose.dev.yml up
 ```
 
 
