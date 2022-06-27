@@ -81,6 +81,16 @@ This route returns the personal information associated with the student, given a
 
 This route returns the schedule of a student, given a `studentNumber`.
 
+#### GET `/meals/:restaurant`
+
+Gets the meals for a given a restaurant. The available restaurants are: `grill, cafeteria, inegi, canteen and inesctec`.
+
+- Returns a [Parameter Forest](https://microservice-api-patterns.org/patterns/structure/representationElements/ParameterForest) with a list of meals;
+- Receives the following arguments:
+  - `restaurant`: the restaurant to get the meals from.
+
+**Note:** this endpoint documentation was done by group T1G3
+
 ## Technologies
 
 ### Cheerio
