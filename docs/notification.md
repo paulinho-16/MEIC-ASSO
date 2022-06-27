@@ -107,7 +107,7 @@ Our group agreed it was good practice to log errors generated upon answering req
 #### Context
 After a topic is created there is the need to identify its creator to prevent others from posting to it. Therefore an implementation of a key is necessary.
 ### Maping
-![something](https://i.imgur.com/xrTEnOU.png)
+![API KEY Image](https://i.imgur.com/xrTEnOU.png)
 
 #### Consequences
 
@@ -117,4 +117,35 @@ After a topic is created there is the need to identify its creator to prevent ot
 
 #### Cons
 - If the token is stolen, it gives its holder total permissions on a topic 
-- There is no way to check if the token holder trustworthy
+- There is no way to check if the token holder is trustworthy
+
+
+
+
+
+
+### Pub Sub
+
+#### Context
+The way the backend and frontend interact with each other in the notifications can be described with the PUB-SUB pattern.
+
+Frontend users Send their token to the backend, this step can be seen as the subscription.
+The Backend modules send the notification information to the notification's module, this can be seen as the publishing part.
+
+
+
+### Maping
+![PUB-SUB image](https://i.imgur.com/ZtP592x.png)
+
+#### Consequences
+
+#### Pros
+- This allows for separation between Notification sender and Receiver. 
+- The Publishers do not need to know all the information of the receiver to be able to send a notification.
+- Subscribers information(device token) can be updated without the need to inform the Sender
+- The Subscriber can be totally ignorant about the Topics that exist. (does not apply for the settings part)
+- In case the Subscribers needs to update the device token(UUID) needed for firebase notifications, there is no need to inform the multiple Publisher
+
+#### Cons
+- In the case of module failure, no module can send notifications as this process is centralized.
+- The process can become slow as it introduces a single point of data flow instead of direct communication.
