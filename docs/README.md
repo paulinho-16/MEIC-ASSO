@@ -87,9 +87,69 @@ For the implementation of all the services, several technologies were used, name
 
 
 
-## Operation
+# Operation
 
 <!--_Instructions: Information about how to set up a production environment, how to build and package the system for deployment, how to deploy the system to production, how to operate the system (where the logs are, how to access monitoring tools, etc.), and how to run and access architectural fitness functions and use them to decide (or not) to the intended quality attributes._-->
+
+### Project
+
+### How to run (locally)
+
+The project can be built and run with docker. 
+
+Setup the `.env` file with the appropriate variables following the `.env.example` schema.
+
+Then, build the system and run the containers to simulate a production environment:
+
+```bash
+docker-compose build
+docker-compose up
+```
+
+### How to deploy (from a local machine)
+
+The project can be deployed using docker.
+
+Setup the `.env` file with the appropriate variables following the `.env.example` schema.
+
+Start by creating an SSH authentication key using the **ssh keygen** command ****and add your public key to the Google Cloud Platform’s Compute Engine dashboard for your Virtual Machine in the SSH Keys section.
+
+Create a docker context with the Virtual Machine’s IP as host, and change from the default context to the new context created to run your docker commands via SSH on the server:
+
+```bash
+docker context create uni4all-remote --docker "host=ssh://34.78.167.227"
+docker context use uni4all-remote
+```
+
+Finally, run the command that builds and runs the containers on the server:
+
+```bash
+COMPOSE_DOCKER_CLI_BUILD=0 docker-compose up -d --build --remove-orphans
+```
+
+For further information about deployment automatization and server connection, check the [devOps.md](https://github.com/FEUP-ASSO-2021-22/uni4all/blob/main/docs/devOps.md) documentation file.
+
+## Operating the system
+
+### Managing
+
+With the Google Cloud Platform’s Compute Engine Dashboard for the Virtual Machine, you are able to monitorize the machine’s resources, and manage the storage and specs (CPU, GPU, Memory) of the system.
+
+It is possible to establish an SSH connection directly via GCloud Console or via local SSH (after setting up the relevant SSH keys). With this connection you can:
+
+Access the running containers:
+
+```bash
+docker container ps
+```
+
+See the container logs:
+
+```bash
+docker logs <container_id>
+```
+
+In order to update the code on production, with a context created, simply run the command that builds up the containers stated on the section **How to deploy**.
 
 ### Monitoring
 
@@ -114,17 +174,6 @@ production: http://34.125.159.222/nagios/
 
 username: nagiosadmin
 password: jv=M-%#vx:KKpW_)7<*5
-```
-
-### Project
-
-#### How to run
-
-The project can be built and deployed with docker.
-
-```
-docker-compose build
-docker-compose up
 ```
 
 ## Usage
