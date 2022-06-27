@@ -135,23 +135,28 @@ The product is available at:
 
 - [uni4all.servehttp.com/](https://uni4all.servehttp.com/)
 
-And the different endpoints are appended to the base URL, for example:
-- At the `/status` endpoint, the process uptime is available and it is accessed through [https://uni4all.servehttp.com/status](https://uni4all.servehttp.com/status)
-- At the `/associations` endpoint, the user can get a list of information about all the student associations that are part of FEUP, accessed through [https://uni4all.servehttp.com/associations](https://uni4all.servehttp.com/associations)
+At the `/status` endpoint, the process uptime is available and it is accessed through [https://uni4all.servehttp.com/status](https://uni4all.servehttp.com/status)
 
-Information about the usage of the product, all the available API endpoints and respective usages can be found at the following link:
+
+Information about the usage of the product can be found at the following link:
 
 - [uni4all.servehttp.com/api-docs/](https://uni4all.servehttp.com/api-docs/)
+
+It includes all the API endpoints and respective usages.
 
 ## Contributing
 
 <!--_Instructions: Information about setting up the development environment, running the system in development, running the tests. Also, should include documentation on all the API endpoints (including internal ones) and how to use them. The API documention should be usable, accurate and up-to-date.-->
 
-Information about the API endpoints can be found at the following link:
+Information about the external API endpoints can be found at the following link:
 
 - [uni4all.servehttp.com/api-docs/](https://uni4all.servehttp.com/api-docs/)
 
+Information about internal API's can be found in the corresponding components documentations.
+
 ### Setting up the development environment
+
+Create a `.env` file in the `api` directory with the correct values, based on the `.env.example` file.
 
 ```
 docker-compose -f docker-compose.dev build
