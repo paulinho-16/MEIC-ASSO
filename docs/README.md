@@ -135,13 +135,13 @@ The product is available at:
 
 - [uni4all.servehttp.com/](https://uni4all.servehttp.com/)
 
-At the endpoint [/status](https://uni4all.servehttp.com/status) is available the process uptime.
+And the different endpoints are appended to the base URL, for example:
+- At the `/status` endpoint, the process uptime is available and it is accessed through [https://uni4all.servehttp.com/status](https://uni4all.servehttp.com/status)
+- At the `/associations` endpoint, the user can get a list of information about all the student associations that are part of FEUP, accessed through [https://uni4all.servehttp.com/associations](https://uni4all.servehttp.com/associations)
 
-Information about the usage of the product can be found at the following link:
+Information about the usage of the product, all the available API endpoints and respective usages can be found at the following link:
 
 - [uni4all.servehttp.com/api-docs/](https://uni4all.servehttp.com/api-docs/)
-
-It includes all the API endpoints and respective usages.
 
 ## Contributing
 
