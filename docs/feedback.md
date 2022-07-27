@@ -11,6 +11,7 @@ Uni4all feedback implementation.
 - [High-level Architecture](#high-level-architecture)
 - [Technologies](#technologies)
 - [API Endpoints](#api-endpoints)
+- [Design and Architectural Patterns](#design-and-architectural-patterns)
 - [Future Work](#future-work)
 
 ## Current Features
@@ -161,6 +162,49 @@ Creates a new teacher review.
 
 `Classes` and `teachers` must be checked for authenticity. These entities must exist. Through [Backend Integration](https://microservice-api-patterns.org/patterns/foundation/BackendIntegration) the classes and teachers are checked through the `/curricular-unit` endpoint for their existence.
 Communication and processing faults are replied with an [Error Report](https://microservice-api-patterns.org/patterns/quality/qualityManagementAndGovernance/ErrorReport) where the response message indicates and classifies the fault in a simple, machine-readable way.
+
+## Design and Architectural Patterns
+
+### [Atomic Parameter List](https://microservice-api-patterns.org/patterns/structure/representationElements/AtomicParameterList)
+
+#### Context
+
+Uni4all API wants to offer Post and Get Feedback Operations to its clients. To enable communication, they need to agree on the structure of each message to be exchanged. Our API offers a list of Atomic Parameters that the clients must follow to communicate with the service.
+
+#### Mapping
+
+In the [API Endpoints](#api-endpoints), we can see the list of parameters that must be used in each endpoint.
+
+#### Consequences
+
+##### Pros
+- Understandability of the API Endpoints usage.
+- Simple structure of the messages.
+- If additional data needs to be transmitted with the message (in future updates), this pattern adapts easily.
+
+##### Cons
+- If the list of parameters becomes too large is better to switch to a Parameter Tree or a Parameter Forest.
+
+### [Error Report](https://microservice-api-patterns.org/patterns/quality/qualityManagementAndGovernance/ErrorReport)
+
+#### Context
+
+The feedback service needs to report the results of its operations to the user so that he knows if his request was successful. At the same time, the request must conform to the HTTP response format so that the client App knows how to proceed depending on the error code.
+
+#### Mapping
+
+Every endpoint from feedback responds with a status code, as we can see in the [API Endpoints](#api-endpoints), as well as with a detailed error message.
+
+#### Consequences
+
+##### Pros
+- Allows the client to handle errors programmatically.
+- A textual error message can explain in more detail what happened.
+- The textual message can also include hints to solve the code.
+
+##### Cons
+- Compared to a single scalar error code, a detailed textual message is at a higher risk of exposing provider-side implementation details or other sensitive data (valuable to malicious attackers).
+- The message may need to be internationalized to reach the end-user.
 
 ## Future Work
 
