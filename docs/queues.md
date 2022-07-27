@@ -1,7 +1,7 @@
 # ASSO Documentation T2G2
 
 ---
-# Feedback<!-- omit in toc -->
+# Queues<!-- omit in toc -->
 
 Uni4all queues implementation.
 It was uses the same nomenclature for identifying the restaurants that were defined in the meals endpoint.
